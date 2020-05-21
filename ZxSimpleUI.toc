@@ -19,3 +19,4 @@ modules\TargetHealth47.lua
 modules\TargetName47.lua
 modules\TargetPower47.lua
 modules\Target47.lua
+modules\Combo47.lua

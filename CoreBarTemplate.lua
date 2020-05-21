@@ -20,7 +20,7 @@ end
 
 function CoreBarTemplate:__init__(curDbProfile)
   -- Start order index at 10 so other modules can easily put options in front
-  self._orderIndex = 10
+  self._orderIndex = ZxSimpleUI.DEFAULT_ORDER_INDEX
   self._curDbProfile = curDbProfile
   self._mainFrame = nil
 
@@ -95,10 +95,10 @@ function CoreBarTemplate:getOptionTable(decorativeName)
       type = "group",
       name = decorativeName,
       get = function(infoTable)
-        return self:_getOption(infoTable)
+        return self:getOption(infoTable)
       end,
       set = function(infoTable, value)
-        self:_setOption(infoTable, value)
+        self:setOption(infoTable, value)
       end,
       args = {
         header = {type = "header", name = decorativeName, order = self:incrementOrderIndex()},
@@ -110,10 +110,10 @@ function CoreBarTemplate:getOptionTable(decorativeName)
           max = math.floor(ZxSimpleUI.SCREEN_WIDTH / 2),
           step = 2,
           get = function(infoTable)
-            return self:_getOption(infoTable)
+            return self:getOption(infoTable)
           end,
           set = function(infoTable, value)
-            self:_setOption(infoTable, value)
+            self:setOption(infoTable, value)
           end,
           order = self:incrementOrderIndex()
         },
@@ -125,10 +125,10 @@ function CoreBarTemplate:getOptionTable(decorativeName)
           max = math.floor(ZxSimpleUI.SCREEN_WIDTH / 2),
           step = 2,
           get = function(infoTable)
-            return self:_getOption(infoTable)
+            return self:getOption(infoTable)
           end,
           set = function(infoTable, value)
-            self:_setOption(infoTable, value)
+            self:setOption(infoTable, value)
           end,
           order = self:incrementOrderIndex()
         },
@@ -140,10 +140,10 @@ function CoreBarTemplate:getOptionTable(decorativeName)
           max = ZxSimpleUI.SCREEN_WIDTH,
           step = 1,
           get = function(infoTable)
-            return self:_getOption(infoTable)
+            return self:getOption(infoTable)
           end,
           set = function(infoTable, value)
-            self:_setOption(infoTable, value)
+            self:setOption(infoTable, value)
           end,
           order = self:incrementOrderIndex()
         },
@@ -164,10 +164,10 @@ function CoreBarTemplate:getOptionTable(decorativeName)
           max = ZxSimpleUI.SCREEN_HEIGHT,
           step = 1,
           get = function(infoTable)
-            return self:_getOption(infoTable)
+            return self:getOption(infoTable)
           end,
           set = function(infoTable, value)
-            self:_setOption(infoTable, value)
+            self:setOption(infoTable, value)
           end,
           order = self:incrementOrderIndex()
         },
@@ -188,10 +188,10 @@ function CoreBarTemplate:getOptionTable(decorativeName)
           max = 36,
           step = 1,
           get = function(infoTable)
-            return self:_getOption(infoTable)
+            return self:getOption(infoTable)
           end,
           set = function(infoTable, value)
-            self:_setOption(infoTable, value)
+            self:setOption(infoTable, value)
           end,
           order = self:incrementOrderIndex()
         },
@@ -209,10 +209,10 @@ function CoreBarTemplate:getOptionTable(decorativeName)
           desc = "Bar Font Color",
           type = "color",
           get = function(infoTable)
-            return self:_getOptionColor(infoTable)
+            return self:getOptionColor(infoTable)
           end,
           set = function(infoTable, r, g, b, a)
-            self:_setOptionColor(infoTable, r, g, b, a)
+            self:setOptionColor(infoTable, r, g, b, a)
           end,
           hasAlpha = false,
           order = self:incrementOrderIndex()
@@ -238,10 +238,10 @@ function CoreBarTemplate:getOptionTable(decorativeName)
           desc = "Bar Color",
           type = "color",
           get = function(infoTable)
-            return self:_getOptionColor(infoTable)
+            return self:getOptionColor(infoTable)
           end,
           set = function(infoTable, r, g, b, a)
-            self:_setOptionColor(infoTable, r, g, b, a)
+            self:setOptionColor(infoTable, r, g, b, a)
           end,
           hasAlpha = true,
           order = self:incrementOrderIndex()
@@ -264,12 +264,8 @@ function CoreBarTemplate:incrementOrderIndex()
   return i
 end
 
--- ####################################
--- # PRIVATE FUNCTIONS
--- ####################################
-
 ---@param infoTable table
-function CoreBarTemplate:_getOption(infoTable)
+function CoreBarTemplate:getOption(infoTable)
   -- Not sure how this gets the key... but it does
   local key = infoTable[#infoTable]
   return self._curDbProfile[key]
@@ -277,7 +273,7 @@ end
 
 ---@param infoTable table
 ---@param value any
-function CoreBarTemplate:_setOption(infoTable, value)
+function CoreBarTemplate:setOption(infoTable, value)
   -- Not sure how this gets the key... but it does
   local key = infoTable[#infoTable]
   self._curDbProfile[key] = value
@@ -285,14 +281,18 @@ function CoreBarTemplate:_setOption(infoTable, value)
 end
 
 ---@param infoTable table
-function CoreBarTemplate:_getOptionColor(infoTable)
-  return unpack(self:_getOption(infoTable))
+function CoreBarTemplate:getOptionColor(infoTable)
+  return unpack(self:getOption(infoTable))
 end
 
 ---@param infoTable table
-function CoreBarTemplate:_setOptionColor(infoTable, r, g, b, a)
-  self:_setOption(infoTable, {r, g, b, a})
+function CoreBarTemplate:setOptionColor(infoTable, r, g, b, a)
+  self:setOption(infoTable, {r, g, b, a})
 end
+
+-- ####################################
+-- # PRIVATE FUNCTIONS
+-- ####################################
 
 function CoreBarTemplate:handlePositionXCenter()
   local width = self._curDbProfile.width

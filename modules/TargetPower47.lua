@@ -41,6 +41,7 @@ local _defaults = {
 local _powerEventColorTable = {}
 _powerEventColorTable["UNIT_MANA"] = {0.0, 0.0, 1.0, 1.0}
 _powerEventColorTable["UNIT_RAGE"] = {1.0, 0.0, 0.0, 1.0}
+_powerEventColorTable["UNIT_FOCUS"] = {1.0, 0.65, 0.0, 1.0}
 _powerEventColorTable["UNIT_ENERGY"] = {1.0, 1.0, 0.0, 1.0}
 _powerEventColorTable["UNIT_RUNIC_POWER"] = {0.0, 1.0, 1.0, 1.0}
 
@@ -109,12 +110,33 @@ function TargetPower47:_registerEvents()
 end
 
 function TargetPower47:_setScriptHandlers()
+  self._mainFrame:SetScript("OnShow", function(argsTable, ...)
+    if self:IsEnabled() then
+      self:_enableAllScriptHandlers()
+      -- Act as if target was just changed
+      self:_handlePlayerTargetChanged()
+    else
+      self._mainFrame:Hide()
+    end
+  end)
+
+  self._mainFrame:SetScript("OnHide", function(argsTable, ...)
+    self:_disableAllScriptHandlers()
+  end)
+end
+
+function TargetPower47:_enableAllScriptHandlers()
   self._mainFrame:SetScript("OnUpdate", function(argsTable, elapsed)
     self:_onUpdateHandler(argsTable, elapsed)
   end)
   self._mainFrame:SetScript("OnEvent", function(argsTable, event, unit)
     self:_onEventHandler(argsTable, event, unit)
   end)
+end
+
+function TargetPower47:_disableAllScriptHandlers()
+  self._mainFrame:SetScript("OnUpdate", nil)
+  self._mainFrame:SetScript("OnEvent", nil)
 end
 
 function TargetPower47:_onEventHandler(argsTable, event, unit)
@@ -188,5 +210,6 @@ function TargetPower47:_setColor()
   self:_setUnitPowerType()
   local upperType = string.upper(self._powerTypeString)
   local colorTable = _powerEventColorTable["UNIT_" .. upperType]
+  colorTable = colorTable or _powerEventColorTable["UNIT_MANA"]
   self._mainFrame.statusBar:SetStatusBarColor(unpack(colorTable))
 end

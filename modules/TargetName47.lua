@@ -73,7 +73,7 @@ function TargetName47:refreshConfig()
   if self:IsEnabled() then
     self:_handlePlayerTargetChanged()
     self.bars:refreshConfig()
-  elseif not self:IsEnabled() then
+  else
     self._mainFrame:Hide()
   end
 end
@@ -101,32 +101,41 @@ function TargetName47:_getAppendedEnableOptionTable()
   return options
 end
 
----@return string formattedName
-function TargetName47:_getFormattedName()
-  local name = UnitName(self.unit) or ""
-  return Utils47:getInitials(name)
-end
-
 function TargetName47:_registerEvents()
   self._mainFrame:RegisterEvent("UNIT_HEALTH")
   self._mainFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
 end
 
 function TargetName47:_setScriptHandlers()
-  self._mainFrame:SetScript("OnEvent", function(argsTable, event, unit)
-    self:_onEventHandler(argsTable, event, unit)
+  self._mainFrame:SetScript("OnShow", function(argsTable, ...)
+    if self:IsEnabled() then
+      self:_enableAllScriptHandlers()
+      -- Act as if target was just changed
+      self:_handlePlayerTargetChanged()
+    else
+      self._mainFrame:Hide()
+    end
   end)
 
-  self._mainFrame:SetScript("OnShow", function(argsTable, ...)
-    -- Even if shown, if the unit is disabled, hide it!
-    if not self:IsEnabled() then self._mainFrame:Hide() end
+  self._mainFrame:SetScript("OnHide", function(argsTable, ...)
+    self:_disableAllScriptHandlers()
   end)
 end
 
+function TargetName47:_enableAllScriptHandlers()
+  self._mainFrame:SetScript("OnEvent", function(argsTable, event, unit, ...)
+    self:_onEventHandler(argsTable, event, unit)
+  end)
+end
+
+function TargetName47:_disableAllScriptHandlers()
+  self._mainFrame:SetScript("OnEvent", nil)
+end
+
 function TargetName47:_onEventHandler(argsTable, event, unit, ...)
-  local isSameEvent = Utils47:stringEqualsIgnoreCase(event, "UNIT_HEALTH")
+  local isUnitHealthEvent = Utils47:stringEqualsIgnoreCase(event, "UNIT_HEALTH")
   local isSameUnit = Utils47:stringEqualsIgnoreCase(unit, self.unit)
-  if isSameEvent and isSameUnit then
+  if isUnitHealthEvent and isSameUnit then
     self:_handleUnitHealthEvent()
   elseif Utils47:stringEqualsIgnoreCase(event, "PLAYER_TARGET_CHANGED") then
     self:_handlePlayerTargetChanged()
@@ -145,4 +154,10 @@ end
 
 function TargetName47:_setFormattedName()
   self._mainFrame.mainText:SetText(self:_getFormattedName())
+end
+
+---@return string formattedName
+function TargetName47:_getFormattedName()
+  local name = UnitName(self.unit) or ""
+  return Utils47:getInitials(name)
 end

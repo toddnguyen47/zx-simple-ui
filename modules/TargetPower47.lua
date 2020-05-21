@@ -95,7 +95,10 @@ function TargetPower47:createBar()
 end
 
 function TargetPower47:refreshConfig()
-  if self:IsEnabled() and self.mainFrame:IsVisible() then self.bars:refreshConfig() end
+  if self:IsEnabled() and self.mainFrame:IsVisible() then
+    self.bars:refreshConfig()
+    self:_setColor()
+  end
 end
 
 -- ####################################

@@ -32,6 +32,7 @@ local _defaults = {
 local _powerEventColorTable = {}
 _powerEventColorTable["UNIT_MANA"] = {0.0, 0.0, 1.0, 1.0}
 _powerEventColorTable["UNIT_RAGE"] = {1.0, 0.0, 0.0, 1.0}
+_powerEventColorTable["UNIT_FOCUS"] = {1.0, 0.65, 0.0, 1.0}
 _powerEventColorTable["UNIT_ENERGY"] = {1.0, 1.0, 0.0, 1.0}
 _powerEventColorTable["UNIT_RUNIC_POWER"] = {0.0, 1.0, 1.0, 1.0}
 
@@ -84,7 +85,8 @@ function PlayerPower47:createBar()
   self._mainFrame = self.bars:createBar(percentage)
 
   self:_registerEvents()
-  self:_setScriptHandlers()
+  self:_setOnShowOnHideHandlers()
+  self:_enableAllScriptHandlers()
 
   self._mainFrame:Show()
   return self._mainFrame
@@ -97,6 +99,7 @@ end
 ---@param argsTable table
 ---@param elapsed number
 function PlayerPower47:_onUpdateHandler(argsTable, elapsed)
+  if not self._mainFrame:IsVisible() then return end
   self._timeSinceLastUpdate = self._timeSinceLastUpdate + elapsed
   if (self._timeSinceLastUpdate > ZxSimpleUI.UPDATE_INTERVAL_SECONDS) then
     local curUnitPower = UnitPower(self.unit)
@@ -139,13 +142,32 @@ function PlayerPower47:_registerEvents()
   self._mainFrame:RegisterEvent("UNIT_DISPLAYPOWER")
 end
 
-function PlayerPower47:_setScriptHandlers()
+function PlayerPower47:_setOnShowOnHideHandlers()
+  self._mainFrame:SetScript("OnShow", function(argsTable, ...)
+    if self:IsEnabled() then
+      self:_enableAllScriptHandlers()
+    else
+      self._mainFrame:Hide()
+    end
+  end)
+
+  self._mainFrame:SetScript("OnHide", function(argsTable, ...)
+    self:_disableAllScriptHandlers()
+  end)
+end
+
+function PlayerPower47:_enableAllScriptHandlers()
   self._mainFrame:SetScript("OnUpdate", function(argsTable, elapsed)
     self:_onUpdateHandler(argsTable, elapsed)
   end)
   self._mainFrame:SetScript("OnEvent", function(argsTable, event, unit)
     self:_onEventHandler(argsTable, event, unit)
   end)
+end
+
+function PlayerPower47:_disableAllScriptHandlers()
+  self._mainFrame:SetScript("OnUpdate", nil)
+  self._mainFrame:SetScript("OnEvent", nil)
 end
 
 function PlayerPower47:_setUnitPowerType()

@@ -87,7 +87,8 @@ function TargetPower47:createBar()
   self._mainFrame = self.bars:createBar(percentage)
 
   self:_registerEvents()
-  self:_setScriptHandlers()
+  self:_setOnShowOnHideHandlers()
+  self:_enableAllScriptHandlers()
 
   self._mainFrame:Hide()
   return self._mainFrame
@@ -109,7 +110,7 @@ function TargetPower47:_registerEvents()
   self._mainFrame:RegisterEvent("UNIT_DISPLAYPOWER")
 end
 
-function TargetPower47:_setScriptHandlers()
+function TargetPower47:_setOnShowOnHideHandlers()
   self._mainFrame:SetScript("OnShow", function(argsTable, ...)
     if self:IsEnabled() then
       self:_enableAllScriptHandlers()

@@ -64,9 +64,10 @@ function PlayerHealth47:createBar()
 
   self._mainFrame = self.bars:createBar(percentage)
   self:_registerEvents()
-  self:_setScriptHandlers()
-  self._mainFrame:Show()
+  self:_setOnShowOnHideHandlers()
+  self:_enableAllScriptHandlers()
 
+  self._mainFrame:Show()
   return self._mainFrame
 end
 
@@ -77,6 +78,7 @@ end
 ---@param argsTable table
 ---@param elapsed number
 function PlayerHealth47:_onUpdateHandler(argsTable, elapsed)
+  if not self._mainFrame:IsVisible() then return end
   self._timeSinceLastUpdate = self._timeSinceLastUpdate + elapsed
   if (self._timeSinceLastUpdate > ZxSimpleUI.UPDATE_INTERVAL_SECONDS) then
     local curUnitHealth = UnitHealth(self.unit)
@@ -99,8 +101,26 @@ function PlayerHealth47:_registerEvents()
   self._mainFrame:RegisterEvent("UNIT_HEALTH")
 end
 
-function PlayerHealth47:_setScriptHandlers()
+function PlayerHealth47:_setOnShowOnHideHandlers()
+  self._mainFrame:SetScript("OnShow", function(argsTable, ...)
+    if self:IsEnabled() then
+      self:_enableAllScriptHandlers()
+    else
+      self._mainFrame:Hide()
+    end
+  end)
+
+  self._mainFrame:SetScript("OnHide", function(argsTable, ...)
+    self:_disableAllScriptHandlers()
+  end)
+end
+
+function PlayerHealth47:_enableAllScriptHandlers()
   self._mainFrame:SetScript("OnUpdate", function(argsTable, elapsed)
     self:_onUpdateHandler(argsTable, elapsed)
   end)
+end
+
+function PlayerHealth47:_disableAllScriptHandlers()
+  self._mainFrame:SetScript("OnUpdate", nil)
 end

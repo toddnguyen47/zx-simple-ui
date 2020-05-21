@@ -74,7 +74,8 @@ function TargetHealth47:createBar()
   self:_createComboPointDisplay()
 
   self:_registerEvents()
-  self:_setScriptHandlers()
+  self:_setOnShowOnHideHandlers()
+  self:_enableAllScriptHandlers()
 
   self._mainFrame:Hide()
   return self._mainFrame
@@ -94,7 +95,7 @@ function TargetHealth47:_registerEvents()
   self._mainFrame:RegisterEvent("UNIT_COMBO_POINTS")
 end
 
-function TargetHealth47:_setScriptHandlers()
+function TargetHealth47:_setOnShowOnHideHandlers()
   self._mainFrame:SetScript("OnShow", function(argsTable, ...)
     if self:IsEnabled() then
       self:_enableAllScriptHandlers()

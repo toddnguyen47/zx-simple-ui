@@ -63,7 +63,8 @@ function TargetName47:createBar()
   self:_setFormattedName()
 
   self:_registerEvents()
-  self:_setScriptHandlers()
+  self:_setOnShowOnHideHandlers()
+  self:_enableAllScriptHandlers()
 
   self._mainFrame:Hide()
   return self._mainFrame
@@ -106,7 +107,7 @@ function TargetName47:_registerEvents()
   self._mainFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
 end
 
-function TargetName47:_setScriptHandlers()
+function TargetName47:_setOnShowOnHideHandlers()
   self._mainFrame:SetScript("OnShow", function(argsTable, ...)
     if self:IsEnabled() then
       self:_enableAllScriptHandlers()

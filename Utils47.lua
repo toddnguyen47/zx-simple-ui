@@ -37,3 +37,19 @@ function Utils47:getInitials(name)
   str1 = str1 .. tableSeparated[#tableSeparated]
   return str1
 end
+
+---@param list table
+---Create a set from a list. The resulting set can be used like so:
+---`if elem in Set then do_something() end`
+function Utils47:Set(list)
+  local set = {}
+  for _, l in ipairs(list) do set[l] = true end
+  return set
+end
+
+---@param list table
+---@param key string
+---@return table
+function Utils47:setContains(list, key)
+  return list[key] ~= nil
+end

@@ -53,12 +53,12 @@ function TargetName47:__init__()
 
   self._timeSinceLastUpdate = 0
   self._prevName = UnitName(self.unit)
-  self._mainFrame = nil
+  self.mainFrame = nil
 end
 
 function TargetName47:createBar()
   local percentage = 1.0
-  self._mainFrame = self.bars:createBar(percentage)
+  self.mainFrame = self.bars:createBar(percentage)
 
   self:_setFormattedName()
 
@@ -66,8 +66,8 @@ function TargetName47:createBar()
   self:_setOnShowOnHideHandlers()
   self:_enableAllScriptHandlers()
 
-  self._mainFrame:Hide()
-  return self._mainFrame
+  self.mainFrame:Hide()
+  return self.mainFrame
 end
 
 function TargetName47:refreshConfig()
@@ -75,7 +75,7 @@ function TargetName47:refreshConfig()
     self:_handlePlayerTargetChanged()
     self.bars:refreshConfig()
   else
-    self._mainFrame:Hide()
+    self.mainFrame:Hide()
   end
 end
 
@@ -103,34 +103,34 @@ function TargetName47:_getAppendedEnableOptionTable()
 end
 
 function TargetName47:_registerEvents()
-  self._mainFrame:RegisterEvent("UNIT_HEALTH")
-  self._mainFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
+  self.mainFrame:RegisterEvent("UNIT_HEALTH")
+  self.mainFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
 end
 
 function TargetName47:_setOnShowOnHideHandlers()
-  self._mainFrame:SetScript("OnShow", function(argsTable, ...)
+  self.mainFrame:SetScript("OnShow", function(argsTable, ...)
     if self:IsEnabled() then
       self:_enableAllScriptHandlers()
       -- Act as if target was just changed
       self:_handlePlayerTargetChanged()
     else
-      self._mainFrame:Hide()
+      self.mainFrame:Hide()
     end
   end)
 
-  self._mainFrame:SetScript("OnHide", function(argsTable, ...)
+  self.mainFrame:SetScript("OnHide", function(argsTable, ...)
     self:_disableAllScriptHandlers()
   end)
 end
 
 function TargetName47:_enableAllScriptHandlers()
-  self._mainFrame:SetScript("OnEvent", function(argsTable, event, unit, ...)
+  self.mainFrame:SetScript("OnEvent", function(argsTable, event, unit, ...)
     self:_onEventHandler(argsTable, event, unit)
   end)
 end
 
 function TargetName47:_disableAllScriptHandlers()
-  self._mainFrame:SetScript("OnEvent", nil)
+  self.mainFrame:SetScript("OnEvent", nil)
 end
 
 function TargetName47:_onEventHandler(argsTable, event, unit, ...)
@@ -154,7 +154,7 @@ function TargetName47:_handlePlayerTargetChanged()
 end
 
 function TargetName47:_setFormattedName()
-  self._mainFrame.mainText:SetText(self:_getFormattedName())
+  self.mainFrame.mainText:SetText(self:_getFormattedName())
 end
 
 ---@return string formattedName

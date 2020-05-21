@@ -75,7 +75,7 @@ end
 function TargetPower47:__init__()
   self._timeSinceLastUpdate = 0
   self._prevTargetPower47 = UnitPowerMax(self.unit)
-  self._mainFrame = nil
+  self.mainFrame = nil
   self._powerType, self._powerTypeString = nil, nil
 end
 
@@ -84,18 +84,18 @@ function TargetPower47:createBar()
   local targetUnitPower = UnitPower(self.unit)
   local targetUnitMaxPower = UnitPowerMax(self.unit)
   local percentage = ZxSimpleUI:calcPercentSafely(targetUnitPower, targetUnitMaxPower)
-  self._mainFrame = self.bars:createBar(percentage)
+  self.mainFrame = self.bars:createBar(percentage)
 
   self:_registerEvents()
   self:_setOnShowOnHideHandlers()
   self:_enableAllScriptHandlers()
 
-  self._mainFrame:Hide()
-  return self._mainFrame
+  self.mainFrame:Hide()
+  return self.mainFrame
 end
 
 function TargetPower47:refreshConfig()
-  if self:IsEnabled() and self._mainFrame:IsVisible() then self.bars:refreshConfig() end
+  if self:IsEnabled() and self.mainFrame:IsVisible() then self.bars:refreshConfig() end
 end
 
 -- ####################################
@@ -104,40 +104,40 @@ end
 
 function TargetPower47:_registerEvents()
   for powerEvent, _ in pairs(_powerEventColorTable) do
-    self._mainFrame:RegisterEvent(powerEvent)
+    self.mainFrame:RegisterEvent(powerEvent)
   end
-  self._mainFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
-  self._mainFrame:RegisterEvent("UNIT_DISPLAYPOWER")
+  self.mainFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
+  self.mainFrame:RegisterEvent("UNIT_DISPLAYPOWER")
 end
 
 function TargetPower47:_setOnShowOnHideHandlers()
-  self._mainFrame:SetScript("OnShow", function(argsTable, ...)
+  self.mainFrame:SetScript("OnShow", function(argsTable, ...)
     if self:IsEnabled() then
       self:_enableAllScriptHandlers()
       -- Act as if target was just changed
       self:_handlePlayerTargetChanged()
     else
-      self._mainFrame:Hide()
+      self.mainFrame:Hide()
     end
   end)
 
-  self._mainFrame:SetScript("OnHide", function(argsTable, ...)
+  self.mainFrame:SetScript("OnHide", function(argsTable, ...)
     self:_disableAllScriptHandlers()
   end)
 end
 
 function TargetPower47:_enableAllScriptHandlers()
-  self._mainFrame:SetScript("OnUpdate", function(argsTable, elapsed)
+  self.mainFrame:SetScript("OnUpdate", function(argsTable, elapsed)
     self:_onUpdateHandler(argsTable, elapsed)
   end)
-  self._mainFrame:SetScript("OnEvent", function(argsTable, event, unit)
+  self.mainFrame:SetScript("OnEvent", function(argsTable, event, unit)
     self:_onEventHandler(argsTable, event, unit)
   end)
 end
 
 function TargetPower47:_disableAllScriptHandlers()
-  self._mainFrame:SetScript("OnUpdate", nil)
-  self._mainFrame:SetScript("OnEvent", nil)
+  self.mainFrame:SetScript("OnUpdate", nil)
+  self.mainFrame:SetScript("OnEvent", nil)
 end
 
 function TargetPower47:_onEventHandler(argsTable, event, unit)
@@ -174,7 +174,7 @@ function TargetPower47:_handleUnitPowerEvent(curUnitPower)
 end
 
 function TargetPower47:_onUpdateHandler(argsTable, elapsed)
-  if not self._mainFrame:IsVisible() then return end
+  if not self.mainFrame:IsVisible() then return end
   self._timeSinceLastUpdate = self._timeSinceLastUpdate + elapsed
   if (self._timeSinceLastUpdate > ZxSimpleUI.UPDATE_INTERVAL_SECONDS) then
     local curUnitPower = UnitPower(self.unit)
@@ -192,8 +192,8 @@ function TargetPower47:_addShowOption(optionsTable)
     name = "Show Bar",
     desc = "Show/Hide the Target Power",
     func = function()
-      if self._mainFrame:IsVisible() then
-        self._mainFrame:Hide()
+      if self.mainFrame:IsVisible() then
+        self.mainFrame:Hide()
       else
         self:_setColor()
         self.bars:_setStatusBarValue(0.8)
@@ -212,5 +212,5 @@ function TargetPower47:_setColor()
   local upperType = string.upper(self._powerTypeString)
   local colorTable = _powerEventColorTable["UNIT_" .. upperType]
   colorTable = colorTable or _powerEventColorTable["UNIT_MANA"]
-  self._mainFrame.statusBar:SetStatusBarColor(unpack(colorTable))
+  self.mainFrame.statusBar:SetStatusBarColor(unpack(colorTable))
 end

@@ -48,26 +48,26 @@ end
 function PlayerName47:__init__()
   self._timeSinceLastUpdate = 0
   self._prevName = UnitName(self.unit)
-  self._mainFrame = nil
+  self.mainFrame = nil
 end
 
 ---@return table
 function PlayerName47:createBar()
   local percentage = 1.0
-  self._mainFrame = self.bars:createBar(percentage)
+  self.mainFrame = self.bars:createBar(percentage)
   self.bars:_setTextOnly(self:_getFormattedName())
 
   self:_setOnShowOnHideHandlers()
-  self._mainFrame:Show()
-  return self._mainFrame
+  self.mainFrame:Show()
+  return self.mainFrame
 end
 
 function PlayerName47:refreshConfig()
   if self:IsEnabled() then
     self.bars:refreshConfig()
-    self._mainFrame:Show()
+    self.mainFrame:Show()
   else
-    self._mainFrame:Hide()
+    self.mainFrame:Hide()
   end
 end
 
@@ -101,8 +101,8 @@ function PlayerName47:_getFormattedName()
 end
 
 function PlayerName47:_setOnShowOnHideHandlers()
-  self._mainFrame:SetScript("OnShow", function(argsTable, ...)
+  self.mainFrame:SetScript("OnShow", function(argsTable, ...)
     -- Even if shown, if the module is disabled, hide the frame!
-    if not self:IsEnabled() then self._mainFrame:Hide() end
+    if not self:IsEnabled() then self.mainFrame:Hide() end
   end)
 end

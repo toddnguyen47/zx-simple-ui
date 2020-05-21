@@ -9,7 +9,7 @@ local media = LibStub("LibSharedMedia-3.0")
 --- upvalues to prevent warnings
 local LibStub = LibStub
 local UIParent, CreateFrame = UIParent, CreateFrame
-local UnitPower, UnitPowerMax = UnitPower, UnitPowerMax
+local MAX_COMBO_POINTS, GetComboPoints = MAX_COMBO_POINTS, GetComboPoints
 local UnitName = UnitName
 local UnitHealth, UnitPowerType = UnitHealth, UnitPowerType
 local ToggleDropDownMenu, TargetFrameDropDown = ToggleDropDownMenu, TargetFrameDropDown
@@ -36,18 +36,115 @@ end
 
 function Combo47:__init__()
   self.options = {}
+  self.mainFrame = nil
+
   self._orderIndex = ZxSimpleUI.DEFAULT_ORDER_INDEX
+  self._comboPointsTable = {}
+  self._allComboPointsHidden = true
+
+  self._MEDIUM_COMBO_POINTS = 3
+  self._yellowColor = {1.0, 1.0, 0.0, 1.0}
+  self._orangeColor = {1.0, 0.65, 0.0, 1.0}
+  self._redColor = {1.0, 0.0, 0.0, 1.0}
+
 end
 
-function Combo47:incrementOrderIndex()
-  local i = self._orderIndex
-  self._orderIndex = self._orderIndex + 1
-  return i
+---@param frameToAttachTo table
+function Combo47:createBar(frameToAttachTo)
+  assert(frameToAttachTo ~= nil)
+  local horizGap = 15
+  local totalNumberOfGaps = horizGap * (MAX_COMBO_POINTS - 1)
+  local comboWidth = (frameToAttachTo:GetWidth() - totalNumberOfGaps) / MAX_COMBO_POINTS
+  local comboHeight = 8
+
+  self.mainFrame = CreateFrame("Frame", nil, frameToAttachTo)
+  self.mainFrame:SetFrameLevel(ZxSimpleUI.DEFAULT_FRAME_LEVEL + 2)
+  self.mainFrame:SetWidth(frameToAttachTo:GetWidth())
+  self.mainFrame:SetHeight(comboHeight)
+  self.mainFrame:SetPoint("BOTTOMLEFT", frameToAttachTo, "TOPLEFT", 0, 0)
+
+  self:_createIndividualComboPointsDisplay(frameToAttachTo)
+  self:_registerEvents()
+  self:_setOnShowOnHideHandlers()
+  self:_enableAllScriptHandlers()
+
+  return self.mainFrame
 end
 
 -- ####################################
 -- # PRIVATE FUNCTIONS
 -- ####################################
+
+---@param frameToAttachTo table
+function Combo47:_createIndividualComboPointsDisplay(frameToAttachTo)
+  local horizGap = 15
+  local totalNumberOfGaps = horizGap * (MAX_COMBO_POINTS - 1)
+  local comboWidth = (frameToAttachTo:GetWidth() - totalNumberOfGaps) / MAX_COMBO_POINTS
+  local comboHeight = 8
+  -- Create all MAX_COMBO_POINTS frames
+  for i = 1, MAX_COMBO_POINTS do
+    local parentFrame, anchorDirection = nil, nil
+    local xoffset, yoffset = 0, 0
+    if i == 1 then
+      parentFrame = self.mainFrame
+      anchorDirection = "BOTTOMLEFT"
+      xoffset = 0
+      yoffset = 0
+    else
+      parentFrame = self._comboPointsTable[i - 1]
+      anchorDirection = "BOTTOMRIGHT"
+      xoffset = horizGap
+      yoffset = 0
+    end
+    local comboTexture = self.mainFrame:CreateTexture(nil, "OVERLAY")
+    comboTexture:ClearAllPoints()
+    comboTexture:SetWidth(comboWidth)
+    comboTexture:SetHeight(comboHeight)
+    comboTexture:SetPoint("BOTTOMLEFT", parentFrame, anchorDirection, xoffset, yoffset)
+    comboTexture:SetTexture(media:Fetch("statusbar", self._curDbProfile.texture))
+    comboTexture:SetVertexColor(unpack(self._yellowColor))
+    comboTexture:Hide()
+    self._comboPointsTable[i] = comboTexture
+  end
+end
+
+function Combo47:_registerEvents()
+  self.mainFrame:RegisterEvent("UNIT_COMBO_POINTS")
+  self.mainFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
+end
+
+function Combo47:_setOnShowOnHideHandlers()
+  self.mainFrame:SetScript("OnShow", function(argsTable, ...)
+    if self:IsEnabled() then
+      self:_enableAllScriptHandlers()
+    else
+      self.mainFrame:Hide()
+    end
+  end)
+
+  self.mainFrame:SetScript("OnHide", function(argsTable, ...)
+    self:_disableAllScriptHandlers()
+  end)
+end
+
+function Combo47:_enableAllScriptHandlers()
+  self.mainFrame:SetScript("OnEvent", function(argsTable, event, unit)
+    self:_onEventHandler(argsTable, event, unit)
+  end)
+end
+
+function Combo47:_disableAllScriptHandlers()
+  -- Do not disable OnEvent in Combo Points since we are not using RegisterUnitWatch to display
+  -- self.mainFrame:SetScript("OnEvent", nil)
+end
+
+function Combo47:_onEventHandler(argsTable, event, unit)
+  if Utils47:stringEqualsIgnoreCase(event, "PLAYER_TARGET_CHANGED") then
+    self:_handlePlayerTargetChanged()
+  elseif Utils47:stringEqualsIgnoreCase(event, "UNIT_COMBO_POINTS") then
+    self:_handleComboPoints()
+  end
+end
 
 ---@return table
 function Combo47:_getOptionTable()
@@ -62,9 +159,55 @@ function Combo47:_getOptionTable()
         self:setOption(infoTable, value)
       end,
       args = {
-        header = {type = "header", name = _DECORATIVE_NAME, order = self:incrementOrderIndex()}
+        header = {
+          type = "header",
+          name = _DECORATIVE_NAME,
+          order = self:_incrementOrderIndex()
+        }
       }
     }
   end
   return self.options
+end
+
+function Combo47:_incrementOrderIndex()
+  local i = self._orderIndex
+  self._orderIndex = self._orderIndex + 1
+  return i
+end
+
+function Combo47:_hideAllComboPoints()
+  for i = 1, MAX_COMBO_POINTS do self._comboPointsTable[i]:Hide() end
+end
+
+---@param comboPoints integer
+---@param currentTexture table
+function Combo47:_setComboPointsColor(comboPoints, currentTexture)
+  if comboPoints >= MAX_COMBO_POINTS then
+    currentTexture:SetVertexColor(unpack(self._redColor))
+  elseif comboPoints >= self._MEDIUM_COMBO_POINTS then
+    currentTexture:SetVertexColor(unpack(self._orangeColor))
+  else
+    currentTexture:SetVertexColor(unpack(self._yellowColor))
+  end
+end
+
+function Combo47:_handleComboPoints()
+  local comboPoints = GetComboPoints("player", self.unit)
+  if not self._allComboPointsHidden and comboPoints == 0 then
+    self:_hideAllComboPoints()
+    self._allComboPointsHidden = true
+  else
+    for i = 1, comboPoints do
+      local currentTexture = self._comboPointsTable[i]
+      self:_setComboPointsColor(comboPoints, currentTexture)
+      currentTexture:Show()
+      self._allComboPointsHidden = false
+    end
+  end
+end
+
+function Combo47:_handlePlayerTargetChanged()
+  local targetName = UnitName(self.unit)
+  if targetName ~= nil and targetName ~= "" then self:_handleComboPoints() end
 end

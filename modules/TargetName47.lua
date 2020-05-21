@@ -116,6 +116,11 @@ function TargetName47:_setScriptHandlers()
   self._mainFrame:SetScript("OnEvent", function(argsTable, event, unit)
     self:_onEventHandler(argsTable, event, unit)
   end)
+
+  self._mainFrame:SetScript("OnShow", function(argsTable, ...)
+    -- Even if shown, if the unit is disabled, hide it!
+    if not self:IsEnabled() then self._mainFrame:Hide() end
+  end)
 end
 
 function TargetName47:_onEventHandler(argsTable, event, unit, ...)

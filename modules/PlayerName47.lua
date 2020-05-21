@@ -56,6 +56,8 @@ function PlayerName47:createBar()
   local percentage = 1.0
   self._mainFrame = self.bars:createBar(percentage)
   self.bars:_setTextOnly(self:_getFormattedName())
+
+  self:_setScriptHandlers()
   self._mainFrame:Show()
   return self._mainFrame
 end
@@ -96,4 +98,11 @@ end
 function PlayerName47:_getFormattedName()
   local name = UnitName(self.unit)
   return Utils47:getInitials(name)
+end
+
+function PlayerName47:_setScriptHandlers()
+  self._mainFrame:SetScript("OnShow", function(argsTable, ...)
+    -- Even if shown, if the module is disabled, hide the frame!
+    if not self:IsEnabled() then self._mainFrame:Hide() end
+  end)
 end

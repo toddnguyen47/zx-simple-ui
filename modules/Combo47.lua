@@ -19,7 +19,7 @@ Combo47.MODULE_NAME = _MODULE_NAME
 Combo47.bars = nil
 Combo47.unit = "target"
 
-local _defaults = {}
+local _defaults = {profile = {texture = "Blizzard"}}
 
 function Combo47:OnInitialize()
   self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, _defaults)
@@ -41,6 +41,7 @@ function Combo47:__init__()
   self._orderIndex = ZxSimpleUI.DEFAULT_ORDER_INDEX
   self._comboPointsTable = {}
   self._allComboPointsHidden = true
+  self._shownOption = true
 
   self._MEDIUM_COMBO_POINTS = 3
   self._yellowColor = {1.0, 1.0, 0.0, 1.0}
@@ -69,6 +70,10 @@ function Combo47:createBar(frameToAttachTo)
   self:_enableAllScriptHandlers()
 
   return self.mainFrame
+end
+
+function Combo47:refreshConfig()
+  if self:IsEnabled() then self:_refreshStatusBar() end
 end
 
 -- ####################################
@@ -114,23 +119,26 @@ function Combo47:_registerEvents()
 end
 
 function Combo47:_setOnShowOnHideHandlers()
-  self.mainFrame:SetScript("OnShow", function(argsTable, ...)
-    if self:IsEnabled() then
-      self:_enableAllScriptHandlers()
-    else
-      self.mainFrame:Hide()
-    end
-  end)
+  self.mainFrame:SetScript(
+    "OnShow", function(argsTable, ...)
+      if self:IsEnabled() then
+        self:_enableAllScriptHandlers()
+      else
+        self.mainFrame:Hide()
+      end
+    end)
 
-  self.mainFrame:SetScript("OnHide", function(argsTable, ...)
-    self:_disableAllScriptHandlers()
-  end)
+  self.mainFrame:SetScript(
+    "OnHide", function(argsTable, ...)
+      self:_disableAllScriptHandlers()
+    end)
 end
 
 function Combo47:_enableAllScriptHandlers()
-  self.mainFrame:SetScript("OnEvent", function(argsTable, event, unit)
-    self:_onEventHandler(argsTable, event, unit)
-  end)
+  self.mainFrame:SetScript(
+    "OnEvent", function(argsTable, event, unit)
+      self:_onEventHandler(argsTable, event, unit)
+    end)
 end
 
 function Combo47:_disableAllScriptHandlers()
@@ -153,21 +161,71 @@ function Combo47:_getOptionTable()
       type = "group",
       name = _DECORATIVE_NAME,
       get = function(infoTable)
-        return self:getOption(infoTable)
+        return self:_getOption(infoTable)
       end,
       set = function(infoTable, value)
-        self:setOption(infoTable, value)
+        self:_setOption(infoTable, value)
       end,
       args = {
         header = {
           type = "header",
           name = _DECORATIVE_NAME,
           order = self:_incrementOrderIndex()
+        },
+        showbar = {
+          type = "execute",
+          name = "Show Display",
+          desc = "Show/Hide the Combo Points Display",
+          order = self:_incrementOrderIndex(),
+          func = function(curFrame, button, isUp)
+            if self._shownOption then
+              self.mainFrame:Show()
+              self:_showAllComboPoints()
+            else
+              self.mainFrame:Hide()
+              self:_hideAllComboPoints()
+            end
+            self._shownOption = not self._shownOption
+          end
+        },
+        texture = {
+          name = "Bar Texture",
+          desc = "Bar Texture",
+          type = "select",
+          dialogControl = "LSM30_Statusbar",
+          values = media:HashTable("statusbar"),
+          order = self:_incrementOrderIndex()
         }
       }
     }
   end
   return self.options
+end
+
+---@param infoTable table
+function Combo47:_getOption(infoTable)
+  -- Not sure how this gets the key... but it does
+  local key = infoTable[#infoTable]
+  return self._curDbProfile[key]
+end
+
+---@param infoTable table
+---@param value any
+function Combo47:_setOption(infoTable, value)
+  -- Not sure how this gets the key... but it does
+  local key = infoTable[#infoTable]
+  self._curDbProfile[key] = value
+  self:refreshConfig()
+end
+
+---@param infoTable table
+function Combo47:_getOptionColor(infoTable)
+  return unpack(self:_getOption(infoTable))
+end
+
+---@param infoTable table
+function Combo47:_setOptionColor(infoTable, r, g, b, a)
+  self:_setOption(infoTable, {r, g, b, a})
 end
 
 function Combo47:_incrementOrderIndex()
@@ -178,6 +236,10 @@ end
 
 function Combo47:_hideAllComboPoints()
   for i = 1, MAX_COMBO_POINTS do self._comboPointsTable[i]:Hide() end
+end
+
+function Combo47:_showAllComboPoints()
+  for i = 1, MAX_COMBO_POINTS do self._comboPointsTable[i]:Show() end
 end
 
 ---@param comboPoints integer
@@ -210,4 +272,11 @@ end
 function Combo47:_handlePlayerTargetChanged()
   local targetName = UnitName(self.unit)
   if targetName ~= nil and targetName ~= "" then self:_handleComboPoints() end
+end
+
+function Combo47:_refreshStatusBar()
+  for _, texture in pairs(self._comboPointsTable) do
+    texture:SetTexture(media:Fetch("statusbar", self._curDbProfile.texture), "BORDER")
+  end
+  -- self.mainFrame.statusBar:SetStatusBarColor(unpack(self._curDbProfile.color))
 end

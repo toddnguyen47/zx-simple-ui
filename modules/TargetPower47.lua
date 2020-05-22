@@ -62,7 +62,6 @@ function TargetPower47:OnInitialize()
 
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
   local optionsTable = self.bars:getOptionTable(_DECORATIVE_NAME)
-  optionsTable = self:_addShowOption(optionsTable)
   optionsTable.args.color = nil
   ZxSimpleUI:registerModuleOptions(_MODULE_NAME, optionsTable, _DECORATIVE_NAME)
 
@@ -172,7 +171,7 @@ function TargetPower47:_handleUnitPowerEvent(curUnitPower)
     curUnitPower = curUnitPower or UnitPower(self.unit)
     local maxUnitPower = UnitPowerMax(self.unit)
     local powerPercent = ZxSimpleUI:calcPercentSafely(curUnitPower, maxUnitPower)
-    self.bars:_setStatusBarValue(powerPercent)
+    self.bars:setStatusBarValue(powerPercent)
   end
 end
 
@@ -187,23 +186,6 @@ function TargetPower47:_onUpdateHandler(argsTable, elapsed)
       self._timeSinceLastUpdate = 0
     end
   end
-end
-
-function TargetPower47:_addShowOption(optionsTable)
-  optionsTable.args["show"] = {
-    type = "execute",
-    name = "Show Bar",
-    desc = "Show/Hide the Target Power",
-    func = function()
-      if self.mainFrame:IsVisible() then
-        self.mainFrame:Hide()
-      else
-        self:_setColor()
-        self.bars:_setStatusBarValue(0.8)
-      end
-    end
-  }
-  return optionsTable
 end
 
 function TargetPower47:_setUnitPowerType()

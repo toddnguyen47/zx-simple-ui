@@ -22,6 +22,7 @@ Combo47.unit = "target"
 local _defaults = {
   profile = {
     texture = "Blizzard",
+    mediumComboPoints = 3,
     lowComboColor = {1.0, 1.0, 0.0, 1.0},
     medComboColor = {1.0, 0.65, 0.0, 1.0},
     maxComboColor = {1.0, 0.0, 0.0, 1.0}
@@ -38,8 +39,7 @@ function Combo47:OnInitialize()
   ZxSimpleUI:registerModuleOptions(_MODULE_NAME, self:_getOptionTable(), _DECORATIVE_NAME)
 end
 
-function Combo47:OnEnable()
-end
+function Combo47:OnEnable() end
 
 function Combo47:__init__()
   self.options = {}
@@ -49,8 +49,6 @@ function Combo47:__init__()
   self._comboPointsTable = {}
   self._allComboPointsHidden = true
   self._shownOption = false
-
-  self._MEDIUM_COMBO_POINTS = 3
 end
 
 ---@param frameToAttachTo table
@@ -134,9 +132,8 @@ function Combo47:_setOnShowOnHideHandlers()
     end
   end)
 
-  self.mainFrame:SetScript("OnHide", function(argsTable, ...)
-    self:_disableAllScriptHandlers()
-  end)
+  self.mainFrame:SetScript("OnHide",
+                           function(argsTable, ...) self:_disableAllScriptHandlers() end)
 end
 
 function Combo47:_enableAllScriptHandlers()
@@ -175,14 +172,10 @@ function Combo47:_setOption(infoTable, value)
 end
 
 ---@param infoTable table
-function Combo47:_getOptionColor(infoTable)
-  return unpack(self:_getOption(infoTable))
-end
+function Combo47:_getOptionColor(infoTable) return unpack(self:_getOption(infoTable)) end
 
 ---@param infoTable table
-function Combo47:_setOptionColor(infoTable, r, g, b, a)
-  self:_setOption(infoTable, {r, g, b, a})
-end
+function Combo47:_setOptionColor(infoTable, r, g, b, a) self:_setOption(infoTable, {r, g, b, a}) end
 
 function Combo47:_incrementOrderIndex()
   local i = self._orderIndex
@@ -207,7 +200,8 @@ end
 function Combo47:_setComboPointsColor(comboPoints, currentTexture)
   if comboPoints >= MAX_COMBO_POINTS then
     currentTexture:SetVertexColor(unpack(self._curDbProfile.maxComboColor))
-  elseif comboPoints >= self._MEDIUM_COMBO_POINTS then
+  elseif self._curDbProfile.mediumComboPoints > 0 and comboPoints >=
+    self._curDbProfile.mediumComboPoints then
     currentTexture:SetVertexColor(unpack(self._curDbProfile.medComboColor))
   else
     currentTexture:SetVertexColor(unpack(self._curDbProfile.lowComboColor))
@@ -246,12 +240,8 @@ function Combo47:_getOptionTable()
     self.options = {
       type = "group",
       name = _DECORATIVE_NAME,
-      get = function(infoTable)
-        return self:_getOption(infoTable)
-      end,
-      set = function(infoTable, value)
-        self:_setOption(infoTable, value)
-      end,
+      get = function(infoTable) return self:_getOption(infoTable) end,
+      set = function(infoTable, value) self:_setOption(infoTable, value) end,
       args = {
         header = {
           type = "header",
@@ -283,13 +273,22 @@ function Combo47:_getOptionTable()
           values = media:HashTable("statusbar"),
           order = self:_incrementOrderIndex()
         },
+        mediumComboPoints = {
+          name = "Medium Combo Points",
+          desc = "For combo points > 0 and < " .. MAX_COMBO_POINTS .. ". Set to 0 to disable.",
+          type = "range",
+          min = 0,
+          max = MAX_COMBO_POINTS - 1,
+          step = 1,
+          get = function(infoTable) return self:_getOption(infoTable) end,
+          set = function(infoTable, value) self:_setOption(infoTable, value) end,
+          order = self:_incrementOrderIndex()
+        },
         lowComboColor = {
           name = "Low Combo Color",
           desc = "Color for low (below medium setpoint) combo points",
           type = "color",
-          get = function(infoTable)
-            return self:_getOptionColor(infoTable)
-          end,
+          get = function(infoTable) return self:_getOptionColor(infoTable) end,
           set = function(infoTable, r, g, b, a)
             self:_setOptionColor(infoTable, r, g, b, a)
           end,
@@ -298,11 +297,10 @@ function Combo47:_getOptionTable()
         },
         medComboColor = {
           name = "Medium Combo Color",
-          desc = "Color for medium combo points (greater than or equal to Medium Combo Points, but less than MAX)",
+          desc = "Color for medium combo points (greater than or equal to " ..
+            "Medium Combo Points, but less than MAX)",
           type = "color",
-          get = function(infoTable)
-            return self:_getOptionColor(infoTable)
-          end,
+          get = function(infoTable) return self:_getOptionColor(infoTable) end,
           set = function(infoTable, r, g, b, a)
             self:_setOptionColor(infoTable, r, g, b, a)
           end,
@@ -313,9 +311,7 @@ function Combo47:_getOptionTable()
           name = "Max Combo Color",
           desc = "Color for MAX combo points",
           type = "color",
-          get = function(infoTable)
-            return self:_getOptionColor(infoTable)
-          end,
+          get = function(infoTable) return self:_getOptionColor(infoTable) end,
           set = function(infoTable, r, g, b, a)
             self:_setOptionColor(infoTable, r, g, b, a)
           end,

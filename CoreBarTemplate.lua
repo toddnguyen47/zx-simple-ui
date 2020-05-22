@@ -258,6 +258,12 @@ function CoreBarTemplate:refreshConfig()
   self:_refreshStatusBar()
 end
 
+---@param percentValue number from 0.0 to 1.0
+function CoreBarTemplate:setStatusBarValue(percentValue)
+  self.mainFrame.mainText:SetText(string.format("%.1f%%", percentValue * 100.0))
+  self.mainFrame.statusBar:SetValue(percentValue)
+end
+
 -- ####################################
 -- # PRIVATE FUNCTIONS
 -- ####################################
@@ -335,12 +341,6 @@ function CoreBarTemplate:_refreshStatusBar()
   local texture = media:Fetch("statusbar", self._curDbProfile.texture)
   self.mainFrame.statusBar:SetStatusBarTexture(texture, "BORDER")
   self.mainFrame.statusBar:SetStatusBarColor(unpack(self._curDbProfile.color))
-end
-
----@param percentValue number from 0.0 to 1.0
-function CoreBarTemplate:_setStatusBarValue(percentValue)
-  self.mainFrame.mainText:SetText(string.format("%.1f%%", percentValue * 100.0))
-  self.mainFrame.statusBar:SetValue(percentValue)
 end
 
 ---@param strInput string

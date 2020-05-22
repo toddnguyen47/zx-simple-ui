@@ -43,7 +43,6 @@ function TargetHealth47:OnInitialize()
 
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
   local optionsTable = self.bars:getOptionTable(_DECORATIVE_NAME)
-  optionsTable = self:_addShowOption(optionsTable)
   ZxSimpleUI:registerModuleOptions(_MODULE_NAME, optionsTable, _DECORATIVE_NAME)
 
   self:__init__()
@@ -145,30 +144,13 @@ function TargetHealth47:_handleUnitHealthEvent(curUnitHealth)
   self:_setHealthValue(curUnitHealth)
 end
 
-function TargetHealth47:_addShowOption(optionsTable)
-  optionsTable.args["show"] = {
-    type = "execute",
-    name = "Show Bar",
-    desc = "Show/Hide the Target Health",
-    func = function()
-      if self.mainFrame:IsVisible() then
-        self.mainFrame:Hide()
-      else
-        self.mainFrame:Show()
-        self.bars:_setStatusBarValue(0.8)
-      end
-    end
-  }
-  return optionsTable
-end
-
 function TargetHealth47:_setHealthValue(curUnitHealth)
   curUnitHealth = curUnitHealth or UnitHealth(self.unit)
   local maxUnitHealth = UnitHealthMax(self.unit)
   local healthPercent = ZxSimpleUI:calcPercentSafely(curUnitHealth, maxUnitHealth)
   self._unitClassification = UnitClassification(self.unit)
   if Utils47:isNormalEnemy(self._unitClassification) then
-    self.bars:_setStatusBarValue(healthPercent)
+    self.bars:setStatusBarValue(healthPercent)
   else
     local s1 = Utils47.UnitClassificationElitesTable[self._unitClassification]
     self.mainFrame.statusBar:SetValue(healthPercent)

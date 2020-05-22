@@ -94,7 +94,7 @@ function PlayerHealth47:_handleUnitHealthEvent(curUnitHealth)
   curUnitHealth = curUnitHealth or UnitHealth(self.unit)
   local maxUnitHealth = UnitHealthMax(self.unit)
   local healthPercent = ZxSimpleUI:calcPercentSafely(curUnitHealth, maxUnitHealth)
-  self.bars:_setStatusBarValue(healthPercent)
+  self.bars:setStatusBarValue(healthPercent)
 end
 
 function PlayerHealth47:_registerEvents()

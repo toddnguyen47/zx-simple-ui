@@ -125,7 +125,7 @@ function PlayerPower47:_setPowerValue(curUnitPower)
   curUnitPower = curUnitPower or UnitPower(self.unit)
   local maxUnitPower = UnitPowerMax(self.unit)
   local powerPercent = ZxSimpleUI:calcPercentSafely(curUnitPower, maxUnitPower)
-  self.bars:_setStatusBarValue(powerPercent)
+  self.bars:setStatusBarValue(powerPercent)
 end
 
 function PlayerPower47:_handlePowerChanged()

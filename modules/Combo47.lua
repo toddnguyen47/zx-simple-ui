@@ -19,7 +19,14 @@ Combo47.MODULE_NAME = _MODULE_NAME
 Combo47.bars = nil
 Combo47.unit = "target"
 
-local _defaults = {profile = {texture = "Blizzard"}}
+local _defaults = {
+  profile = {
+    texture = "Blizzard",
+    lowComboColor = {1.0, 1.0, 0.0, 1.0},
+    medComboColor = {1.0, 0.65, 0.0, 1.0},
+    maxComboColor = {1.0, 0.0, 0.0, 1.0}
+  }
+}
 
 function Combo47:OnInitialize()
   self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, _defaults)
@@ -41,13 +48,9 @@ function Combo47:__init__()
   self._orderIndex = ZxSimpleUI.DEFAULT_ORDER_INDEX
   self._comboPointsTable = {}
   self._allComboPointsHidden = true
-  self._shownOption = true
+  self._shownOption = false
 
   self._MEDIUM_COMBO_POINTS = 3
-  self._yellowColor = {1.0, 1.0, 0.0, 1.0}
-  self._orangeColor = {1.0, 0.65, 0.0, 1.0}
-  self._redColor = {1.0, 0.0, 0.0, 1.0}
-
 end
 
 ---@param frameToAttachTo table
@@ -73,7 +76,11 @@ function Combo47:createBar(frameToAttachTo)
 end
 
 function Combo47:refreshConfig()
-  if self:IsEnabled() then self:_refreshStatusBar() end
+  if self:IsEnabled() then
+    self:_refreshStatusBar()
+    self:_handleComboPoints()
+    if self._shownOption then self:_showAllComboPoints() end
+  end
 end
 
 -- ####################################
@@ -107,7 +114,7 @@ function Combo47:_createIndividualComboPointsDisplay(frameToAttachTo)
     comboTexture:SetHeight(comboHeight)
     comboTexture:SetPoint("BOTTOMLEFT", parentFrame, anchorDirection, xoffset, yoffset)
     comboTexture:SetTexture(media:Fetch("statusbar", self._curDbProfile.texture))
-    comboTexture:SetVertexColor(unpack(self._yellowColor))
+    comboTexture:SetVertexColor(unpack(self._curDbProfile.lowComboColor))
     comboTexture:Hide()
     self._comboPointsTable[i] = comboTexture
   end
@@ -119,26 +126,23 @@ function Combo47:_registerEvents()
 end
 
 function Combo47:_setOnShowOnHideHandlers()
-  self.mainFrame:SetScript(
-    "OnShow", function(argsTable, ...)
-      if self:IsEnabled() then
-        self:_enableAllScriptHandlers()
-      else
-        self.mainFrame:Hide()
-      end
-    end)
+  self.mainFrame:SetScript("OnShow", function(argsTable, ...)
+    if self:IsEnabled() then
+      self:_enableAllScriptHandlers()
+    else
+      self.mainFrame:Hide()
+    end
+  end)
 
-  self.mainFrame:SetScript(
-    "OnHide", function(argsTable, ...)
-      self:_disableAllScriptHandlers()
-    end)
+  self.mainFrame:SetScript("OnHide", function(argsTable, ...)
+    self:_disableAllScriptHandlers()
+  end)
 end
 
 function Combo47:_enableAllScriptHandlers()
-  self.mainFrame:SetScript(
-    "OnEvent", function(argsTable, event, unit)
-      self:_onEventHandler(argsTable, event, unit)
-    end)
+  self.mainFrame:SetScript("OnEvent", function(argsTable, event, unit)
+    self:_onEventHandler(argsTable, event, unit)
+  end)
 end
 
 function Combo47:_disableAllScriptHandlers()
@@ -152,54 +156,6 @@ function Combo47:_onEventHandler(argsTable, event, unit)
   elseif Utils47:stringEqualsIgnoreCase(event, "UNIT_COMBO_POINTS") then
     self:_handleComboPoints()
   end
-end
-
----@return table
-function Combo47:_getOptionTable()
-  if next(self.options) == nil then
-    self.options = {
-      type = "group",
-      name = _DECORATIVE_NAME,
-      get = function(infoTable)
-        return self:_getOption(infoTable)
-      end,
-      set = function(infoTable, value)
-        self:_setOption(infoTable, value)
-      end,
-      args = {
-        header = {
-          type = "header",
-          name = _DECORATIVE_NAME,
-          order = self:_incrementOrderIndex()
-        },
-        showbar = {
-          type = "execute",
-          name = "Show Display",
-          desc = "Show/Hide the Combo Points Display",
-          order = self:_incrementOrderIndex(),
-          func = function(curFrame, button, isUp)
-            if self._shownOption then
-              self.mainFrame:Show()
-              self:_showAllComboPoints()
-            else
-              self.mainFrame:Hide()
-              self:_hideAllComboPoints()
-            end
-            self._shownOption = not self._shownOption
-          end
-        },
-        texture = {
-          name = "Bar Texture",
-          desc = "Bar Texture",
-          type = "select",
-          dialogControl = "LSM30_Statusbar",
-          values = media:HashTable("statusbar"),
-          order = self:_incrementOrderIndex()
-        }
-      }
-    }
-  end
-  return self.options
 end
 
 ---@param infoTable table
@@ -239,18 +195,22 @@ function Combo47:_hideAllComboPoints()
 end
 
 function Combo47:_showAllComboPoints()
-  for i = 1, MAX_COMBO_POINTS do self._comboPointsTable[i]:Show() end
+  for i = 1, MAX_COMBO_POINTS do
+    local currentTexture = self._comboPointsTable[i]
+    currentTexture:Show()
+    self:_setComboPointsColor(i, currentTexture)
+  end
 end
 
 ---@param comboPoints integer
 ---@param currentTexture table
 function Combo47:_setComboPointsColor(comboPoints, currentTexture)
   if comboPoints >= MAX_COMBO_POINTS then
-    currentTexture:SetVertexColor(unpack(self._redColor))
+    currentTexture:SetVertexColor(unpack(self._curDbProfile.maxComboColor))
   elseif comboPoints >= self._MEDIUM_COMBO_POINTS then
-    currentTexture:SetVertexColor(unpack(self._orangeColor))
+    currentTexture:SetVertexColor(unpack(self._curDbProfile.medComboColor))
   else
-    currentTexture:SetVertexColor(unpack(self._yellowColor))
+    currentTexture:SetVertexColor(unpack(self._curDbProfile.lowComboColor))
   end
 end
 
@@ -278,5 +238,92 @@ function Combo47:_refreshStatusBar()
   for _, texture in pairs(self._comboPointsTable) do
     texture:SetTexture(media:Fetch("statusbar", self._curDbProfile.texture), "BORDER")
   end
-  -- self.mainFrame.statusBar:SetStatusBarColor(unpack(self._curDbProfile.color))
+end
+
+---@return table
+function Combo47:_getOptionTable()
+  if next(self.options) == nil then
+    self.options = {
+      type = "group",
+      name = _DECORATIVE_NAME,
+      get = function(infoTable)
+        return self:_getOption(infoTable)
+      end,
+      set = function(infoTable, value)
+        self:_setOption(infoTable, value)
+      end,
+      args = {
+        header = {
+          type = "header",
+          name = _DECORATIVE_NAME,
+          order = self:_incrementOrderIndex()
+        },
+        showbar = {
+          type = "execute",
+          name = "Show Display",
+          desc = "Show/Hide the Combo Points Display",
+          order = self:_incrementOrderIndex(),
+          func = function(curFrame, button, isUp)
+            -- Toggle this option every time the button is clicked
+            self._shownOption = not self._shownOption
+            if self._shownOption then
+              self.mainFrame:Show()
+              self:refreshConfig()
+            else
+              self.mainFrame:Hide()
+              self:_hideAllComboPoints()
+            end
+          end
+        },
+        texture = {
+          name = "Bar Texture",
+          desc = "Bar Texture",
+          type = "select",
+          dialogControl = "LSM30_Statusbar",
+          values = media:HashTable("statusbar"),
+          order = self:_incrementOrderIndex()
+        },
+        lowComboColor = {
+          name = "Low Combo Color",
+          desc = "Color for low (below medium setpoint) combo points",
+          type = "color",
+          get = function(infoTable)
+            return self:_getOptionColor(infoTable)
+          end,
+          set = function(infoTable, r, g, b, a)
+            self:_setOptionColor(infoTable, r, g, b, a)
+          end,
+          hasAlpha = false,
+          order = self:_incrementOrderIndex()
+        },
+        medComboColor = {
+          name = "Medium Combo Color",
+          desc = "Color for medium combo points (greater than or equal to Medium Combo Points, but less than MAX)",
+          type = "color",
+          get = function(infoTable)
+            return self:_getOptionColor(infoTable)
+          end,
+          set = function(infoTable, r, g, b, a)
+            self:_setOptionColor(infoTable, r, g, b, a)
+          end,
+          hasAlpha = false,
+          order = self:_incrementOrderIndex()
+        },
+        maxComboColor = {
+          name = "Max Combo Color",
+          desc = "Color for MAX combo points",
+          type = "color",
+          get = function(infoTable)
+            return self:_getOptionColor(infoTable)
+          end,
+          set = function(infoTable, r, g, b, a)
+            self:_setOptionColor(infoTable, r, g, b, a)
+          end,
+          hasAlpha = false,
+          order = self:_incrementOrderIndex()
+        }
+      }
+    }
+  end
+  return self.options
 end

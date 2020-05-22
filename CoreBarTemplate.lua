@@ -56,8 +56,7 @@ function CoreBarTemplate:createBar(percentValue)
   self.mainFrame:SetFrameLevel(ZxSimpleUI.DEFAULT_FRAME_LEVEL)
   self.mainFrame:SetBackdrop(self.frameBackdropTable)
   self.mainFrame:SetBackdropColor(1, 0, 0, 1)
-  self.mainFrame:SetPoint(
-    "BOTTOMLEFT", UIParent, "BOTTOMLEFT", self._curDbProfile.positionx,
+  self.mainFrame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", self._curDbProfile.positionx,
     self._curDbProfile.positiony)
 
   self:_setMouseClicks()
@@ -69,8 +68,8 @@ function CoreBarTemplate:createBar(percentValue)
   self.mainFrame.statusBar = CreateFrame("StatusBar", nil, self.mainFrame)
   self.mainFrame.statusBar:ClearAllPoints()
   self.mainFrame.statusBar:SetPoint("CENTER", self.mainFrame, "CENTER")
-  self.mainFrame.statusBar:SetStatusBarTexture(
-    media:Fetch("statusbar", self._curDbProfile.texture), "BORDER")
+  local texture = media:Fetch("statusbar", self._curDbProfile.texture)
+  self.mainFrame.statusBar:SetStatusBarTexture(texture, "BORDER")
   self.mainFrame.statusBar:GetStatusBarTexture():SetHorizTile(false)
   self.mainFrame.statusBar:GetStatusBarTexture():SetVertTile(false)
   self.mainFrame.statusBar:SetStatusBarColor(unpack(self._curDbProfile.color))
@@ -79,8 +78,8 @@ function CoreBarTemplate:createBar(percentValue)
   self:_setFrameWidthHeight()
 
   self.mainFrame.mainText = self.mainFrame.statusBar:CreateFontString(nil, "BORDER")
-  self.mainFrame.mainText:SetFont(
-    media:Fetch("font", self._curDbProfile.font), self._curDbProfile.fontsize, "OUTLINE")
+  self.mainFrame.mainText:SetFont(media:Fetch("font", self._curDbProfile.font),
+    self._curDbProfile.fontsize, "OUTLINE")
   self.mainFrame.mainText:SetTextColor(unpack(self._curDbProfile.fontcolor))
   self.mainFrame.mainText:SetPoint("CENTER", self.mainFrame.statusBar, "CENTER", 0, 0)
   self.mainFrame.mainText:SetText(string.format("%.1f%%", percentValue * 100.0))
@@ -321,21 +320,20 @@ function CoreBarTemplate:_setFrameWidthHeight()
 end
 
 function CoreBarTemplate:_refreshBarFrame()
-  self.mainFrame:SetPoint(
-    "BOTTOMLEFT", UIParent, "BOTTOMLEFT", self._curDbProfile.positionx,
+  self.mainFrame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", self._curDbProfile.positionx,
     self._curDbProfile.positiony)
   self.mainFrame:SetBackdrop(self.frameBackdropTable)
 
   self.frameBackdropTable.edgeFile = media:Fetch("border", self._curDbProfile.border)
 
-  self.mainFrame.mainText:SetFont(
-    media:Fetch("font", self._curDbProfile.font), self._curDbProfile.fontsize, "OUTLINE")
+  self.mainFrame.mainText:SetFont(media:Fetch("font", self._curDbProfile.font),
+    self._curDbProfile.fontsize, "OUTLINE")
   self.mainFrame.mainText:SetTextColor(unpack(self._curDbProfile.fontcolor))
 end
 
 function CoreBarTemplate:_refreshStatusBar()
-  self.mainFrame.statusBar:SetStatusBarTexture(
-    media:Fetch("statusbar", self._curDbProfile.texture), "BORDER")
+  local texture = media:Fetch("statusbar", self._curDbProfile.texture)
+  self.mainFrame.statusBar:SetStatusBarTexture(texture, "BORDER")
   self.mainFrame.statusBar:SetStatusBarColor(unpack(self._curDbProfile.color))
 end
 

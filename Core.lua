@@ -24,6 +24,7 @@ ZxSimpleUI.SCREEN_WIDTH = math.floor(GetScreenWidth())
 ZxSimpleUI.SCREEN_HEIGHT = math.floor(GetScreenHeight())
 ZxSimpleUI.DEFAULT_FRAME_LEVEL = 15 -- maximum number with 4 bits
 ZxSimpleUI.DEFAULT_ORDER_INDEX = 7
+ZxSimpleUI.HEADER_ORDER_INDEX = 1
 
 -- if 60 FPS, then 1 frame will be refreshed in 16.67 milliseconds.
 local refreshEveryNFrame = 10

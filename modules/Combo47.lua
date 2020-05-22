@@ -264,13 +264,13 @@ function Combo47:_getOptionTable()
         header = {
           type = "header",
           name = _DECORATIVE_NAME,
-          order = self:_incrementOrderIndex()
+          order = ZxSimpleUI.HEADER_ORDER_INDEX
         },
         showbar = {
           type = "toggle",
           name = "Show Display",
           desc = "Show/Hide the Combo Points Display",
-          order = self:_incrementOrderIndex(),
+          order = ZxSimpleUI.HEADER_ORDER_INDEX + 1,
           get = function(curFrame, ...)
             return self._shownOption
           end,

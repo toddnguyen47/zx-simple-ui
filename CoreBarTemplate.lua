@@ -101,7 +101,7 @@ function CoreBarTemplate:getOptionTable(decorativeName)
         self:_setOption(infoTable, value)
       end,
       args = {
-        header = {type = "header", name = decorativeName, order = self:_incrementOrderIndex()},
+        header = {type = "header", name = decorativeName, order = ZxSimpleUI.HEADER_ORDER_INDEX},
         width = {
           name = "Bar Width",
           desc = "Bar Width Size",

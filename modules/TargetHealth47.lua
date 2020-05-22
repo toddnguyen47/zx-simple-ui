@@ -13,7 +13,7 @@ local media = LibStub("LibSharedMedia-3.0")
 --- upvalues to prevent warnings
 local LibStub = LibStub
 local CreateFrame, UnitHealth, UnitHealthMax = CreateFrame, UnitHealth, UnitHealthMax
-local UnitName = UnitName
+local UnitName, UnitClassification = UnitName, UnitClassification
 local unpack = unpack
 
 TargetHealth47.MODULE_NAME = _MODULE_NAME
@@ -49,12 +49,12 @@ function TargetHealth47:OnInitialize()
   self:__init__()
 end
 
-function TargetHealth47:OnEnable()
-end
+function TargetHealth47:OnEnable() end
 
 function TargetHealth47:__init__()
   self._timeSinceLastUpdate = 0
   self._prevTargetHealth47 = UnitHealthMax(self.unit)
+  self._unitClassification = ""
   self.mainFrame = nil
 end
 
@@ -95,9 +95,8 @@ function TargetHealth47:_setOnShowOnHideHandlers()
     end
   end)
 
-  self.mainFrame:SetScript("OnHide", function(argsTable, ...)
-    self:_disableAllScriptHandlers()
-  end)
+  self.mainFrame:SetScript("OnHide",
+                           function(argsTable, ...) self:_disableAllScriptHandlers() end)
 end
 
 function TargetHealth47:_enableAllScriptHandlers()
@@ -167,5 +166,12 @@ function TargetHealth47:_setHealthValue(curUnitHealth)
   curUnitHealth = curUnitHealth or UnitHealth(self.unit)
   local maxUnitHealth = UnitHealthMax(self.unit)
   local healthPercent = ZxSimpleUI:calcPercentSafely(curUnitHealth, maxUnitHealth)
-  self.bars:_setStatusBarValue(healthPercent)
+  self._unitClassification = UnitClassification(self.unit)
+  if Utils47:isNormalEnemy(self._unitClassification) then
+    self.bars:_setStatusBarValue(healthPercent)
+  else
+    local s1 = Utils47.UnitClassificationElitesTable[self._unitClassification]
+    self.mainFrame.statusBar:SetValue(healthPercent)
+    self.mainFrame.mainText:SetText(string.format("(%s) %.1f%%", s1, healthPercent * 100.0))
+  end
 end

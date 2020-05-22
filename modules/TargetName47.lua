@@ -11,6 +11,7 @@ local media = LibStub("LibSharedMedia-3.0")
 local LibStub = LibStub
 local UIParent, CreateFrame, UnitName = UIParent, CreateFrame, UnitName
 local UnitName, UnitHealth = UnitName, UnitHealth
+local UnitClassification = UnitClassification
 local ToggleDropDownMenu, TargetFrameDropDown = ToggleDropDownMenu, TargetFrameDropDown
 local unpack = unpack
 
@@ -45,8 +46,7 @@ function TargetName47:OnInitialize()
   self:__init__()
 end
 
-function TargetName47:OnEnable()
-end
+function TargetName47:OnEnable() end
 
 function TargetName47:__init__()
   self.unit = "target"
@@ -90,9 +90,7 @@ function TargetName47:_getAppendedEnableOptionTable()
     type = "toggle",
     name = "Enable",
     desc = "Enable / Disable Module `" .. _DECORATIVE_NAME .. "`",
-    get = function(info)
-      return ZxSimpleUI:getModuleEnabledState(_MODULE_NAME)
-    end,
+    get = function(info) return ZxSimpleUI:getModuleEnabledState(_MODULE_NAME) end,
     set = function(info, val)
       ZxSimpleUI:setModuleEnabledState(_MODULE_NAME, val)
       self:refreshConfig()
@@ -118,9 +116,8 @@ function TargetName47:_setOnShowOnHideHandlers()
     end
   end)
 
-  self.mainFrame:SetScript("OnHide", function(argsTable, ...)
-    self:_disableAllScriptHandlers()
-  end)
+  self.mainFrame:SetScript("OnHide",
+                           function(argsTable, ...) self:_disableAllScriptHandlers() end)
 end
 
 function TargetName47:_enableAllScriptHandlers()
@@ -129,9 +126,7 @@ function TargetName47:_enableAllScriptHandlers()
   end)
 end
 
-function TargetName47:_disableAllScriptHandlers()
-  self.mainFrame:SetScript("OnEvent", nil)
-end
+function TargetName47:_disableAllScriptHandlers() self.mainFrame:SetScript("OnEvent", nil) end
 
 function TargetName47:_onEventHandler(argsTable, event, unit, ...)
   local isUnitHealthEvent = Utils47:stringEqualsIgnoreCase(event, "UNIT_HEALTH")
@@ -160,5 +155,11 @@ end
 ---@return string formattedName
 function TargetName47:_getFormattedName()
   local name = UnitName(self.unit) or ""
-  return Utils47:getInitials(name)
+  local formattedName = Utils47:getInitials(name)
+  local unitClassification = UnitClassification(self.unit)
+  if not Utils47:isNormalEnemy(unitClassification) then
+    local s1 = Utils47.UnitClassificationElitesTable[unitClassification]
+    formattedName = string.format("(%s) %s", s1, formattedName)
+  end
+  return formattedName
 end

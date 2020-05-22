@@ -6,6 +6,12 @@ ZxSimpleUI.Utils47 = Utils47
 --- References:
 --- Layers: https://wowwiki.fandom.com/wiki/XML/Layer
 Utils47.LayerLevel = {"BACKGROUND", "BORDER", "ARTWORK", "OVERLAY", "HIGHLIGHT"}
+Utils47.UnitClassificationElitesTable = {
+  ["worldboss"] = "WB",
+  ["rareelite"] = "RE",
+  ["elite"] = "E",
+  ["rare"] = "R"
+}
 
 ---@param strInput string
 ---@param sep string
@@ -50,6 +56,10 @@ end
 ---@param list table
 ---@param key string
 ---@return table
-function Utils47:setContains(list, key)
-  return list[key] ~= nil
+function Utils47:setContains(list, key) return list[key] ~= nil end
+
+---@param unitClassification string
+---@return boolean
+function Utils47:isNormalEnemy(unitClassification)
+  return self.UnitClassificationElitesTable[unitClassification] == nil
 end

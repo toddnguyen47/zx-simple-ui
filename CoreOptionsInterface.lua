@@ -57,9 +57,7 @@ function _getOptionsTable()
         options.args.general.args[moduleKey] = {
           type = "execute",
           name = val.name,
-          func = function()
-            InterfaceOptionsFrame_OpenToCategory(val)
-          end,
+          func = function() InterfaceOptionsFrame_OpenToCategory(val) end,
           order = frameLevel
         }
         if moduleKey == "Profiles" then

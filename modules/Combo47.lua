@@ -31,7 +31,8 @@ local _defaults = {
     showbar = false,
     enabledToggle = Combo47.playerEnglishClass == "ROGUE" or Combo47.playerEnglishClass ==
       "DRUID",
-    horizGap = 15
+    horizGap = 15,
+    yoffset = 0
   }
 }
 
@@ -105,13 +106,11 @@ function Combo47:_createIndividualComboPointsDisplay()
     if i == 1 then
       parentFrame = self.mainFrame
       anchorDirection = "BOTTOMLEFT"
-      xoffset = 0
-      yoffset = 0
+      yoffset = self._curDbProfile.yoffset
     else
       parentFrame = self._comboPointsTable[i - 1]
       anchorDirection = "BOTTOMRIGHT"
       xoffset = self._curDbProfile.horizGap
-      yoffset = 0
     end
     local comboTexture = self.mainFrame:CreateTexture(nil, "OVERLAY")
     comboTexture:ClearAllPoints()
@@ -254,7 +253,10 @@ function Combo47:_refreshStatusBar()
   for i, texture in ipairs(self._comboPointsTable) do
     texture:SetTexture(media:Fetch("statusbar", self._curDbProfile.texture), "BORDER")
     texture:SetWidth(comboWidth)
-    if i > 1 then
+    if i == 1 then
+      texture:SetPoint("BOTTOMLEFT", self._frameToAttachTo, "TOPLEFT", 0,
+        self._curDbProfile.yoffset)
+    else
       texture:SetPoint("BOTTOMLEFT", self._comboPointsTable[i - 1], "BOTTOMRIGHT",
         self._curDbProfile.horizGap, 0)
     end
@@ -405,6 +407,21 @@ function Combo47:_getOptionTable()
           type = "range",
           min = 0,
           max = 30,
+          step = 1,
+          get = function(infoTable)
+            return self:_getOption(infoTable)
+          end,
+          set = function(infoTable, value)
+            self:_setOption(infoTable, value)
+          end,
+          order = self:_incrementOrderIndex()
+        },
+        yoffset = {
+          name = "Y Offset",
+          desc = "Y Offset",
+          type = "range",
+          min = 0,
+          max = 20,
           step = 1,
           get = function(infoTable)
             return self:_getOption(infoTable)

@@ -30,6 +30,8 @@ local _defaults = {
 }
 
 function PlayerName47:OnInitialize()
+  self:__init__()
+
   self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, _defaults)
   self._curDbProfile = self.db.profile
   self.bars = CoreBarTemplate:new(self._curDbProfile)
@@ -37,9 +39,7 @@ function PlayerName47:OnInitialize()
 
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
   ZxSimpleUI:registerModuleOptions(_MODULE_NAME, self:_getAppendedEnableOptionTable(),
-                                   _DECORATIVE_NAME)
-
-  self:__init__()
+    _DECORATIVE_NAME)
 end
 
 function PlayerName47:OnEnable()

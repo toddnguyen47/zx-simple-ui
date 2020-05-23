@@ -46,6 +46,8 @@ _unitPowerTypeTable["RUNES"] = 5
 _unitPowerTypeTable["RUNICPOWER"] = 6
 
 function PlayerPower47:OnInitialize()
+  self:__init__()
+
   self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, _defaults)
   self._curDbProfile = self.db.profile
   self.bars = CoreBarTemplate:new(self._curDbProfile)
@@ -53,9 +55,7 @@ function PlayerPower47:OnInitialize()
 
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
   ZxSimpleUI:registerModuleOptions(_MODULE_NAME, self.bars:getOptionTable(_DECORATIVE_NAME),
-                                   _DECORATIVE_NAME)
-
-  self:__init__()
+    _DECORATIVE_NAME)
 end
 
 function PlayerPower47:OnEnable()

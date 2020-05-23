@@ -12,6 +12,18 @@ Utils47.UnitClassificationElitesTable = {
   ["elite"] = "E",
   ["rare"] = "R"
 }
+Utils47.englishClass = {
+  "NONE", "WARRIOR", "PALADIN", "HUNTER", "ROGUE", "PRIEST", "DEATHKNIGHT", "SHAMAN", "MAGE",
+  "WARLOCK", "DRUID"
+}
+
+---@param tableInput table
+---Add a debugPrint() function to the global `table` class
+table.debugPrint = function(tableInput)
+  for k, v in pairs(tableInput) do
+    print(string.format("Key: %s | Value: %s", tostring(k), tostring(v)))
+  end
+end
 
 ---@param strInput string
 ---@param sep string
@@ -56,7 +68,9 @@ end
 ---@param list table
 ---@param key string
 ---@return table
-function Utils47:setContains(list, key) return list[key] ~= nil end
+function Utils47:setContains(list, key)
+  return list[key] ~= nil
+end
 
 ---@param unitClassification string
 ---@return boolean

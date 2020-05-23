@@ -36,6 +36,8 @@ local _defaults = {
 }
 
 function TargetHealth47:OnInitialize()
+  self:__init__()
+
   self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, _defaults)
   self._curDbProfile = self.db.profile
   self.bars = CoreBarTemplate:new(self._curDbProfile)
@@ -44,11 +46,10 @@ function TargetHealth47:OnInitialize()
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
   local optionsTable = self.bars:getOptionTable(_DECORATIVE_NAME)
   ZxSimpleUI:registerModuleOptions(_MODULE_NAME, optionsTable, _DECORATIVE_NAME)
-
-  self:__init__()
 end
 
-function TargetHealth47:OnEnable() end
+function TargetHealth47:OnEnable()
+end
 
 function TargetHealth47:__init__()
   self._timeSinceLastUpdate = 0
@@ -94,8 +95,9 @@ function TargetHealth47:_setOnShowOnHideHandlers()
     end
   end)
 
-  self.mainFrame:SetScript("OnHide",
-                           function(argsTable, ...) self:_disableAllScriptHandlers() end)
+  self.mainFrame:SetScript("OnHide", function(argsTable, ...)
+    self:_disableAllScriptHandlers()
+  end)
 end
 
 function TargetHealth47:_enableAllScriptHandlers()

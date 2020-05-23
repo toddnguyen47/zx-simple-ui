@@ -10,7 +10,7 @@ local media = LibStub("LibSharedMedia-3.0")
 local LibStub = LibStub
 local UIParent, CreateFrame = UIParent, CreateFrame
 local MAX_COMBO_POINTS, GetComboPoints = MAX_COMBO_POINTS, GetComboPoints
-local UnitName = UnitName
+local UnitName, UnitClass = UnitName, UnitClass
 local UnitHealth, UnitPowerType = UnitHealth, UnitPowerType
 local ToggleDropDownMenu, TargetFrameDropDown = ToggleDropDownMenu, TargetFrameDropDown
 local unpack = unpack
@@ -18,6 +18,7 @@ local unpack = unpack
 Combo47.MODULE_NAME = _MODULE_NAME
 Combo47.bars = nil
 Combo47.unit = "target"
+Combo47.playerEnglishClass = select(2, UnitClass("player"))
 
 local _defaults = {
   profile = {
@@ -26,15 +27,18 @@ local _defaults = {
     lowComboColor = {1.0, 1.0, 0.0, 1.0},
     medComboColor = {1.0, 0.65, 0.0, 1.0},
     maxComboColor = {1.0, 0.0, 0.0, 1.0},
-    height = 8
+    height = 8,
+    showbar = false,
+    enabledToggle = Combo47.playerEnglishClass == "ROGUE" or Combo47.playerEnglishClass ==
+      "DRUID"
   }
 }
 
 function Combo47:OnInitialize()
+  self:__init__()
+
   self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, _defaults)
   self._curDbProfile = self.db.profile
-
-  self:__init__()
 
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
   ZxSimpleUI:registerModuleOptions(_MODULE_NAME, self:_getOptionTable(), _DECORATIVE_NAME)
@@ -50,7 +54,7 @@ function Combo47:__init__()
   self._orderIndex = ZxSimpleUI.DEFAULT_ORDER_INDEX
   self._comboPointsTable = {}
   self._allComboPointsHidden = true
-  self._shownOption = false
+  self._playerEnglishClass = UnitClass("player")
 end
 
 ---@param frameToAttachTo table
@@ -75,11 +79,13 @@ function Combo47:createBar(frameToAttachTo)
 end
 
 function Combo47:refreshConfig()
+  self:_handleEnableOption()
+  self:_handleShownOption()
   if self:IsEnabled() then
     self:_refreshBarFrame()
     self:_refreshStatusBar()
     self:_handleComboPoints()
-    if self._shownOption then self:_showAllComboPoints() end
+    if self._curDbProfile.showbar then self:_showAllComboPoints() end
   end
 end
 
@@ -248,6 +254,22 @@ function Combo47:_refreshStatusBar()
   end
 end
 
+function Combo47:_handleEnableOption()
+  self.options.enabledToggle = self._curDbProfile.enabledToggle
+  ZxSimpleUI:setModuleEnabledState(_MODULE_NAME, self._curDbProfile.enabledToggle)
+end
+
+function Combo47:_handleShownOption()
+  if self._curDbProfile.showbar then
+    self.mainFrame:Show()
+    self.options.args.enabledToggle.disabled = true
+  else
+    self.mainFrame:Hide()
+    self:_hideAllComboPoints()
+    self.options.args.enabledToggle.disabled = false
+  end
+end
+
 ---@return table
 function Combo47:_getOptionTable()
   if next(self.options) == nil then
@@ -266,23 +288,29 @@ function Combo47:_getOptionTable()
           name = _DECORATIVE_NAME,
           order = ZxSimpleUI.HEADER_ORDER_INDEX
         },
+        enabledToggle = {
+          type = "toggle",
+          name = "Enable",
+          desc = "Enable / Disable this module",
+          order = ZxSimpleUI.HEADER_ORDER_INDEX + 1,
+          disabled = false,
+          get = function(infoTable, ...)
+            return self:_getOption(infoTable)
+          end,
+          set = function(infoTable, isSelected, ...)
+            self:_setOption(infoTable, isSelected)
+          end
+        },
         showbar = {
           type = "toggle",
           name = "Show Display",
           desc = "Show/Hide the Combo Points Display",
-          order = ZxSimpleUI.HEADER_ORDER_INDEX + 1,
-          get = function(curFrame, ...)
-            return self._shownOption
+          order = ZxSimpleUI.HEADER_ORDER_INDEX + 2,
+          get = function(infoTable, ...)
+            return self:_getOption(infoTable)
           end,
-          set = function(curFrame, isSelected, ...)
-            self._shownOption = isSelected
-            if self._shownOption then
-              self.mainFrame:Show()
-              self:refreshConfig()
-            else
-              self.mainFrame:Hide()
-              self:_hideAllComboPoints()
-            end
+          set = function(infoTable, isSelected, ...)
+            self:_setOption(infoTable, isSelected)
           end
         },
         texture = {

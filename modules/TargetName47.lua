@@ -34,6 +34,8 @@ local _defaults = {
 }
 
 function TargetName47:OnInitialize()
+  self:__init__()
+
   self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, _defaults)
   self._curDbProfile = self.db.profile
   self.bars = CoreBarTemplate:new(self._curDbProfile)
@@ -41,12 +43,11 @@ function TargetName47:OnInitialize()
 
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
   ZxSimpleUI:registerModuleOptions(_MODULE_NAME, self:_getAppendedEnableOptionTable(),
-                                   _DECORATIVE_NAME)
-
-  self:__init__()
+    _DECORATIVE_NAME)
 end
 
-function TargetName47:OnEnable() end
+function TargetName47:OnEnable()
+end
 
 function TargetName47:__init__()
   self.unit = "target"
@@ -90,7 +91,9 @@ function TargetName47:_getAppendedEnableOptionTable()
     type = "toggle",
     name = "Enable",
     desc = "Enable / Disable Module `" .. _DECORATIVE_NAME .. "`",
-    get = function(info) return ZxSimpleUI:getModuleEnabledState(_MODULE_NAME) end,
+    get = function(info)
+      return ZxSimpleUI:getModuleEnabledState(_MODULE_NAME)
+    end,
     set = function(info, val)
       ZxSimpleUI:setModuleEnabledState(_MODULE_NAME, val)
       self:refreshConfig()
@@ -116,8 +119,9 @@ function TargetName47:_setOnShowOnHideHandlers()
     end
   end)
 
-  self.mainFrame:SetScript("OnHide",
-                           function(argsTable, ...) self:_disableAllScriptHandlers() end)
+  self.mainFrame:SetScript("OnHide", function(argsTable, ...)
+    self:_disableAllScriptHandlers()
+  end)
 end
 
 function TargetName47:_enableAllScriptHandlers()
@@ -126,7 +130,9 @@ function TargetName47:_enableAllScriptHandlers()
   end)
 end
 
-function TargetName47:_disableAllScriptHandlers() self.mainFrame:SetScript("OnEvent", nil) end
+function TargetName47:_disableAllScriptHandlers()
+  self.mainFrame:SetScript("OnEvent", nil)
+end
 
 function TargetName47:_onEventHandler(argsTable, event, unit, ...)
   local isUnitHealthEvent = Utils47:stringEqualsIgnoreCase(event, "UNIT_HEALTH")

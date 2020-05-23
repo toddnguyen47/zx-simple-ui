@@ -30,16 +30,15 @@ local _defaults = {
     height = 8,
     showbar = false,
     enabledToggle = Combo47.playerEnglishClass == "ROGUE" or Combo47.playerEnglishClass ==
-      "DRUID"
+      "DRUID",
+    horizGap = 15
   }
 }
 
 function Combo47:OnInitialize()
   self:__init__()
-
   self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, _defaults)
   self._curDbProfile = self.db.profile
-
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
   ZxSimpleUI:registerModuleOptions(_MODULE_NAME, self:_getOptionTable(), _DECORATIVE_NAME)
 end
@@ -55,22 +54,24 @@ function Combo47:__init__()
   self._comboPointsTable = {}
   self._allComboPointsHidden = true
   self._playerEnglishClass = UnitClass("player")
+  self._frameToAttachTo = nil
 end
 
 ---@param frameToAttachTo table
 function Combo47:createBar(frameToAttachTo)
   assert(frameToAttachTo ~= nil)
+  self._frameToAttachTo = frameToAttachTo
   local horizGap = 15
   local totalNumberOfGaps = horizGap * (MAX_COMBO_POINTS - 1)
-  local comboWidth = (frameToAttachTo:GetWidth() - totalNumberOfGaps) / MAX_COMBO_POINTS
+  local comboWidth = (self._frameToAttachTo:GetWidth() - totalNumberOfGaps) / MAX_COMBO_POINTS
 
-  self.mainFrame = CreateFrame("Frame", nil, frameToAttachTo)
+  self.mainFrame = CreateFrame("Frame", nil, self._frameToAttachTo)
   self.mainFrame:SetFrameLevel(ZxSimpleUI.DEFAULT_FRAME_LEVEL + 2)
-  self.mainFrame:SetWidth(frameToAttachTo:GetWidth())
+  self.mainFrame:SetWidth(self._frameToAttachTo:GetWidth())
   self.mainFrame:SetHeight(self._curDbProfile.height)
-  self.mainFrame:SetPoint("BOTTOMLEFT", frameToAttachTo, "TOPLEFT", 0, 0)
+  self.mainFrame:SetPoint("BOTTOMLEFT", self._frameToAttachTo, "TOPLEFT", 0, 0)
 
-  self:_createIndividualComboPointsDisplay(frameToAttachTo)
+  self:_createIndividualComboPointsDisplay()
   self:_registerEvents()
   self:_setOnShowOnHideHandlers()
   self:_enableAllScriptHandlers()
@@ -93,11 +94,9 @@ end
 -- # PRIVATE FUNCTIONS
 -- ####################################
 
----@param frameToAttachTo table
-function Combo47:_createIndividualComboPointsDisplay(frameToAttachTo)
-  local horizGap = 15
-  local totalNumberOfGaps = horizGap * (MAX_COMBO_POINTS - 1)
-  local comboWidth = (frameToAttachTo:GetWidth() - totalNumberOfGaps) / MAX_COMBO_POINTS
+function Combo47:_createIndividualComboPointsDisplay()
+  local totalNumberOfGaps = self._curDbProfile.horizGap * (MAX_COMBO_POINTS - 1)
+  local comboWidth = (self._frameToAttachTo:GetWidth() - totalNumberOfGaps) / MAX_COMBO_POINTS
 
   -- Create all MAX_COMBO_POINTS frames
   for i = 1, MAX_COMBO_POINTS do
@@ -111,7 +110,7 @@ function Combo47:_createIndividualComboPointsDisplay(frameToAttachTo)
     else
       parentFrame = self._comboPointsTable[i - 1]
       anchorDirection = "BOTTOMRIGHT"
-      xoffset = horizGap
+      xoffset = self._curDbProfile.horizGap
       yoffset = 0
     end
     local comboTexture = self.mainFrame:CreateTexture(nil, "OVERLAY")
@@ -249,8 +248,16 @@ function Combo47:_refreshBarFrame()
 end
 
 function Combo47:_refreshStatusBar()
-  for _, texture in pairs(self._comboPointsTable) do
+  local totalNumberOfGaps = self._curDbProfile.horizGap * (MAX_COMBO_POINTS - 1)
+  local comboWidth = (self._frameToAttachTo:GetWidth() - totalNumberOfGaps) / MAX_COMBO_POINTS
+
+  for i, texture in ipairs(self._comboPointsTable) do
     texture:SetTexture(media:Fetch("statusbar", self._curDbProfile.texture), "BORDER")
+    texture:SetWidth(comboWidth)
+    if i > 1 then
+      texture:SetPoint("BOTTOMLEFT", self._comboPointsTable[i - 1], "BOTTOMRIGHT",
+        self._curDbProfile.horizGap, 0)
+    end
   end
 end
 
@@ -260,6 +267,7 @@ function Combo47:_handleEnableOption()
 end
 
 function Combo47:_handleShownOption()
+  self.options.showbar = self._curDbProfile.showbar
   if self._curDbProfile.showbar then
     self.mainFrame:Show()
     self.options.args.enabledToggle.disabled = true
@@ -382,6 +390,21 @@ function Combo47:_getOptionTable()
           type = "range",
           min = 2,
           max = 20,
+          step = 1,
+          get = function(infoTable)
+            return self:_getOption(infoTable)
+          end,
+          set = function(infoTable, value)
+            self:_setOption(infoTable, value)
+          end,
+          order = self:_incrementOrderIndex()
+        },
+        horizGap = {
+          name = "Horizontal Gap",
+          desc = "Horizontal Gap between each combo point bar",
+          type = "range",
+          min = 0,
+          max = 30,
           step = 1,
           get = function(infoTable)
             return self:_getOption(infoTable)

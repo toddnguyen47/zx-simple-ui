@@ -40,6 +40,9 @@ function Combo47:OnInitialize()
   self:__init__()
   self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, _defaults)
   self._curDbProfile = self.db.profile
+  -- Always set the showbar option to false on initialize
+  self._curDbProfile.showbar = _defaults.profile.showbar
+
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
   ZxSimpleUI:registerModuleOptions(_MODULE_NAME, self:_getOptionTable(), _DECORATIVE_NAME)
 end

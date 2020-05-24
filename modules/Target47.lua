@@ -39,7 +39,7 @@ function Target47:_createBars()
   self._barLists["TargetHealth47"] = TargetHealth47:createBar()
   self._barLists["TargetPower47"] = TargetPower47:createBar()
   self._barLists["TargetName47"] = TargetName47:createBar()
-  self._barLists["Combo47"] = Combo47:createBar(self._barLists["TargetHealth47"])
+  self._barLists["Combo47"] = Combo47:createBar(self._barLists["TargetPower47"])
 
   self._ignoreSet["Combo47"] = true
 end

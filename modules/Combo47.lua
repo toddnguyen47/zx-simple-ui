@@ -73,7 +73,7 @@ function Combo47:createBar(frameToAttachTo)
   self.mainFrame:SetFrameLevel(ZxSimpleUI.DEFAULT_FRAME_LEVEL + 2)
   self.mainFrame:SetWidth(self._frameToAttachTo:GetWidth())
   self.mainFrame:SetHeight(self._curDbProfile.height)
-  self.mainFrame:SetPoint("BOTTOMLEFT", self._frameToAttachTo, "TOPLEFT", 0, 0)
+  self.mainFrame:SetPoint("BOTTOMLEFT", self._frameToAttachTo, "BOTTOMLEFT", 0, 0)
 
   self:_createIndividualComboPointsDisplay()
   self:_registerEvents()
@@ -103,23 +103,24 @@ function Combo47:_createIndividualComboPointsDisplay()
   local comboWidth = (self._frameToAttachTo:GetWidth() - totalNumberOfGaps) / MAX_COMBO_POINTS
 
   -- Create all MAX_COMBO_POINTS frames
+  -- Ref: https://wow.gamepedia.com/API_Region_SetPoint
   for i = 1, MAX_COMBO_POINTS do
-    local parentFrame, anchorDirection = nil, nil
+    local parentFrame, relativePoint = nil, nil
     local xoffset, yoffset = 0, 0
     if i == 1 then
       parentFrame = self.mainFrame
-      anchorDirection = "BOTTOMLEFT"
+      relativePoint = "BOTTOMLEFT"
       yoffset = self._curDbProfile.yoffset
     else
       parentFrame = self._comboPointsTable[i - 1]
-      anchorDirection = "BOTTOMRIGHT"
+      relativePoint = "TOPRIGHT"
       xoffset = self._curDbProfile.horizGap
     end
     local comboTexture = self.mainFrame:CreateTexture(nil, "OVERLAY")
     comboTexture:ClearAllPoints()
     comboTexture:SetWidth(comboWidth)
     comboTexture:SetHeight(self.mainFrame:GetHeight())
-    comboTexture:SetPoint("BOTTOMLEFT", parentFrame, anchorDirection, xoffset, yoffset)
+    comboTexture:SetPoint("TOPLEFT", parentFrame, relativePoint, xoffset, yoffset)
     comboTexture:SetTexture(media:Fetch("statusbar", self._curDbProfile.texture))
     comboTexture:SetVertexColor(unpack(self._curDbProfile.lowComboColor))
     comboTexture:Hide()
@@ -136,6 +137,7 @@ function Combo47:_setOnShowOnHideHandlers()
   self.mainFrame:SetScript("OnShow", function(argsTable, ...)
     if self:IsEnabled() then
       self:_enableAllScriptHandlers()
+      self.mainFrame:Show()
     else
       self.mainFrame:Hide()
     end
@@ -257,10 +259,10 @@ function Combo47:_refreshStatusBar()
     texture:SetTexture(media:Fetch("statusbar", self._curDbProfile.texture), "BORDER")
     texture:SetWidth(comboWidth)
     if i == 1 then
-      texture:SetPoint("BOTTOMLEFT", self._frameToAttachTo, "TOPLEFT", 0,
+      texture:SetPoint("TOPLEFT", self._frameToAttachTo, "BOTTOMLEFT", 0,
         self._curDbProfile.yoffset)
     else
-      texture:SetPoint("BOTTOMLEFT", self._comboPointsTable[i - 1], "BOTTOMRIGHT",
+      texture:SetPoint("TOPLEFT", self._comboPointsTable[i - 1], "TOPRIGHT",
         self._curDbProfile.horizGap, 0)
     end
   end
@@ -274,10 +276,9 @@ end
 function Combo47:_handleShownOption()
   self.options.showbar = self._curDbProfile.showbar
   if self._curDbProfile.showbar then
-    self.mainFrame:Show()
+    self:_showAllComboPoints()
     self.options.args.enabledToggle.disabled = true
   else
-    self.mainFrame:Hide()
     self:_hideAllComboPoints()
     self.options.args.enabledToggle.disabled = false
   end
@@ -423,8 +424,8 @@ function Combo47:_getOptionTable()
           name = "Y Offset",
           desc = "Y Offset",
           type = "range",
-          min = 0,
-          max = 20,
+          min = -30,
+          max = 30,
           step = 1,
           get = function(infoTable)
             return self:_getOption(infoTable)

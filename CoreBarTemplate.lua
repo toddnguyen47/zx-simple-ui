@@ -101,7 +101,11 @@ function CoreBarTemplate:getOptionTable(decorativeName)
         self:_setOption(infoTable, value)
       end,
       args = {
-        header = {type = "header", name = decorativeName, order = ZxSimpleUI.HEADER_ORDER_INDEX},
+        header = {
+          type = "header",
+          name = decorativeName,
+          order = ZxSimpleUI.HEADER_ORDER_INDEX
+        },
         width = {
           name = "Bar Width",
           desc = "Bar Width Size",
@@ -274,19 +278,19 @@ function CoreBarTemplate:_incrementOrderIndex()
   return i
 end
 
----@param infoTable table
-function CoreBarTemplate:_getOption(infoTable)
-  -- Not sure how this gets the key... but it does
-  local key = infoTable[#infoTable]
-  return self._curDbProfile[key]
+---@param info table
+---Ref: https://www.wowace.com/projects/ace3/pages/ace-config-3-0-options-tables#title-4-1
+function CoreBarTemplate:_getOption(info)
+  local keyLeafNode = info[#info]
+  return self._curDbProfile[keyLeafNode]
 end
 
----@param infoTable table
+---@param info table
 ---@param value any
-function CoreBarTemplate:_setOption(infoTable, value)
-  -- Not sure how this gets the key... but it does
-  local key = infoTable[#infoTable]
-  self._curDbProfile[key] = value
+---Ref: https://www.wowace.com/projects/ace3/pages/ace-config-3-0-options-tables#title-4-1
+function CoreBarTemplate:_setOption(info, value)
+  local keyLeafNode = info[#info]
+  self._curDbProfile[keyLeafNode] = value
   self:refreshConfig()
 end
 

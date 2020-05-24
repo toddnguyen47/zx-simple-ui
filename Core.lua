@@ -1,7 +1,4 @@
-local ZxSimpleUI = LibStub("AceAddon-3.0"):NewAddon("ZxSimpleUI", "AceConsole-3.0",
-                                                    "AceEvent-3.0")
-local AceConfig = LibStub("AceConfig-3.0")
-local AceGUI = LibStub("AceGUI-3.0")
+local ZxSimpleUI = LibStub("AceAddon-3.0"):NewAddon("ZxSimpleUI", "AceConsole-3.0")
 
 ---LibSharedMedia registers
 local media = LibStub("LibSharedMedia-3.0")
@@ -20,6 +17,7 @@ local _defaults = {
 --- "CONSTANTS"
 ZxSimpleUI.ADDON_NAME = "ZxSimpleUI"
 ZxSimpleUI.DECORATIVE_NAME = "Zx Simple UI"
+ZxSimpleUI.SLASH_COMMANDS = {"zxsimpleui", "zxsui"}
 ZxSimpleUI.SCREEN_WIDTH = math.floor(GetScreenWidth())
 ZxSimpleUI.SCREEN_HEIGHT = math.floor(GetScreenHeight())
 ZxSimpleUI.DEFAULT_FRAME_LEVEL = 15 -- maximum number with 4 bits
@@ -31,7 +29,7 @@ local refreshEveryNFrame = 10
 ZxSimpleUI.UPDATE_INTERVAL_SECONDS = 16 * refreshEveryNFrame / 1000.0
 
 ZxSimpleUI.moduleOptionsTable = {}
-ZxSimpleUI.optionFrameTable = {}
+ZxSimpleUI.blizOptionTable = {}
 ZxSimpleUI.db = nil
 
 function ZxSimpleUI:OnInitialize()
@@ -85,9 +83,9 @@ end
 ---@param displayName string
 function ZxSimpleUI:registerModuleOptions(name, optTable, displayName)
   self.moduleOptionsTable[name] = optTable
-  self.optionFrameTable[name] = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(
-                                  self.ADDON_NAME, displayName or name, self.DECORATIVE_NAME,
-                                  name)
+  -- self.blizOptionTable[name] = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(
+  --                                 self.ADDON_NAME, displayName or name, self.DECORATIVE_NAME,
+  --                                 name)
 end
 
 ---@param currentValue number

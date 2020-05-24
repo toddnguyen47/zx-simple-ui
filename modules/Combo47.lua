@@ -73,7 +73,12 @@ function Combo47:createBar(frameToAttachTo)
   self.mainFrame:SetFrameLevel(ZxSimpleUI.DEFAULT_FRAME_LEVEL + 2)
   self.mainFrame:SetWidth(self._frameToAttachTo:GetWidth())
   self.mainFrame:SetHeight(self._curDbProfile.height)
-  self.mainFrame:SetPoint("BOTTOMLEFT", self._frameToAttachTo, "BOTTOMLEFT", 0, 0)
+  self.mainFrame:SetPoint("TOPLEFT", self._frameToAttachTo, "BOTTOMLEFT", 0,
+    self._curDbProfile.yoffset)
+
+  self.mainFrame.bgTexture = self.mainFrame:CreateTexture(nil, "BACKGROUND")
+  self.mainFrame.bgTexture:SetTexture(0, 0, 0, 0.5)
+  self.mainFrame.bgTexture:SetAllPoints()
 
   self:_createIndividualComboPointsDisplay()
   self:_registerEvents()
@@ -246,6 +251,8 @@ end
 
 function Combo47:_refreshBarFrame()
   self.mainFrame:SetHeight(self._curDbProfile.height)
+  self.mainFrame:SetPoint("TOPLEFT", self._frameToAttachTo, "BOTTOMLEFT", 0,
+    self._curDbProfile.yoffset)
   for _, texture in pairs(self._comboPointsTable) do
     texture:SetHeight(self.mainFrame:GetHeight())
   end

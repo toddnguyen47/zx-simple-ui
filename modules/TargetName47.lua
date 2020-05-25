@@ -1,18 +1,18 @@
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local CoreBarTemplate = ZxSimpleUI.CoreBarTemplate
 local Utils47 = ZxSimpleUI.Utils47
+local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
 
 local _MODULE_NAME = "TargetName47"
 local _DECORATIVE_NAME = "Target Name"
 local TargetName47 = ZxSimpleUI:NewModule(_MODULE_NAME)
+
 local media = LibStub("LibSharedMedia-3.0")
 
 --- upvalues to prevent warnings
-local LibStub = LibStub
-local UIParent, CreateFrame, UnitName = UIParent, CreateFrame, UnitName
+local UnitName = UnitName
 local UnitName, UnitHealth = UnitName, UnitHealth
 local UnitClassification = UnitClassification
-local ToggleDropDownMenu, TargetFrameDropDown = ToggleDropDownMenu, TargetFrameDropDown
 local unpack = unpack
 
 TargetName47.MODULE_NAME = _MODULE_NAME
@@ -29,7 +29,8 @@ local _defaults = {
     fontcolor = {1.0, 1.0, 1.0},
     texture = "Blizzard",
     color = {0.0, 0.0, 0.0, 1.0},
-    border = "None"
+    border = "None",
+    enabledToggle = true
   }
 }
 
@@ -46,8 +47,9 @@ function TargetName47:OnInitialize()
     _DECORATIVE_NAME)
 end
 
-function TargetName47:OnEnable()
-end
+function TargetName47:OnEnable() self:handleOnEnable() end
+
+function TargetName47:OnDisable() self:handleOnDisable() end
 
 function TargetName47:__init__()
   self.unit = "target"
@@ -66,19 +68,32 @@ function TargetName47:createBar()
   self:_registerEvents()
   self:_setOnShowOnHideHandlers()
   self:_enableAllScriptHandlers()
+  RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
 
   self.mainFrame:Hide()
   return self.mainFrame
 end
 
 function TargetName47:refreshConfig()
+  self:handleEnableToggle()
   if self:IsEnabled() then
     self:_handlePlayerTargetChanged()
     self.bars:refreshConfig()
-  else
-    self.mainFrame:Hide()
   end
 end
+
+function TargetName47:handleEnableToggle()
+  ZxSimpleUI:setModuleEnabledState(_MODULE_NAME, self._curDbProfile.enabledToggle)
+end
+
+function TargetName47:handleOnEnable()
+  if self.mainFrame ~= nil then
+    self:refreshConfig()
+    self.mainFrame:Show()
+  end
+end
+
+function TargetName47:handleOnDisable() if self.mainFrame ~= nil then self.mainFrame:Hide() end end
 
 -- ####################################
 -- # PRIVATE FUNCTIONS
@@ -87,17 +102,11 @@ end
 ---@return table
 function TargetName47:_getAppendedEnableOptionTable()
   local options = self.bars:getOptionTable(_DECORATIVE_NAME)
-  options.args["enableButton"] = {
+  -- Use parent's get/set functions
+  options.args["enabledToggle"] = {
     type = "toggle",
     name = "Enable",
     desc = "Enable / Disable Module `" .. _DECORATIVE_NAME .. "`",
-    get = function(info)
-      return ZxSimpleUI:getModuleEnabledState(_MODULE_NAME)
-    end,
-    set = function(info, val)
-      ZxSimpleUI:setModuleEnabledState(_MODULE_NAME, val)
-      self:refreshConfig()
-    end,
     order = 1
   }
   return options
@@ -119,9 +128,8 @@ function TargetName47:_setOnShowOnHideHandlers()
     end
   end)
 
-  self.mainFrame:SetScript("OnHide", function(argsTable, ...)
-    self:_disableAllScriptHandlers()
-  end)
+  self.mainFrame:SetScript("OnHide",
+    function(argsTable, ...) self:_disableAllScriptHandlers() end)
 end
 
 function TargetName47:_enableAllScriptHandlers()
@@ -130,9 +138,7 @@ function TargetName47:_enableAllScriptHandlers()
   end)
 end
 
-function TargetName47:_disableAllScriptHandlers()
-  self.mainFrame:SetScript("OnEvent", nil)
-end
+function TargetName47:_disableAllScriptHandlers() self.mainFrame:SetScript("OnEvent", nil) end
 
 function TargetName47:_onEventHandler(argsTable, event, unit, ...)
   local isUnitHealthEvent = Utils47:stringEqualsIgnoreCase(event, "UNIT_HEALTH")

@@ -29,7 +29,10 @@ local refreshEveryNFrame = 10
 ZxSimpleUI.UPDATE_INTERVAL_SECONDS = 16 * refreshEveryNFrame / 1000.0
 
 ZxSimpleUI.moduleOptionsTable = {}
+ZxSimpleUI.moduleKeySorted = {}
 ZxSimpleUI.blizOptionTable = {}
+ZxSimpleUI.playerBars = {}
+ZxSimpleUI.targetBars = {}
 ZxSimpleUI.db = nil
 
 function ZxSimpleUI:OnInitialize()
@@ -83,6 +86,7 @@ end
 ---@param displayName string
 function ZxSimpleUI:registerModuleOptions(name, optTable, displayName)
   self.moduleOptionsTable[name] = optTable
+  table.insert(self.moduleKeySorted, name)
   -- self.blizOptionTable[name] = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(
   --                                 self.ADDON_NAME, displayName or name, self.DECORATIVE_NAME,
   --                                 name)
@@ -97,9 +101,8 @@ function ZxSimpleUI:calcPercentSafely(currentValue, maxValue)
 end
 
 ---@param module string
-function ZxSimpleUI:getModuleEnabledState(module)
-  return self.db.profile.modules[module].enabled
-end
+function ZxSimpleUI:getModuleEnabledState(module) return
+  self.db.profile.modules[module].enabled end
 
 ---@param module string
 ---@param isEnabled boolean
@@ -124,6 +127,4 @@ end
 ---@param unit string
 ---@return boolean
 ---Ref: https://wowwiki.fandom.com/wiki/SecureStateDriver
-function ZxSimpleUI:getUnitWatchState(unit)
-  return string.lower(unit) == "pet"
-end
+function ZxSimpleUI:getUnitWatchState(unit) return string.lower(unit) == "pet" end

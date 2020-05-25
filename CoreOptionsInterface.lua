@@ -71,9 +71,7 @@ end
 function _openOptionFrame(info, value, ...)
   if not _frame then
     _frame = AceGUI:Create("Frame")
-    _frame:SetCallback("OnClose", function(widget)
-      AceGUI:Release(widget)
-    end)
+    _frame:SetCallback("OnClose", function(widget) AceGUI:Release(widget) end)
     _frame:SetTitle(ZxSimpleUI.DECORATIVE_NAME)
   end
   AceConfigDialog:Open(ZxSimpleUI.ADDON_NAME, _frame)
@@ -90,7 +88,9 @@ end
 
 function _addModuleOptionTables()
   local defaultOrderIndex = 7
-  for moduleAppName, optionTableOrFunc in pairs(ZxSimpleUI.moduleOptionsTable) do
+  table.sort(ZxSimpleUI.moduleKeySorted)
+  for _, moduleAppName in pairs(ZxSimpleUI.moduleKeySorted) do
+    local optionTableOrFunc = ZxSimpleUI.moduleOptionsTable[moduleAppName]
     if type(optionTableOrFunc) == "function" then
       option.args[moduleAppName] = optionTableOrFunc()
     else

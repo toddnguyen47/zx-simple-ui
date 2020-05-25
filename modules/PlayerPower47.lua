@@ -1,6 +1,7 @@
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local CoreBarTemplate = ZxSimpleUI.CoreBarTemplate
 local Utils47 = ZxSimpleUI.Utils47
+local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
 
 --- upvalues to prevent warnings
 local LibStub = LibStub
@@ -10,8 +11,8 @@ local UnitClass, UnitPowerType = UnitClass, UnitPowerType
 local _MODULE_NAME = "PlayerPower47"
 local _DECORATIVE_NAME = "Player Power"
 local PlayerPower47 = ZxSimpleUI:NewModule(_MODULE_NAME)
-PlayerPower47.MODULE_NAME = _MODULE_NAME
 
+PlayerPower47.MODULE_NAME = _MODULE_NAME
 PlayerPower47.unit = "player"
 
 local _defaults = {
@@ -29,21 +30,23 @@ local _defaults = {
   }
 }
 
-local _powerEventColorTable = {}
-_powerEventColorTable["UNIT_MANA"] = {0.0, 0.0, 1.0, 1.0}
-_powerEventColorTable["UNIT_RAGE"] = {1.0, 0.0, 0.0, 1.0}
-_powerEventColorTable["UNIT_FOCUS"] = {1.0, 0.65, 0.0, 1.0}
-_powerEventColorTable["UNIT_ENERGY"] = {1.0, 1.0, 0.0, 1.0}
-_powerEventColorTable["UNIT_RUNIC_POWER"] = {0.0, 1.0, 1.0, 1.0}
+local _powerEventColorTable = {
+  ["UNIT_MANA"] = {0.0, 0.0, 1.0, 1.0},
+  ["UNIT_RAGE"] = {1.0, 0.0, 0.0, 1.0},
+  ["UNIT_FOCUS"] = {1.0, 0.65, 0.0, 1.0},
+  ["UNIT_ENERGY"] = {1.0, 1.0, 0.0, 1.0},
+  ["UNIT_RUNIC_POWER"] = {0.0, 1.0, 1.0, 1.0}
+}
 
-local _unitPowerTypeTable = {}
-_unitPowerTypeTable["MANA"] = 0
-_unitPowerTypeTable["RAGE"] = 1
-_unitPowerTypeTable["FOCUS"] = 2
-_unitPowerTypeTable["ENERGY"] = 3
-_unitPowerTypeTable["COMBOPOINTS"] = 4
-_unitPowerTypeTable["RUNES"] = 5
-_unitPowerTypeTable["RUNICPOWER"] = 6
+local _unitPowerTypeTable = {
+  ["MANA"] = 0,
+  ["RAGE"] = 1,
+  ["FOCUS"] = 2,
+  ["ENERGY"] = 3,
+  ["COMBOPOINTS"] = 4,
+  ["RUNES"] = 5,
+  ["RUNICPOWER"] = 6
+}
 
 function PlayerPower47:OnInitialize()
   self:__init__()
@@ -59,7 +62,15 @@ function PlayerPower47:OnInitialize()
 end
 
 function PlayerPower47:OnEnable()
+  if self.mainFrame ~= nil then
+    self:refreshConfig()
+    self.mainFrame:Show()
+  end
 end
+
+function PlayerPower47:OnEnable() self:handleOnEnable() end
+
+function PlayerPower47:OnDisable() self:handleOnDisable() end
 
 function PlayerPower47:__init__()
   self.mainFrame = nil
@@ -70,9 +81,7 @@ function PlayerPower47:__init__()
   self._powerTypeString = ""
 end
 
-function PlayerPower47:refreshConfig()
-  if self:IsEnabled() then self.bars:refreshConfig() end
-end
+function PlayerPower47:refreshConfig() if self:IsEnabled() then self.bars:refreshConfig() end end
 
 ---@return table
 function PlayerPower47:createBar()
@@ -88,9 +97,23 @@ function PlayerPower47:createBar()
   self:_setOnShowOnHideHandlers()
   self:_enableAllScriptHandlers()
 
+  RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
+
   self.mainFrame:Show()
   return self.mainFrame
 end
+
+---Don't have to do anything here. Maybe in the future I'll add an option to disable this bar.
+function PlayerPower47:handleEnableToggle() end
+
+function PlayerPower47:handleOnEnable()
+  if self.mainFrame ~= nil then
+    self:refreshConfig()
+    self.mainFrame:Show()
+  end
+end
+
+function PlayerPower47:handleOnDisable() if self.mainFrame ~= nil then self.mainFrame:Hide() end end
 
 -- ####################################
 -- # PRIVATE FUNCTIONS
@@ -151,9 +174,8 @@ function PlayerPower47:_setOnShowOnHideHandlers()
     end
   end)
 
-  self.mainFrame:SetScript("OnHide", function(argsTable, ...)
-    self:_disableAllScriptHandlers()
-  end)
+  self.mainFrame:SetScript("OnHide",
+    function(argsTable, ...) self:_disableAllScriptHandlers() end)
 end
 
 function PlayerPower47:_enableAllScriptHandlers()
@@ -177,6 +199,7 @@ end
 function PlayerPower47:_setDefaultColor()
   local powerTypeUpper = string.upper(self._powerTypeString)
   local colorTable = _powerEventColorTable["UNIT_" .. powerTypeUpper]
+  if colorTable == nil then colorTable = _powerEventColorTable["UNIT_MANA"] end
   _defaults.profile.color = colorTable
   self._curDbProfile.color = colorTable
 end

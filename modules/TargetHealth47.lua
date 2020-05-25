@@ -4,10 +4,12 @@
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local CoreBarTemplate = ZxSimpleUI.CoreBarTemplate
 local Utils47 = ZxSimpleUI.Utils47
+local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
 
 local _MODULE_NAME = "TargetHealth47"
 local _DECORATIVE_NAME = "Target Health"
 local TargetHealth47 = ZxSimpleUI:NewModule(_MODULE_NAME)
+
 local media = LibStub("LibSharedMedia-3.0")
 
 --- upvalues to prevent warnings
@@ -48,8 +50,9 @@ function TargetHealth47:OnInitialize()
   ZxSimpleUI:registerModuleOptions(_MODULE_NAME, optionsTable, _DECORATIVE_NAME)
 end
 
-function TargetHealth47:OnEnable()
-end
+function TargetHealth47:OnEnable() self:handleOnEnable() end
+
+function TargetHealth47:OnDisable() self:handleOnDisable() end
 
 function TargetHealth47:__init__()
   self._timeSinceLastUpdate = 0
@@ -69,12 +72,28 @@ function TargetHealth47:createBar()
   self:_setOnShowOnHideHandlers()
   self:_enableAllScriptHandlers()
 
+  RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
+
   self.mainFrame:Hide()
   return self.mainFrame
 end
 
 function TargetHealth47:refreshConfig()
   if self:IsEnabled() and self.mainFrame:IsVisible() then self.bars:refreshConfig() end
+end
+
+---Don't have to do anything here. Maybe in the future I'll add an option to disable this bar.
+function TargetHealth47:handleEnableToggle() end
+
+function TargetHealth47:handleOnEnable()
+  if self.mainFrame ~= nil then
+    self:refreshConfig()
+    self.mainFrame:Show()
+  end
+end
+
+function TargetHealth47:handleOnDisable()
+  if self.mainFrame ~= nil then self.mainFrame:Hide() end
 end
 
 -- ####################################
@@ -95,9 +114,8 @@ function TargetHealth47:_setOnShowOnHideHandlers()
     end
   end)
 
-  self.mainFrame:SetScript("OnHide", function(argsTable, ...)
-    self:_disableAllScriptHandlers()
-  end)
+  self.mainFrame:SetScript("OnHide",
+    function(argsTable, ...) self:_disableAllScriptHandlers() end)
 end
 
 function TargetHealth47:_enableAllScriptHandlers()

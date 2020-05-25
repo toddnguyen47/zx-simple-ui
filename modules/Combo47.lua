@@ -1,5 +1,6 @@
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local Utils47 = ZxSimpleUI.Utils47
+local TargetPower47 = ZxSimpleUI:GetModule("TargetPower47")
 
 local _MODULE_NAME = "Combo47"
 local _DECORATIVE_NAME = "Combo Points Display"
@@ -7,12 +8,9 @@ local Combo47 = ZxSimpleUI:NewModule(_MODULE_NAME)
 local media = LibStub("LibSharedMedia-3.0")
 
 --- upvalues to prevent warnings
-local LibStub = LibStub
-local UIParent, CreateFrame = UIParent, CreateFrame
+local CreateFrame = CreateFrame
 local MAX_COMBO_POINTS, GetComboPoints = MAX_COMBO_POINTS, GetComboPoints
 local UnitName, UnitClass = UnitName, UnitClass
-local UnitHealth, UnitPowerType = UnitHealth, UnitPowerType
-local ToggleDropDownMenu, TargetFrameDropDown = ToggleDropDownMenu, TargetFrameDropDown
 local unpack = unpack
 
 Combo47.MODULE_NAME = _MODULE_NAME
@@ -48,17 +46,9 @@ function Combo47:OnInitialize()
   ZxSimpleUI:registerModuleOptions(_MODULE_NAME, self:_getOptionTable(), _DECORATIVE_NAME)
 end
 
-function Combo47:OnEnable()
-  self:_registerAllEvents()
-  self:refreshConfig()
-  self:_handleComboPoints()
-end
+function Combo47:OnEnable() self:handleOnEnable() end
 
-function Combo47:OnDisable()
-  self:_unregisterAllEvents()
-  self.mainFrame:Hide()
-  self:_hideAllComboPoints()
-end
+function Combo47:OnDisable() self:handleOnDisable() end
 
 function Combo47:__init__()
   self.options = {}
@@ -91,9 +81,30 @@ function Combo47:createBar(frameToAttachTo)
 end
 
 function Combo47:refreshConfig()
+  self:handleEnableToggle()
   if self:IsEnabled() then
     self:_refreshBarFrame()
     self:_refreshComboPointsDisplay()
+  end
+end
+
+function Combo47:handleEnableToggle()
+  ZxSimpleUI:setModuleEnabledState(_MODULE_NAME, self._curDbProfile.enabledToggle)
+end
+
+function Combo47:handleOnEnable()
+  if self.mainFrame ~= nil then
+    self:_registerAllEvents()
+    self:refreshConfig()
+    self:_handleComboPoints()
+  end
+end
+
+function Combo47:handleOnDisable()
+  if self.mainFrame ~= nil then
+    self:_unregisterAllEvents()
+    self.mainFrame:Hide()
+    self:_hideAllComboPoints()
   end
 end
 
@@ -151,6 +162,7 @@ end
 function Combo47:_handleComboPoints()
   local comboPoints = GetComboPoints("player", self.unit)
   if not self._allComboPointsHidden and comboPoints == 0 then
+    self.mainFrame:Hide()
     self:_hideAllComboPoints()
     self._allComboPointsHidden = true
   else
@@ -219,16 +231,6 @@ function Combo47:_getOptionColor(info) return unpack(self:_getOption(info)) end
 ---@param info table
 function Combo47:_setOptionColor(info, r, g, b, a) self:_setOption(info, {r, g, b, a}) end
 
-function Combo47:_getEnabled(info)
-  local curModuleName = info[1]
-  return ZxSimpleUI:getModuleEnabledState(curModuleName)
-end
-
-function Combo47:_setEnabled(info, value)
-  local curModuleName = info[1]
-  ZxSimpleUI:setModuleEnabledState(curModuleName, value)
-end
-
 function Combo47:_getShownOption(info) return self:_getOption(info) end
 
 ---@param info table
@@ -273,9 +275,7 @@ function Combo47:_getOptionTable()
           name = "Enable",
           desc = "Enable / Disable this module",
           order = ZxSimpleUI.HEADER_ORDER_INDEX + 1,
-          disabled = function(info) return self._curDbProfile.showbar end,
-          get = function(info) return self:_getEnabled(info) end,
-          set = function(info, value) self:_setEnabled(info, value) end
+          disabled = function(info) return self._curDbProfile.showbar end
         },
         showbar = {
           type = "toggle",

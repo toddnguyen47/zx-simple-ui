@@ -4,10 +4,12 @@
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local CoreBarTemplate = ZxSimpleUI.CoreBarTemplate
 local Utils47 = ZxSimpleUI.Utils47
+local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
 
 local _MODULE_NAME = "TargetPower47"
 local _DECORATIVE_NAME = "Target Power"
 local TargetPower47 = ZxSimpleUI:NewModule(_MODULE_NAME)
+
 local media = LibStub("LibSharedMedia-3.0")
 
 --- upvalues to prevent warnings
@@ -66,8 +68,9 @@ function TargetPower47:OnInitialize()
   ZxSimpleUI:registerModuleOptions(_MODULE_NAME, optionsTable, _DECORATIVE_NAME)
 end
 
-function TargetPower47:OnEnable()
-end
+function TargetPower47:OnEnable() self:handleOnEnable() end
+
+function TargetPower47:OnDisable() self:handleOnDisable() end
 
 function TargetPower47:__init__()
   self._timeSinceLastUpdate = 0
@@ -87,6 +90,8 @@ function TargetPower47:createBar()
   self:_setOnShowOnHideHandlers()
   self:_enableAllScriptHandlers()
 
+  RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
+
   self.mainFrame:Hide()
   return self.mainFrame
 end
@@ -97,6 +102,18 @@ function TargetPower47:refreshConfig()
     self:_setColor()
   end
 end
+
+---Don't have to do anything here. Maybe in the future I'll add an option to disable this bar.
+function TargetPower47:handleEnableToggle() end
+
+function TargetPower47:handleOnEnable()
+  if self.mainFrame ~= nil then
+    self:refreshConfig()
+    self.mainFrame:Show()
+  end
+end
+
+function TargetPower47:handleOnDisable() if self.mainFrame ~= nil then self.mainFrame:Hide() end end
 
 -- ####################################
 -- # PRIVATE FUNCTIONS
@@ -121,9 +138,8 @@ function TargetPower47:_setOnShowOnHideHandlers()
     end
   end)
 
-  self.mainFrame:SetScript("OnHide", function(argsTable, ...)
-    self:_disableAllScriptHandlers()
-  end)
+  self.mainFrame:SetScript("OnHide",
+    function(argsTable, ...) self:_disableAllScriptHandlers() end)
 end
 
 function TargetPower47:_enableAllScriptHandlers()

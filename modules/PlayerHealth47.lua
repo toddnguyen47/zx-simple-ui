@@ -1,15 +1,16 @@
-local media = LibStub("LibSharedMedia-3.0")
-local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
-local CoreBarTemplate = ZxSimpleUI.CoreBarTemplate
-
-local _MODULE_NAME = "PlayerHealth47"
-local _DECORATIVE_NAME = "Player Health"
-local PlayerHealth47 = ZxSimpleUI:NewModule(_MODULE_NAME)
-
 --- upvalues to prevent warnings
 local LibStub = LibStub
 local UnitHealth, UnitHealthMax = UnitHealth, UnitHealthMax
 local UnitName = UnitName
+
+local media = LibStub("LibSharedMedia-3.0")
+local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
+local CoreBarTemplate = ZxSimpleUI.CoreBarTemplate
+local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
+
+local _MODULE_NAME = "PlayerHealth47"
+local _DECORATIVE_NAME = "Player Health"
+local PlayerHealth47 = ZxSimpleUI:NewModule(_MODULE_NAME)
 
 PlayerHealth47.MODULE_NAME = _MODULE_NAME
 PlayerHealth47.bars = nil
@@ -43,8 +44,9 @@ function PlayerHealth47:OnInitialize()
     _DECORATIVE_NAME)
 end
 
-function PlayerHealth47:OnEnable()
-end
+function PlayerHealth47:OnEnable() self:handleOnEnable() end
+
+function PlayerHealth47:OnDisable() self:handleOnDisable() end
 
 function PlayerHealth47:__init__()
   self._timeSinceLastUpdate = 0
@@ -52,9 +54,7 @@ function PlayerHealth47:__init__()
   self.mainFrame = nil
 end
 
-function PlayerHealth47:refreshConfig()
-  if self:IsEnabled() then self.bars:refreshConfig() end
-end
+function PlayerHealth47:refreshConfig() if self:IsEnabled() then self.bars:refreshConfig() end end
 
 ---@return table
 function PlayerHealth47:createBar()
@@ -67,8 +67,24 @@ function PlayerHealth47:createBar()
   self:_setOnShowOnHideHandlers()
   self:_enableAllScriptHandlers()
 
+  RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
+
   self.mainFrame:Show()
   return self.mainFrame
+end
+
+---Don't have to do anything here. Maybe in the future I'll add an option to disable this bar.
+function PlayerHealth47:handleEnableToggle() end
+
+function PlayerHealth47:handleOnEnable()
+  if self.mainFrame ~= nil then
+    self:refreshConfig()
+    self.mainFrame:Show()
+  end
+end
+
+function PlayerHealth47:handleOnDisable()
+  if self.mainFrame ~= nil then self.mainFrame:Hide() end
 end
 
 -- ####################################
@@ -97,9 +113,7 @@ function PlayerHealth47:_handleUnitHealthEvent(curUnitHealth)
   self.bars:setStatusBarValue(healthPercent)
 end
 
-function PlayerHealth47:_registerEvents()
-  self.mainFrame:RegisterEvent("UNIT_HEALTH")
-end
+function PlayerHealth47:_registerEvents() self.mainFrame:RegisterEvent("UNIT_HEALTH") end
 
 function PlayerHealth47:_setOnShowOnHideHandlers()
   self.mainFrame:SetScript("OnShow", function(argsTable, ...)
@@ -110,9 +124,8 @@ function PlayerHealth47:_setOnShowOnHideHandlers()
     end
   end)
 
-  self.mainFrame:SetScript("OnHide", function(argsTable, ...)
-    self:_disableAllScriptHandlers()
-  end)
+  self.mainFrame:SetScript("OnHide",
+    function(argsTable, ...) self:_disableAllScriptHandlers() end)
 end
 
 function PlayerHealth47:_enableAllScriptHandlers()
@@ -121,6 +134,4 @@ function PlayerHealth47:_enableAllScriptHandlers()
   end)
 end
 
-function PlayerHealth47:_disableAllScriptHandlers()
-  self.mainFrame:SetScript("OnUpdate", nil)
-end
+function PlayerHealth47:_disableAllScriptHandlers() self.mainFrame:SetScript("OnUpdate", nil) end

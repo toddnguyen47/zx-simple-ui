@@ -18,8 +18,10 @@ function CoreBarTemplate:new(curDbProfile)
   return newInstance
 end
 
+---@param curDbProfile table
 function CoreBarTemplate:__init__(curDbProfile)
-  -- Start order index at 10 so other modules can easily put options in front
+  assert(curDbProfile ~= nil)
+  -- Start order index at DEFAULT_ORDER_INDEX so other modules can easily put options in front
   self._orderIndex = ZxSimpleUI.DEFAULT_ORDER_INDEX
   self._curDbProfile = curDbProfile
   self.mainFrame = nil

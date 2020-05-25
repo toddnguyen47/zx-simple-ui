@@ -11,10 +11,13 @@ Utils47.lua
 CoreOptionsInterface.lua
 CoreBarTemplate.lua
 
+modules\RegisterWatchHandler47.lua
 modules\PlayerHealth47.lua
 modules\PlayerName47.lua
 modules\PlayerPower47.lua
+modules\Runes47.lua
 modules\Player47.lua
+
 modules\TargetHealth47.lua
 modules\TargetName47.lua
 modules\TargetPower47.lua

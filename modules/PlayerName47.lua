@@ -1,6 +1,7 @@
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local CoreBarTemplate = ZxSimpleUI.CoreBarTemplate
 local Utils47 = ZxSimpleUI.Utils47
+local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
 
 --- upvalues to prevent warnings
 local LibStub = LibStub
@@ -25,7 +26,8 @@ local _defaults = {
     fontcolor = {1.0, 1.0, 1.0},
     texture = "Blizzard",
     color = {0.0, 0.0, 0.0, 1.0},
-    border = "None"
+    border = "None",
+    enabledToggle = true
   }
 }
 
@@ -42,8 +44,9 @@ function PlayerName47:OnInitialize()
     _DECORATIVE_NAME)
 end
 
-function PlayerName47:OnEnable()
-end
+function PlayerName47:OnEnable() self:handleOnEnable() end
+
+function PlayerName47:OnDisable() self:handleOnDisable() end
 
 function PlayerName47:__init__()
   self._timeSinceLastUpdate = 0
@@ -58,38 +61,62 @@ function PlayerName47:createBar()
   self.bars:_setTextOnly(self:_getFormattedName())
 
   self:_setOnShowOnHideHandlers()
-  self.mainFrame:Show()
+  RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
   return self.mainFrame
 end
 
 function PlayerName47:refreshConfig()
+  self:handleEnableToggle()
   if self:IsEnabled() then
     self.bars:refreshConfig()
     self.mainFrame:Show()
-  else
-    self.mainFrame:Hide()
   end
 end
+
+function PlayerName47:handleEnableToggle()
+  ZxSimpleUI:setModuleEnabledState(_MODULE_NAME, self._curDbProfile.enabledToggle)
+end
+
+function PlayerName47:handleOnEnable()
+  if self.mainFrame ~= nil then
+    self:refreshConfig()
+    self.mainFrame:Show()
+  end
+end
+
+function PlayerName47:handleOnDisable() if self.mainFrame ~= nil then self.mainFrame:Hide() end end
 
 -- ####################################
 -- # PRIVATE FUNCTIONS
 -- ####################################
 
+---@param info table
+---Ref: https://www.wowace.com/projects/ace3/pages/ace-config-3-0-options-tables#title-4-1
+function PlayerName47:_getOption(info)
+  local keyLeafNode = info[#info]
+  return self._curDbProfile[keyLeafNode]
+end
+
+---@param info table
+---@param value any
+---Ref: https://www.wowace.com/projects/ace3/pages/ace-config-3-0-options-tables#title-4-1
+function PlayerName47:_setOption(info, value)
+  local keyLeafNode = info[#info]
+  self._curDbProfile[keyLeafNode] = value
+  self:refreshConfig()
+end
+
 ---@return table
 function PlayerName47:_getAppendedEnableOptionTable()
   local options = self.bars:getOptionTable(_DECORATIVE_NAME)
-  options.args["enableButton"] = {
+  -- Use parent's get/set functions
+  options.args["enabledToggle"] = {
     type = "toggle",
     name = "Enable",
     desc = "Enable / Disable Module `" .. _DECORATIVE_NAME .. "`",
-    get = function(info)
-      return ZxSimpleUI:getModuleEnabledState(_MODULE_NAME)
-    end,
-    set = function(info, val)
-      ZxSimpleUI:setModuleEnabledState(_MODULE_NAME, val)
-      self:refreshConfig()
-    end,
-    order = 1
+    order = 1,
+    get = function(info) return self:_getOption(info) end,
+    set = function(info, value) self:_setOption(info, value) end
   }
   return options
 end

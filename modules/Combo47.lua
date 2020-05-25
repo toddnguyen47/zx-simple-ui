@@ -229,6 +229,24 @@ function Combo47:_setEnabled(info, value)
   ZxSimpleUI:setModuleEnabledState(curModuleName, value)
 end
 
+function Combo47:_getShownOption(info) return self:_getOption(info) end
+
+---@param info table
+---@param value boolean
+function Combo47:_setShownOption(info, value)
+  self:_setOption(info, value)
+  if (value == true) then
+    self.mainFrame:Show()
+    for i, comboTexture in ipairs(self._comboPointsTable) do
+      self:_setComboPointsColor(i, comboTexture)
+      comboTexture:Show()
+    end
+  else
+    self:_hideAllComboPoints()
+    self.mainFrame:Hide()
+  end
+end
+
 function Combo47:_incrementOrderIndex()
   local i = self._orderIndex
   self._orderIndex = self._orderIndex + 1
@@ -255,7 +273,7 @@ function Combo47:_getOptionTable()
           name = "Enable",
           desc = "Enable / Disable this module",
           order = ZxSimpleUI.HEADER_ORDER_INDEX + 1,
-          disabled = false,
+          disabled = function(info) return self._curDbProfile.showbar end,
           get = function(info) return self:_getEnabled(info) end,
           set = function(info, value) self:_setEnabled(info, value) end
         },
@@ -263,7 +281,9 @@ function Combo47:_getOptionTable()
           type = "toggle",
           name = "Show Display",
           desc = "Show/Hide the Combo Points Display",
-          order = ZxSimpleUI.HEADER_ORDER_INDEX + 2
+          order = ZxSimpleUI.HEADER_ORDER_INDEX + 2,
+          get = function(info) return self:_getShownOption(info) end,
+          set = function(info, value) self:_setShownOption(info, value) end
         },
         texture = {
           name = "Bar Texture",

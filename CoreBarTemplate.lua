@@ -94,8 +94,9 @@ function CoreBarTemplate:getOptionTable(decorativeName)
     self.options = {
       type = "group",
       name = decorativeName,
-      get = function(infoTable)
-        return self:_getOption(infoTable)
+      --- "Parent" get/set
+      get = function(info)
+        return self:_getOption(info)
       end,
       set = function(infoTable, value)
         self:_setOption(infoTable, value)
@@ -113,12 +114,6 @@ function CoreBarTemplate:getOptionTable(decorativeName)
           min = 0,
           max = math.floor(ZxSimpleUI.SCREEN_WIDTH / 2),
           step = 2,
-          get = function(infoTable)
-            return self:_getOption(infoTable)
-          end,
-          set = function(infoTable, value)
-            self:_setOption(infoTable, value)
-          end,
           order = self:_incrementOrderIndex()
         },
         height = {
@@ -128,12 +123,6 @@ function CoreBarTemplate:getOptionTable(decorativeName)
           min = 0,
           max = math.floor(ZxSimpleUI.SCREEN_WIDTH / 2),
           step = 2,
-          get = function(infoTable)
-            return self:_getOption(infoTable)
-          end,
-          set = function(infoTable, value)
-            self:_setOption(infoTable, value)
-          end,
           order = self:_incrementOrderIndex()
         },
         positionx = {
@@ -143,12 +132,6 @@ function CoreBarTemplate:getOptionTable(decorativeName)
           min = 0,
           max = ZxSimpleUI.SCREEN_WIDTH,
           step = 1,
-          get = function(infoTable)
-            return self:_getOption(infoTable)
-          end,
-          set = function(infoTable, value)
-            self:_setOption(infoTable, value)
-          end,
           order = self:_incrementOrderIndex()
         },
         positionx_center = {
@@ -167,12 +150,6 @@ function CoreBarTemplate:getOptionTable(decorativeName)
           min = 0,
           max = ZxSimpleUI.SCREEN_HEIGHT,
           step = 1,
-          get = function(infoTable)
-            return self:_getOption(infoTable)
-          end,
-          set = function(infoTable, value)
-            self:_setOption(infoTable, value)
-          end,
           order = self:_incrementOrderIndex()
         },
         positiony_center = {
@@ -191,12 +168,6 @@ function CoreBarTemplate:getOptionTable(decorativeName)
           min = 10,
           max = 36,
           step = 1,
-          get = function(infoTable)
-            return self:_getOption(infoTable)
-          end,
-          set = function(infoTable, value)
-            self:_setOption(infoTable, value)
-          end,
           order = self:_incrementOrderIndex()
         },
         -- LSM30_ is LibSharedMedia's custom controls
@@ -212,11 +183,11 @@ function CoreBarTemplate:getOptionTable(decorativeName)
           name = "Bar Font Color",
           desc = "Bar Font Color",
           type = "color",
-          get = function(infoTable)
-            return self:_getOptionColor(infoTable)
+          get = function(info)
+            return self:_getOptionColor(info)
           end,
-          set = function(infoTable, r, g, b, a)
-            self:_setOptionColor(infoTable, r, g, b, a)
+          set = function(info, r, g, b, a)
+            self:_setOptionColor(info, r, g, b, a)
           end,
           hasAlpha = false,
           order = self:_incrementOrderIndex()
@@ -241,8 +212,8 @@ function CoreBarTemplate:getOptionTable(decorativeName)
           name = "Bar Color",
           desc = "Bar Color",
           type = "color",
-          get = function(infoTable)
-            return self:_getOptionColor(infoTable)
+          get = function(info)
+            return self:_getOptionColor(info)
           end,
           set = function(infoTable, r, g, b, a)
             self:_setOptionColor(infoTable, r, g, b, a)
@@ -294,14 +265,14 @@ function CoreBarTemplate:_setOption(info, value)
   self:refreshConfig()
 end
 
----@param infoTable table
-function CoreBarTemplate:_getOptionColor(infoTable)
-  return unpack(self:_getOption(infoTable))
+---@param info table
+function CoreBarTemplate:_getOptionColor(info)
+  return unpack(self:_getOption(info))
 end
 
----@param infoTable table
-function CoreBarTemplate:_setOptionColor(infoTable, r, g, b, a)
-  self:_setOption(infoTable, {r, g, b, a})
+---@param info table
+function CoreBarTemplate:_setOptionColor(info, r, g, b, a)
+  self:_setOption(info, {r, g, b, a})
 end
 
 function CoreBarTemplate:handlePositionXCenter()

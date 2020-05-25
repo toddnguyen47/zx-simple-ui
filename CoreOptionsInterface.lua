@@ -74,9 +74,9 @@ function _openOptionFrame(info, value, ...)
     _frame:SetCallback("OnClose", function(widget)
       AceGUI:Release(widget)
     end)
+    _frame:SetTitle(ZxSimpleUI.DECORATIVE_NAME)
   end
   AceConfigDialog:Open(ZxSimpleUI.ADDON_NAME, _frame)
-  _frame:SetTitle(ZxSimpleUI.DECORATIVE_NAME)
 end
 
 local option = {}

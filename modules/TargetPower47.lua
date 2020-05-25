@@ -14,9 +14,7 @@ local media = LibStub("LibSharedMedia-3.0")
 local LibStub = LibStub
 local UIParent, CreateFrame = UIParent, CreateFrame
 local UnitPower, UnitPowerMax = UnitPower, UnitPowerMax
-local UnitName = UnitName
-local UnitHealth, UnitPowerType = UnitHealth, UnitPowerType
-local ToggleDropDownMenu, TargetFrameDropDown = ToggleDropDownMenu, TargetFrameDropDown
+local UnitName, UnitPowerType = UnitName, UnitPowerType
 local unpack = unpack
 
 TargetPower47.MODULE_NAME = _MODULE_NAME
@@ -166,13 +164,10 @@ function TargetPower47:_handlePowerChanged()
 end
 
 function TargetPower47:_handleUnitPowerEvent(curUnitPower)
-  local currentHealth = UnitHealth(self.unit)
-  if currentHealth > 0 then
-    curUnitPower = curUnitPower or UnitPower(self.unit)
-    local maxUnitPower = UnitPowerMax(self.unit)
-    local powerPercent = ZxSimpleUI:calcPercentSafely(curUnitPower, maxUnitPower)
-    self.bars:setStatusBarValue(powerPercent)
-  end
+  curUnitPower = curUnitPower or UnitPower(self.unit)
+  local maxUnitPower = UnitPowerMax(self.unit)
+  local powerPercent = ZxSimpleUI:calcPercentSafely(curUnitPower, maxUnitPower)
+  self.bars:setStatusBarValue(powerPercent)
 end
 
 function TargetPower47:_onUpdateHandler(argsTable, elapsed)
@@ -197,5 +192,8 @@ function TargetPower47:_setColor()
   local upperType = string.upper(self._powerTypeString)
   local colorTable = _powerEventColorTable["UNIT_" .. upperType]
   colorTable = colorTable or _powerEventColorTable["UNIT_MANA"]
+
+  _defaults.profile.color = colorTable
+  self._curDbProfile.color = colorTable
   self.mainFrame.statusBar:SetStatusBarColor(unpack(colorTable))
 end

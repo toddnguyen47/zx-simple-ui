@@ -95,12 +95,8 @@ function CoreBarTemplate:getOptionTable(decorativeName)
       type = "group",
       name = decorativeName,
       --- "Parent" get/set
-      get = function(info)
-        return self:_getOption(info)
-      end,
-      set = function(infoTable, value)
-        self:_setOption(infoTable, value)
-      end,
+      get = function(info) return self:_getOption(info) end,
+      set = function(info, value) self:_setOption(info, value) end,
       args = {
         header = {
           type = "header",
@@ -138,9 +134,7 @@ function CoreBarTemplate:getOptionTable(decorativeName)
           name = "Center Bar X",
           desc = "Center Bar X Position",
           type = "execute",
-          func = function(...)
-            self:handlePositionXCenter()
-          end,
+          func = function(...) self:handlePositionXCenter() end,
           order = self:_incrementOrderIndex()
         },
         positiony = {
@@ -156,9 +150,7 @@ function CoreBarTemplate:getOptionTable(decorativeName)
           name = "Center Bar Y",
           desc = "Center Bar Y Position",
           type = "execute",
-          func = function(...)
-            self:handlePositionYCenter()
-          end,
+          func = function(...) self:handlePositionYCenter() end,
           order = self:_incrementOrderIndex()
         },
         fontsize = {
@@ -183,12 +175,8 @@ function CoreBarTemplate:getOptionTable(decorativeName)
           name = "Bar Font Color",
           desc = "Bar Font Color",
           type = "color",
-          get = function(info)
-            return self:_getOptionColor(info)
-          end,
-          set = function(info, r, g, b, a)
-            self:_setOptionColor(info, r, g, b, a)
-          end,
+          get = function(info) return self:_getOptionColor(info) end,
+          set = function(info, r, g, b, a) self:_setOptionColor(info, r, g, b, a) end,
           hasAlpha = false,
           order = self:_incrementOrderIndex()
         },
@@ -212,12 +200,8 @@ function CoreBarTemplate:getOptionTable(decorativeName)
           name = "Bar Color",
           desc = "Bar Color",
           type = "color",
-          get = function(info)
-            return self:_getOptionColor(info)
-          end,
-          set = function(infoTable, r, g, b, a)
-            self:_setOptionColor(infoTable, r, g, b, a)
-          end,
+          get = function(info) return self:_getOptionColor(info) end,
+          set = function(info, r, g, b, a) self:_setOptionColor(info, r, g, b, a) end,
           hasAlpha = true,
           order = self:_incrementOrderIndex()
         }
@@ -266,14 +250,10 @@ function CoreBarTemplate:_setOption(info, value)
 end
 
 ---@param info table
-function CoreBarTemplate:_getOptionColor(info)
-  return unpack(self:_getOption(info))
-end
+function CoreBarTemplate:_getOptionColor(info) return unpack(self:_getOption(info)) end
 
 ---@param info table
-function CoreBarTemplate:_setOptionColor(info, r, g, b, a)
-  self:_setOption(info, {r, g, b, a})
-end
+function CoreBarTemplate:_setOptionColor(info, r, g, b, a) self:_setOption(info, {r, g, b, a}) end
 
 function CoreBarTemplate:handlePositionXCenter()
   local width = self._curDbProfile.width
@@ -319,9 +299,7 @@ function CoreBarTemplate:_refreshStatusBar()
 end
 
 ---@param strInput string
-function CoreBarTemplate:_setTextOnly(strInput)
-  self.mainFrame.mainText:SetText(strInput)
-end
+function CoreBarTemplate:_setTextOnly(strInput) self.mainFrame.mainText:SetText(strInput) end
 
 function CoreBarTemplate:_setMouseClicks()
   self.mainFrame:RegisterForClicks("AnyUp")

@@ -16,9 +16,10 @@ local ToggleDropDownMenu, TargetFrameDropDown = ToggleDropDownMenu, TargetFrameD
 local unpack = unpack
 
 Combo47.MODULE_NAME = _MODULE_NAME
+Combo47.PLAYER_ENGLISH_CLASS = select(2, UnitClass("player"))
+Combo47.EVENT_TABLE = {"PLAYER_TARGET_CHANGED", "UNIT_COMBO_POINTS"}
 Combo47.bars = nil
 Combo47.unit = "target"
-Combo47.playerEnglishClass = select(2, UnitClass("player"))
 
 local _defaults = {
   profile = {
@@ -29,7 +30,7 @@ local _defaults = {
     maxComboColor = {1.0, 0.0, 0.0, 1.0},
     height = 8,
     showbar = false,
-    enabledToggle = Combo47.playerEnglishClass == "ROGUE" or Combo47.playerEnglishClass ==
+    enabledToggle = Combo47.PLAYER_ENGLISH_CLASS == "ROGUE" or Combo47.PLAYER_ENGLISH_CLASS ==
       "DRUID",
     horizGap = 15,
     yoffset = 0
@@ -48,6 +49,15 @@ function Combo47:OnInitialize()
 end
 
 function Combo47:OnEnable()
+  self:_registerAllEvents()
+  self:refreshConfig()
+  self:_handleComboPoints()
+end
+
+function Combo47:OnDisable()
+  self:_unregisterAllEvents()
+  self.mainFrame:Hide()
+  self:_hideAllComboPoints()
 end
 
 function Combo47:__init__()
@@ -65,37 +75,25 @@ end
 function Combo47:createBar(frameToAttachTo)
   assert(frameToAttachTo ~= nil)
   self._frameToAttachTo = frameToAttachTo
-  local horizGap = 15
-  local totalNumberOfGaps = horizGap * (MAX_COMBO_POINTS - 1)
-  local comboWidth = (self._frameToAttachTo:GetWidth() - totalNumberOfGaps) / MAX_COMBO_POINTS
 
   self.mainFrame = CreateFrame("Frame", nil, self._frameToAttachTo)
   self.mainFrame:SetFrameLevel(ZxSimpleUI.DEFAULT_FRAME_LEVEL + 2)
-  self.mainFrame:SetWidth(self._frameToAttachTo:GetWidth())
-  self.mainFrame:SetHeight(self._curDbProfile.height)
-  self.mainFrame:SetPoint("TOPLEFT", self._frameToAttachTo, "BOTTOMLEFT", 0,
-    self._curDbProfile.yoffset)
 
   self.mainFrame.bgTexture = self.mainFrame:CreateTexture(nil, "BACKGROUND")
   self.mainFrame.bgTexture:SetTexture(0, 0, 0, 0.5)
   self.mainFrame.bgTexture:SetAllPoints()
 
   self:_createIndividualComboPointsDisplay()
-  self:_registerEvents()
-  self:_setOnShowOnHideHandlers()
-  self:_enableAllScriptHandlers()
+  self:_setOnEventScript()
 
+  self.mainFrame:Hide()
   return self.mainFrame
 end
 
 function Combo47:refreshConfig()
-  self:_handleEnableOption()
-  self:_handleShownOption()
   if self:IsEnabled() then
     self:_refreshBarFrame()
-    self:_refreshStatusBar()
-    self:_handleComboPoints()
-    if self._curDbProfile.showbar then self:_showAllComboPoints() end
+    self:_refreshComboPointsDisplay()
   end
 end
 
@@ -103,65 +101,43 @@ end
 -- # PRIVATE FUNCTIONS
 -- ####################################
 
-function Combo47:_createIndividualComboPointsDisplay()
+function Combo47:_refreshBarFrame()
+  self.mainFrame:SetWidth(self._frameToAttachTo:GetWidth())
+  self.mainFrame:SetHeight(self._curDbProfile.height)
+  self.mainFrame:SetPoint("TOPLEFT", self._frameToAttachTo, "BOTTOMLEFT", 0,
+    self._curDbProfile.yoffset)
+end
+
+function Combo47:_refreshComboPointsDisplay()
   local totalNumberOfGaps = self._curDbProfile.horizGap * (MAX_COMBO_POINTS - 1)
   local comboWidth = (self._frameToAttachTo:GetWidth() - totalNumberOfGaps) / MAX_COMBO_POINTS
-
-  -- Create all MAX_COMBO_POINTS frames
-  -- Ref: https://wow.gamepedia.com/API_Region_SetPoint
-  for i = 1, MAX_COMBO_POINTS do
-    local parentFrame, relativePoint = nil, nil
-    local xoffset, yoffset = 0, 0
-    if i == 1 then
-      parentFrame = self.mainFrame
-      relativePoint = "BOTTOMLEFT"
-      yoffset = self._curDbProfile.yoffset
-    else
-      parentFrame = self._comboPointsTable[i - 1]
-      relativePoint = "TOPRIGHT"
-      xoffset = self._curDbProfile.horizGap
-    end
-    local comboTexture = self.mainFrame:CreateTexture(nil, "OVERLAY")
-    comboTexture:ClearAllPoints()
+  for i, comboTexture in ipairs(self._comboPointsTable) do
     comboTexture:SetWidth(comboWidth)
     comboTexture:SetHeight(self.mainFrame:GetHeight())
-    comboTexture:SetPoint("TOPLEFT", parentFrame, relativePoint, xoffset, yoffset)
-    comboTexture:SetTexture(media:Fetch("statusbar", self._curDbProfile.texture))
-    comboTexture:SetVertexColor(unpack(self._curDbProfile.lowComboColor))
-    comboTexture:Hide()
-    self._comboPointsTable[i] = comboTexture
+    comboTexture:SetTexture(media:Fetch("statusbar", self._curDbProfile.texture), "BORDER")
+    self:_setComboPointsColor(i, comboTexture)
+    if i == 1 then
+      comboTexture:SetPoint("TOPLEFT", self._frameToAttachTo, "BOTTOMLEFT", 0,
+        self._curDbProfile.yoffset)
+    else
+      comboTexture:SetPoint("TOPLEFT", self._comboPointsTable[i - 1], "TOPRIGHT",
+        self._curDbProfile.horizGap, 0)
+    end
   end
 end
 
-function Combo47:_registerEvents()
-  self.mainFrame:RegisterEvent("UNIT_COMBO_POINTS")
-  self.mainFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
+function Combo47:_registerAllEvents()
+  for _, event in pairs(self.EVENT_TABLE) do self.mainFrame:RegisterEvent(event) end
 end
 
-function Combo47:_setOnShowOnHideHandlers()
-  self.mainFrame:SetScript("OnShow", function(argsTable, ...)
-    if self:IsEnabled() then
-      self:_enableAllScriptHandlers()
-      self.mainFrame:Show()
-    else
-      self.mainFrame:Hide()
-    end
-  end)
-
-  self.mainFrame:SetScript("OnHide", function(argsTable, ...)
-    self:_disableAllScriptHandlers()
-  end)
+function Combo47:_unregisterAllEvents()
+  for _, event in pairs(self.EVENT_TABLE) do self.mainFrame:UnregisterEvent(event) end
 end
 
-function Combo47:_enableAllScriptHandlers()
+function Combo47:_setOnEventScript()
   self.mainFrame:SetScript("OnEvent", function(argsTable, event, unit)
     self:_onEventHandler(argsTable, event, unit)
   end)
-end
-
-function Combo47:_disableAllScriptHandlers()
-  -- Do not disable OnEvent in Combo Points since we are not using RegisterUnitWatch to display
-  -- self.mainFrame:SetScript("OnEvent", nil)
 end
 
 function Combo47:_onEventHandler(argsTable, event, unit)
@@ -172,63 +148,6 @@ function Combo47:_onEventHandler(argsTable, event, unit)
   end
 end
 
----@param infoTable table
-function Combo47:_getOption(infoTable)
-  -- Not sure how this gets the key... but it does
-  local key = infoTable[#infoTable]
-  return self._curDbProfile[key]
-end
-
----@param infoTable table
----@param value any
-function Combo47:_setOption(infoTable, value)
-  -- Not sure how this gets the key... but it does
-  local key = infoTable[#infoTable]
-  self._curDbProfile[key] = value
-  self:refreshConfig()
-end
-
----@param infoTable table
-function Combo47:_getOptionColor(infoTable)
-  return unpack(self:_getOption(infoTable))
-end
-
----@param infoTable table
-function Combo47:_setOptionColor(infoTable, r, g, b, a)
-  self:_setOption(infoTable, {r, g, b, a})
-end
-
-function Combo47:_incrementOrderIndex()
-  local i = self._orderIndex
-  self._orderIndex = self._orderIndex + 1
-  return i
-end
-
-function Combo47:_hideAllComboPoints()
-  for i = 1, MAX_COMBO_POINTS do self._comboPointsTable[i]:Hide() end
-end
-
-function Combo47:_showAllComboPoints()
-  for i = 1, MAX_COMBO_POINTS do
-    local currentTexture = self._comboPointsTable[i]
-    currentTexture:Show()
-    self:_setComboPointsColor(i, currentTexture)
-  end
-end
-
----@param comboPoints integer
----@param currentTexture table
-function Combo47:_setComboPointsColor(comboPoints, currentTexture)
-  if comboPoints >= MAX_COMBO_POINTS then
-    currentTexture:SetVertexColor(unpack(self._curDbProfile.maxComboColor))
-  elseif self._curDbProfile.mediumComboPoints > 0 and comboPoints >=
-    self._curDbProfile.mediumComboPoints then
-    currentTexture:SetVertexColor(unpack(self._curDbProfile.medComboColor))
-  else
-    currentTexture:SetVertexColor(unpack(self._curDbProfile.lowComboColor))
-  end
-end
-
 function Combo47:_handleComboPoints()
   local comboPoints = GetComboPoints("player", self.unit)
   if not self._allComboPointsHidden and comboPoints == 0 then
@@ -236,6 +155,7 @@ function Combo47:_handleComboPoints()
     self._allComboPointsHidden = true
   else
     for i = 1, comboPoints do
+      if i == 1 then self.mainFrame:Show() end
       local currentTexture = self._comboPointsTable[i]
       self:_setComboPointsColor(comboPoints, currentTexture)
       currentTexture:Show()
@@ -249,46 +169,70 @@ function Combo47:_handlePlayerTargetChanged()
   if targetName ~= nil and targetName ~= "" then self:_handleComboPoints() end
 end
 
-function Combo47:_refreshBarFrame()
-  self.mainFrame:SetHeight(self._curDbProfile.height)
-  self.mainFrame:SetPoint("TOPLEFT", self._frameToAttachTo, "BOTTOMLEFT", 0,
-    self._curDbProfile.yoffset)
-  for _, texture in pairs(self._comboPointsTable) do
-    texture:SetHeight(self.mainFrame:GetHeight())
-  end
+function Combo47:_hideAllComboPoints()
+  for i = 1, MAX_COMBO_POINTS do self._comboPointsTable[i]:Hide() end
 end
 
-function Combo47:_refreshStatusBar()
-  local totalNumberOfGaps = self._curDbProfile.horizGap * (MAX_COMBO_POINTS - 1)
-  local comboWidth = (self._frameToAttachTo:GetWidth() - totalNumberOfGaps) / MAX_COMBO_POINTS
-
-  for i, texture in ipairs(self._comboPointsTable) do
-    texture:SetTexture(media:Fetch("statusbar", self._curDbProfile.texture), "BORDER")
-    texture:SetWidth(comboWidth)
-    if i == 1 then
-      texture:SetPoint("TOPLEFT", self._frameToAttachTo, "BOTTOMLEFT", 0,
-        self._curDbProfile.yoffset)
-    else
-      texture:SetPoint("TOPLEFT", self._comboPointsTable[i - 1], "TOPRIGHT",
-        self._curDbProfile.horizGap, 0)
-    end
-  end
-end
-
-function Combo47:_handleEnableOption()
-  self.options.enabledToggle = self._curDbProfile.enabledToggle
-  ZxSimpleUI:setModuleEnabledState(_MODULE_NAME, self._curDbProfile.enabledToggle)
-end
-
-function Combo47:_handleShownOption()
-  self.options.showbar = self._curDbProfile.showbar
-  if self._curDbProfile.showbar then
-    self:_showAllComboPoints()
-    self.options.args.enabledToggle.disabled = true
+---@param comboPoints integer
+---@param comboTexture table
+function Combo47:_setComboPointsColor(comboPoints, comboTexture)
+  if comboPoints >= MAX_COMBO_POINTS then
+    comboTexture:SetVertexColor(unpack(self._curDbProfile.maxComboColor))
+  elseif self._curDbProfile.mediumComboPoints > 0 and comboPoints >=
+    self._curDbProfile.mediumComboPoints then
+    comboTexture:SetVertexColor(unpack(self._curDbProfile.medComboColor))
   else
-    self:_hideAllComboPoints()
-    self.options.args.enabledToggle.disabled = false
+    comboTexture:SetVertexColor(unpack(self._curDbProfile.lowComboColor))
   end
+end
+
+function Combo47:_createIndividualComboPointsDisplay()
+  -- Create all MAX_COMBO_POINTS frames
+  -- Ref: https://wow.gamepedia.com/API_Region_SetPoint
+  for i = 1, MAX_COMBO_POINTS do
+    local comboTexture = self.mainFrame:CreateTexture(nil, "OVERLAY")
+    comboTexture:ClearAllPoints()
+    comboTexture:Hide()
+    self._comboPointsTable[i] = comboTexture
+  end
+end
+
+---@param info table
+---Ref: https://www.wowace.com/projects/ace3/pages/ace-config-3-0-options-tables#title-4-1
+function Combo47:_getOption(info)
+  local keyLeafNode = info[#info]
+  return self._curDbProfile[keyLeafNode]
+end
+
+---@param info table
+---@param value any
+---Ref: https://www.wowace.com/projects/ace3/pages/ace-config-3-0-options-tables#title-4-1
+function Combo47:_setOption(info, value)
+  local keyLeafNode = info[#info]
+  self._curDbProfile[keyLeafNode] = value
+  self:refreshConfig()
+end
+
+---@param info table
+function Combo47:_getOptionColor(info) return unpack(self:_getOption(info)) end
+
+---@param info table
+function Combo47:_setOptionColor(info, r, g, b, a) self:_setOption(info, {r, g, b, a}) end
+
+function Combo47:_getEnabled(info)
+  local curModuleName = info[1]
+  return ZxSimpleUI:getModuleEnabledState(curModuleName)
+end
+
+function Combo47:_setEnabled(info, value)
+  local curModuleName = info[1]
+  ZxSimpleUI:setModuleEnabledState(curModuleName, value)
+end
+
+function Combo47:_incrementOrderIndex()
+  local i = self._orderIndex
+  self._orderIndex = self._orderIndex + 1
+  return i
 end
 
 ---@return table
@@ -297,12 +241,9 @@ function Combo47:_getOptionTable()
     self.options = {
       type = "group",
       name = _DECORATIVE_NAME,
-      get = function(infoTable)
-        return self:_getOption(infoTable)
-      end,
-      set = function(infoTable, value)
-        self:_setOption(infoTable, value)
-      end,
+      --- "Parent" get/set
+      get = function(info) return self:_getOption(info) end,
+      set = function(info, value) self:_setOption(info, value) end,
       args = {
         header = {
           type = "header",
@@ -315,24 +256,14 @@ function Combo47:_getOptionTable()
           desc = "Enable / Disable this module",
           order = ZxSimpleUI.HEADER_ORDER_INDEX + 1,
           disabled = false,
-          get = function(infoTable, ...)
-            return self:_getOption(infoTable)
-          end,
-          set = function(infoTable, isSelected, ...)
-            self:_setOption(infoTable, isSelected)
-          end
+          get = function(info) return self:_getEnabled(info) end,
+          set = function(info, value) self:_setEnabled(info, value) end
         },
         showbar = {
           type = "toggle",
           name = "Show Display",
           desc = "Show/Hide the Combo Points Display",
-          order = ZxSimpleUI.HEADER_ORDER_INDEX + 2,
-          get = function(infoTable, ...)
-            return self:_getOption(infoTable)
-          end,
-          set = function(infoTable, isSelected, ...)
-            self:_setOption(infoTable, isSelected)
-          end
+          order = ZxSimpleUI.HEADER_ORDER_INDEX + 2
         },
         texture = {
           name = "Bar Texture",
@@ -349,24 +280,14 @@ function Combo47:_getOptionTable()
           min = 0,
           max = MAX_COMBO_POINTS - 1,
           step = 1,
-          get = function(infoTable)
-            return self:_getOption(infoTable)
-          end,
-          set = function(infoTable, value)
-            self:_setOption(infoTable, value)
-          end,
           order = self:_incrementOrderIndex()
         },
         lowComboColor = {
           name = "Low Combo Color",
           desc = "Color for low (below medium setpoint) combo points",
           type = "color",
-          get = function(infoTable)
-            return self:_getOptionColor(infoTable)
-          end,
-          set = function(infoTable, r, g, b, a)
-            self:_setOptionColor(infoTable, r, g, b, a)
-          end,
+          get = function(info) return self:_getOptionColor(info) end,
+          set = function(info, r, g, b, a) self:_setOptionColor(info, r, g, b, a) end,
           hasAlpha = false,
           order = self:_incrementOrderIndex()
         },
@@ -375,12 +296,8 @@ function Combo47:_getOptionTable()
           desc = "Color for medium combo points (greater than or equal to " ..
             "Medium Combo Points, but less than MAX)",
           type = "color",
-          get = function(infoTable)
-            return self:_getOptionColor(infoTable)
-          end,
-          set = function(infoTable, r, g, b, a)
-            self:_setOptionColor(infoTable, r, g, b, a)
-          end,
+          get = function(info) return self:_getOptionColor(info) end,
+          set = function(info, r, g, b, a) self:_setOptionColor(info, r, g, b, a) end,
           hasAlpha = false,
           order = self:_incrementOrderIndex()
         },
@@ -388,12 +305,8 @@ function Combo47:_getOptionTable()
           name = "Max Combo Color",
           desc = "Color for MAX combo points",
           type = "color",
-          get = function(infoTable)
-            return self:_getOptionColor(infoTable)
-          end,
-          set = function(infoTable, r, g, b, a)
-            self:_setOptionColor(infoTable, r, g, b, a)
-          end,
+          get = function(info) return self:_getOptionColor(info) end,
+          set = function(info, r, g, b, a) self:_setOptionColor(info, r, g, b, a) end,
           hasAlpha = false,
           order = self:_incrementOrderIndex()
         },
@@ -404,12 +317,6 @@ function Combo47:_getOptionTable()
           min = 2,
           max = 20,
           step = 1,
-          get = function(infoTable)
-            return self:_getOption(infoTable)
-          end,
-          set = function(infoTable, value)
-            self:_setOption(infoTable, value)
-          end,
           order = self:_incrementOrderIndex()
         },
         horizGap = {
@@ -419,12 +326,6 @@ function Combo47:_getOptionTable()
           min = 0,
           max = 30,
           step = 1,
-          get = function(infoTable)
-            return self:_getOption(infoTable)
-          end,
-          set = function(infoTable, value)
-            self:_setOption(infoTable, value)
-          end,
           order = self:_incrementOrderIndex()
         },
         yoffset = {
@@ -434,12 +335,6 @@ function Combo47:_getOptionTable()
           min = -30,
           max = 30,
           step = 1,
-          get = function(infoTable)
-            return self:_getOption(infoTable)
-          end,
-          set = function(infoTable, value)
-            self:_setOption(infoTable, value)
-          end,
           order = self:_incrementOrderIndex()
         }
       }

@@ -28,7 +28,8 @@ local _defaults = {
     height = 35,
     yoffset = 0,
     font = "Friz Quadrata TT",
-    fontsize = 12
+    fontsize = 12,
+    fontcolor = {1.0, 1.0, 1.0}
   }
 }
 
@@ -63,10 +64,6 @@ function Totems47:createBar(frameToAttachTo)
   self.mainFrame = CreateFrame("Frame", nil, self._frameToAttachTo)
   self.mainFrame:SetFrameLevel(ZxSimpleUI.DEFAULT_FRAME_LEVEL + 2)
 
-  self.mainFrame.bgTexture = self.mainFrame:CreateTexture(nil, "BACKGROUND")
-  self.mainFrame.bgTexture:SetTexture(0, 0, 0, 0.5)
-  self.mainFrame.bgTexture:SetAllPoints()
-
   self:_createTotemFrames()
   self.mainFrame:Show()
   return self.mainFrame
@@ -89,6 +86,7 @@ function Totems47:handleOnEnable()
     self:_registerAllEvents()
     self:_enableAllScriptHandlers()
     self:refreshConfig()
+    self:_handlePlayerTotemUpdate()
     self.mainFrame:Show()
   end
 end
@@ -125,6 +123,7 @@ function Totems47:_refreshTotemBars()
     totemFrame:SetHeight(mainFrameHeight)
     totemFrame.durationText:SetFont(media:Fetch("font", self._curDbProfile.font),
       self._curDbProfile.fontsize, "OUTLINE")
+    totemFrame.durationText:SetTextColor(unpack(self._curDbProfile.fontcolor))
     if id == 1 then
       totemFrame:SetPoint("TOPLEFT", self._frameToAttachTo, "BOTTOMLEFT", 0,
         self._curDbProfile.yoffset)
@@ -138,6 +137,7 @@ end
 function Totems47:_createTotemFrames()
   for i = 1, MAX_TOTEMS do
     local totemFrame = CreateFrame("Frame", nil, self.mainFrame)
+    totemFrame.lastUpdatedTime = 0
     totemFrame.parent = self.mainFrame
     totemFrame:SetFrameLevel(self.mainFrame:GetFrameLevel() + 1)
 
@@ -145,11 +145,9 @@ function Totems47:_createTotemFrames()
     totemFrame.texture:SetAllPoints()
 
     totemFrame.durationText = totemFrame:CreateFontString(nil, "BORDER")
-
     totemFrame.durationText:SetPoint("TOP", totemFrame, "BOTTOM", 0, -2)
     totemFrame.durationText:SetFont(media:Fetch("font", self._curDbProfile.font),
       self._curDbProfile.fontsize, "OUTLINE")
-    totemFrame.durationText:SetText("H" .. tostring(i))
 
     totemFrame:Hide()
     self._totemBarList[i] = totemFrame
@@ -186,13 +184,55 @@ function Totems47:_handlePlayerTotemUpdate(curFrame, totemSlot)
     if totemName ~= nil and totemName ~= "" then
       ---Ref: https://wow.gamepedia.com/API_Texture_SetTexture
       totemFrame.texture:SetTexture(icon)
+      local timeLeft = self:_getTimeLeft(startTime, duration)
+      local formatString = "%.0fs"
+      if (timeLeft > 60) then
+        timeLeft = math.ceil(timeLeft / 60)
+        formatString = "%dm"
+      end
+
+      totemFrame.durationText:SetText(string.format(formatString, timeLeft))
       totemFrame:Show()
-      -- probably need to set an OnUpdate on this texture
+      totemFrame:SetScript("OnUpdate", function(curFrame, elapsedTime)
+        curFrame.lastUpdatedTime = curFrame.lastUpdatedTime + elapsedTime
+        -- Only update once a second until the last 2 seconds
+        timeLeft = self:_getTimeLeft(startTime, duration)
+        if (timeLeft > 2 and curFrame.lastUpdatedTime < 1.0) then return end
+
+        curFrame.lastUpdatedTime = 0
+        if timeLeft > 60 then
+          timeLeft = math.ceil(timeLeft / 60)
+          formatString = "%dm"
+        elseif timeLeft > 1.0 then
+          formatString = "%.0fs"
+        else
+          formatString = "%.1fs"
+        end
+        totemFrame.durationText:SetText(string.format(formatString, timeLeft))
+
+        if timeLeft < 2 then curFrame.texture:SetAlpha(0.4) end
+
+        if timeLeft <= 0 then
+          curFrame.texture:SetTexture(nil)
+          curFrame.durationText:SetText("")
+          curFrame:SetScript("OnUpdate", nil)
+          curFrame:Hide()
+        end
+      end)
     else
       totemFrame.texture:SetTexture(nil)
+      totemFrame.durationText:SetText("")
+      totemFrame:SetScript("OnUpdate", nil)
       totemFrame:Hide()
     end
   end
+end
+
+function Totems47:_getTimeLeft(startTime, duration)
+  local currentTime = GetTime()
+  local endTime = startTime + duration
+  local timeLeft = endTime - currentTime
+  return timeLeft
 end
 
 -- ####################################
@@ -297,6 +337,15 @@ function Totems47:_getOptionTable()
           min = 10,
           max = 36,
           step = 1,
+          order = self:_incrementOrderIndex()
+        },
+        fontcolor = {
+          name = "Totem Duration Color",
+          desc = "Totem Duration Color",
+          type = "color",
+          get = function(info) return self:_getOptionColor(info) end,
+          set = function(info, r, g, b, a) self:_setOptionColor(info, r, g, b, a) end,
+          hasAlpha = false,
           order = self:_incrementOrderIndex()
         }
       }

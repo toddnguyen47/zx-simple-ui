@@ -68,12 +68,17 @@ end
 ---@param list table
 ---@param key string
 ---@return table
-function Utils47:setContains(list, key)
-  return list[key] ~= nil
-end
+function Utils47:setContains(list, key) return list[key] ~= nil end
 
 ---@param unitClassification string
 ---@return boolean
 function Utils47:isNormalEnemy(unitClassification)
   return self.UnitClassificationElitesTable[unitClassification] == nil
+end
+
+---@param input number
+---@return integer
+function Utils47:round(input)
+  local num = input + 0.5
+  return math.floor(num)
 end

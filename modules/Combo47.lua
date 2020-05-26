@@ -293,6 +293,34 @@ function Combo47:_getOptionTable()
           values = media:HashTable("statusbar"),
           order = self:_incrementOrderIndex()
         },
+        height = {
+          name = "Combo Height",
+          desc = "Combo display height",
+          type = "range",
+          min = 2,
+          max = 20,
+          step = 1,
+          order = self:_incrementOrderIndex()
+        },
+        horizGap = {
+          name = "Horizontal Gap",
+          desc = "Horizontal Gap between each combo point bar",
+          type = "range",
+          min = 0,
+          max = 30,
+          step = 1,
+          order = self:_incrementOrderIndex()
+        },
+        yoffset = {
+          name = "Y Offset",
+          desc = "Y Offset",
+          type = "range",
+          min = -30,
+          max = 30,
+          step = 1,
+          order = self:_incrementOrderIndex()
+        },
+        colorHeader = {name = "Colors", type = "header", order = self:_incrementOrderIndex()},
         mediumComboPoints = {
           name = "Medium Combo Points",
           desc = "For combo points > 0 and < " .. MAX_COMBO_POINTS .. ". Set to 0 to disable.",
@@ -328,33 +356,6 @@ function Combo47:_getOptionTable()
           get = function(info) return self:_getOptionColor(info) end,
           set = function(info, r, g, b, a) self:_setOptionColor(info, r, g, b, a) end,
           hasAlpha = false,
-          order = self:_incrementOrderIndex()
-        },
-        height = {
-          name = "Combo Height",
-          desc = "Combo display height",
-          type = "range",
-          min = 2,
-          max = 20,
-          step = 1,
-          order = self:_incrementOrderIndex()
-        },
-        horizGap = {
-          name = "Horizontal Gap",
-          desc = "Horizontal Gap between each combo point bar",
-          type = "range",
-          min = 0,
-          max = 30,
-          step = 1,
-          order = self:_incrementOrderIndex()
-        },
-        yoffset = {
-          name = "Y Offset",
-          desc = "Y Offset",
-          type = "range",
-          min = -30,
-          max = 30,
-          step = 1,
           order = self:_incrementOrderIndex()
         }
       }

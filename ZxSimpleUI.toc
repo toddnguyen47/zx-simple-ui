@@ -16,6 +16,7 @@ modules\PlayerHealth47.lua
 modules\PlayerName47.lua
 modules\PlayerPower47.lua
 modules\Runes47.lua
+modules\Totems47.lua
 modules\Player47.lua
 
 modules\TargetHealth47.lua

@@ -3,6 +3,7 @@ local PlayerHealth47 = ZxSimpleUI:GetModule("PlayerHealth47")
 local PlayerName47 = ZxSimpleUI:GetModule("PlayerName47")
 local PlayerPower47 = ZxSimpleUI:GetModule("PlayerPower47")
 local Runes47 = ZxSimpleUI:GetModule("Runes47")
+local Totems47 = ZxSimpleUI:GetModule("Totems47")
 
 local _MODULE_NAME = "Player47"
 local _DECORATIVE_NAME = "Player Factory"
@@ -40,6 +41,10 @@ end
 function Player47:_createAdditionalBars()
   self._barList[Runes47.MODULE_NAME] = Runes47
   local parentFrame = self._barList[PlayerPower47.MODULE_NAME].mainFrame
+  self._barList[Runes47.MODULE_NAME]:createBar(parentFrame)
+
+  self._barList[Runes47.MODULE_NAME] = Totems47
+  parentFrame = self._barList[PlayerPower47.MODULE_NAME].mainFrame
   self._barList[Runes47.MODULE_NAME]:createBar(parentFrame)
 end
 

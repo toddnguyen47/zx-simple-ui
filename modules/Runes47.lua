@@ -1,6 +1,6 @@
 --- Upvalues
 local LibStub = LibStub
-local GetRuneType = GetRuneType
+local GetRuneType, GetRuneCooldown, GetTime = GetRuneType, GetRuneCooldown, GetTime
 
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local Utils47 = ZxSimpleUI.Utils47
@@ -34,7 +34,8 @@ local _defaults = {
     bloodColor = {1.0, 0.0, 0.4, 1.0},
     unholyChromaticColor = {0.0, 1.0, 0.4, 1.0},
     frostColor = {0.0, 0.4, 1.0, 1.0},
-    deathColor = {0.7, 0.5, 1.0, 1.0}
+    deathColor = {0.7, 0.5, 1.0, 1.0},
+    runeCooldownAlpha = 0.3
   }
 }
 
@@ -75,7 +76,6 @@ function Runes47:createBar(frameToAttachTo)
   self.mainFrame.bgTexture:SetAllPoints()
 
   self:_createRuneFrames()
-
   self.mainFrame:Show()
   return self.mainFrame
 end
@@ -96,6 +96,7 @@ end
 function Runes47:handleOnEnable()
   if self.mainFrame ~= nil then
     self:_registerAllEvents()
+    self:_enableAllScriptHandlers()
     self:refreshConfig()
     self.mainFrame:Show()
   end
@@ -104,6 +105,7 @@ end
 function Runes47:handleOnDisable()
   if self.mainFrame ~= nil then
     self:_unregisterAllEvents()
+    self:_disableAllScriptHandlers()
     self.mainFrame:Hide()
   end
 end
@@ -133,21 +135,41 @@ function Runes47:_refreshRuneFrames()
   local runeWidth = (self._frameToAttachTo:GetWidth() - totalNumberOfGaps) /
                       self.MAX_RUNE_NUMBER
 
-  -- This `id` has already been mapped in _createRuneFrames()
-  for id, runeStatusBar in pairs(self._runeBarList) do
+  -- Important! Do a regular for loop so we can use RUNE_MAP
+  for id = 1, self.MAX_RUNE_NUMBER do
+    local runeStatusBar = self._runeBarList[RUNE_MAP[id]]
     runeStatusBar:SetWidth(runeWidth)
     runeStatusBar:SetHeight(self._curDbProfile.height)
     runeStatusBar:SetStatusBarTexture(media:Fetch("statusbar", self._curDbProfile.texture),
       "BORDER")
+    runeStatusBar:GetStatusBarTexture():SetHorizTile(false)
     self:_setRuneColor(runeStatusBar)
+
     if id == 1 then
       runeStatusBar:SetPoint("TOPLEFT", self._frameToAttachTo, "BOTTOMLEFT", 0,
         self._curDbProfile.yoffset)
     else
-      runeStatusBar:SetPoint("TOPLEFT", self._runeBarList[id - 1], "TOPRIGHT",
+      runeStatusBar:SetPoint("TOPLEFT", self._runeBarList[RUNE_MAP[id - 1]], "TOPRIGHT",
         self._curDbProfile.horizGap, 0)
     end
   end
+end
+
+function Runes47:_createRuneFrames()
+  for id = 1, self.MAX_RUNE_NUMBER do
+    local runeStatusBar = CreateFrame("StatusBar", nil, self.mainFrame)
+    runeStatusBar.parent = self.mainFrame
+    runeStatusBar:SetFrameLevel(self.mainFrame:GetFrameLevel() + 1)
+    runeStatusBar:SetMinMaxValues(0, 10)
+    runeStatusBar.runeType = RUNE_TYPE_TABLE[GetRuneType(id)]
+    self._runeBarList[id] = runeStatusBar
+  end
+end
+
+---@param runeStatusBar table
+function Runes47:_setRuneColor(runeStatusBar)
+  local curColor = self._runeColors[runeStatusBar.runeType]
+  runeStatusBar:SetStatusBarColor(unpack(curColor))
 end
 
 function Runes47:_registerAllEvents()
@@ -158,23 +180,65 @@ function Runes47:_unregisterAllEvents()
   for _, event in pairs(self.EVENT_TABLE) do self.mainFrame:UnregisterEvent(event) end
 end
 
-function Runes47:_createRuneFrames()
-  for id = 1, self.MAX_RUNE_NUMBER do
-    local runeStatusBar = CreateFrame("StatusBar", nil, self.mainFrame)
-    runeStatusBar.parent = self.mainFrame
-    runeStatusBar:SetFrameLevel(self.mainFrame:GetFrameLevel() + 1)
-    runeStatusBar:SetMinMaxValues(0, 1)
-    runeStatusBar.runeType = RUNE_TYPE_TABLE[GetRuneType(id)]
+function Runes47:_enableAllScriptHandlers()
+  self.mainFrame:SetScript("OnEvent", function(curFrame, event, id, usable, ...)
+    self:_onEventHandler(curFrame, event, id, usable, ...)
+  end)
+end
 
-    runeStatusBar:Show()
-    self._runeBarList[RUNE_MAP[id]] = runeStatusBar
+function Runes47:_disableAllScriptHandlers() self.mainFrame:SetScript("OnEvent", nil) end
+
+function Runes47:_onEventHandler(curFrame, event, id, usable, ...)
+  if event == "RUNE_TYPE_UPDATE" then
+    self:_handleRuneTypeUpdate(curFrame, event, id, usable, ...)
+  elseif event == "RUNE_POWER_UPDATE" then
+    self:_handleRunePowerUpdate(curFrame, event, id, usable, ...)
   end
 end
 
----@param runeStatusBar table
-function Runes47:_setRuneColor(runeStatusBar)
-  local curColor = self._runeColors[runeStatusBar.runeType]
-  runeStatusBar:SetStatusBarColor(unpack(curColor))
+function Runes47:_handleRuneTypeUpdate(curFrame, event, unit, usable, ...)
+  -- WIP: Need to level a death knight to high enough levels to test this out
+end
+
+function Runes47:_handleRunePowerUpdate(curFrame, event, id, usable)
+  if not id then
+    self:_refreshRuneColors()
+    return
+  elseif not self._runeBarList[id] then
+    return
+  end
+
+  local runeFrame = self._runeBarList[id]
+  local startTime, duration, isRuneReady = GetRuneCooldown(id)
+  if isRuneReady then
+    self:_handleRuneCooldownComplete(runeFrame)
+  else
+    runeFrame.startTime = startTime
+    runeFrame.duration = duration
+    local currentTime = GetTime()
+
+    runeFrame:SetMinMaxValues(0, runeFrame.duration)
+    runeFrame:SetValue(currentTime - startTime)
+    runeFrame:SetAlpha(self._curDbProfile.runeCooldownAlpha)
+    runeFrame:SetScript("OnUpdate", function(curFrame, elapsedTime)
+      self:_monitorCurrentRune(curFrame, elapsedTime)
+    end)
+  end
+
+end
+
+function Runes47:_monitorCurrentRune(runeFrame, elapsedTime)
+  local curTime = GetTime() - runeFrame.startTime
+  runeFrame:SetValue(curTime)
+
+  if (curTime >= runeFrame.duration) then self:_handleRuneCooldownComplete(runeFrame) end
+end
+
+function Runes47:_handleRuneCooldownComplete(runeFrame)
+  runeFrame:SetMinMaxValues(0, 10)
+  runeFrame:SetValue(10)
+  runeFrame:SetAlpha(1.0)
+  runeFrame:SetScript("OnUpdate", nil)
 end
 
 -- ####################################
@@ -278,6 +342,15 @@ function Runes47:_getOptionTable()
           min = -30,
           max = 30,
           step = 1,
+          order = self:_incrementOrderIndex()
+        },
+        runeCooldownAlpha = {
+          name = "Rune Cooldown Alpha",
+          desc = "Rune Cooldown Alpha Level",
+          type = "range",
+          min = 0,
+          max = 0.9,
+          step = 0.05,
           order = self:_incrementOrderIndex()
         },
         colorHeader = {name = "Colors", type = "header", order = self:_incrementOrderIndex()},

@@ -119,9 +119,9 @@ function PlayerPower47:handleOnDisable() if self.mainFrame ~= nil then self.main
 -- # PRIVATE FUNCTIONS
 -- ####################################
 
----@param argsTable table
+---@param curFrame table
 ---@param elapsed number
-function PlayerPower47:_onUpdateHandler(argsTable, elapsed)
+function PlayerPower47:_onUpdateHandler(curFrame, elapsed)
   if not self.mainFrame:IsVisible() then return end
   self._timeSinceLastUpdate = self._timeSinceLastUpdate + elapsed
   if (self._timeSinceLastUpdate > ZxSimpleUI.UPDATE_INTERVAL_SECONDS) then
@@ -134,10 +134,10 @@ function PlayerPower47:_onUpdateHandler(argsTable, elapsed)
   end
 end
 
----@param argsTable table
+---@param curFrame table
 ---@param event string
 ---@param unit string
-function PlayerPower47:_onEventHandler(argsTable, event, unit)
+function PlayerPower47:_onEventHandler(curFrame, event, unit)
   local isSameEvent = Utils47:stringEqualsIgnoreCase(event, "UNIT_DISPLAYPOWER")
   local isSameUnit = Utils47:stringEqualsIgnoreCase(unit, self.unit)
   if isSameEvent and isSameUnit then self:_handlePowerChanged() end
@@ -166,7 +166,7 @@ function PlayerPower47:_registerEvents()
 end
 
 function PlayerPower47:_setOnShowOnHideHandlers()
-  self.mainFrame:SetScript("OnShow", function(argsTable, ...)
+  self.mainFrame:SetScript("OnShow", function(curFrame, ...)
     if self:IsEnabled() then
       self:_enableAllScriptHandlers()
     else
@@ -175,15 +175,15 @@ function PlayerPower47:_setOnShowOnHideHandlers()
   end)
 
   self.mainFrame:SetScript("OnHide",
-    function(argsTable, ...) self:_disableAllScriptHandlers() end)
+    function(curFrame, ...) self:_disableAllScriptHandlers() end)
 end
 
 function PlayerPower47:_enableAllScriptHandlers()
-  self.mainFrame:SetScript("OnUpdate", function(argsTable, elapsed)
-    self:_onUpdateHandler(argsTable, elapsed)
+  self.mainFrame:SetScript("OnUpdate", function(curFrame, elapsed)
+    self:_onUpdateHandler(curFrame, elapsed)
   end)
-  self.mainFrame:SetScript("OnEvent", function(argsTable, event, unit)
-    self:_onEventHandler(argsTable, event, unit)
+  self.mainFrame:SetScript("OnEvent", function(curFrame, event, unit)
+    self:_onEventHandler(curFrame, event, unit)
   end)
 end
 

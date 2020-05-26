@@ -128,7 +128,7 @@ function TargetPower47:_registerEvents()
 end
 
 function TargetPower47:_setOnShowOnHideHandlers()
-  self.mainFrame:SetScript("OnShow", function(argsTable, ...)
+  self.mainFrame:SetScript("OnShow", function(curFrame, ...)
     if self:IsEnabled() then
       self:_enableAllScriptHandlers()
       -- Act as if target was just changed
@@ -139,15 +139,15 @@ function TargetPower47:_setOnShowOnHideHandlers()
   end)
 
   self.mainFrame:SetScript("OnHide",
-    function(argsTable, ...) self:_disableAllScriptHandlers() end)
+    function(curFrame, ...) self:_disableAllScriptHandlers() end)
 end
 
 function TargetPower47:_enableAllScriptHandlers()
-  self.mainFrame:SetScript("OnUpdate", function(argsTable, elapsed)
-    self:_onUpdateHandler(argsTable, elapsed)
+  self.mainFrame:SetScript("OnUpdate", function(curFrame, elapsed)
+    self:_onUpdateHandler(curFrame, elapsed)
   end)
-  self.mainFrame:SetScript("OnEvent", function(argsTable, event, unit)
-    self:_onEventHandler(argsTable, event, unit)
+  self.mainFrame:SetScript("OnEvent", function(curFrame, event, unit)
+    self:_onEventHandler(curFrame, event, unit)
   end)
 end
 
@@ -156,7 +156,7 @@ function TargetPower47:_disableAllScriptHandlers()
   self.mainFrame:SetScript("OnEvent", nil)
 end
 
-function TargetPower47:_onEventHandler(argsTable, event, unit)
+function TargetPower47:_onEventHandler(curFrame, event, unit)
   if Utils47:stringEqualsIgnoreCase(event, "PLAYER_TARGET_CHANGED") then
     self:_handlePlayerTargetChanged()
   elseif Utils47:stringEqualsIgnoreCase(unit, self.unit) then
@@ -186,7 +186,7 @@ function TargetPower47:_handleUnitPowerEvent(curUnitPower)
   self.bars:setStatusBarValue(powerPercent)
 end
 
-function TargetPower47:_onUpdateHandler(argsTable, elapsed)
+function TargetPower47:_onUpdateHandler(curFrame, elapsed)
   if not self.mainFrame:IsVisible() then return end
   self._timeSinceLastUpdate = self._timeSinceLastUpdate + elapsed
   if (self._timeSinceLastUpdate > ZxSimpleUI.UPDATE_INTERVAL_SECONDS) then

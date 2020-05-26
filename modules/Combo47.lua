@@ -146,12 +146,12 @@ function Combo47:_unregisterAllEvents()
 end
 
 function Combo47:_setOnEventScript()
-  self.mainFrame:SetScript("OnEvent", function(argsTable, event, unit)
-    self:_onEventHandler(argsTable, event, unit)
+  self.mainFrame:SetScript("OnEvent", function(curFrame, event, unit)
+    self:_onEventHandler(curFrame, event, unit)
   end)
 end
 
-function Combo47:_onEventHandler(argsTable, event, unit)
+function Combo47:_onEventHandler(curFrame, event, unit)
   if Utils47:stringEqualsIgnoreCase(event, "PLAYER_TARGET_CHANGED") then
     self:_handlePlayerTargetChanged()
   elseif Utils47:stringEqualsIgnoreCase(event, "UNIT_COMBO_POINTS") then

@@ -91,9 +91,9 @@ end
 -- # PRIVATE FUNCTIONS
 -- ####################################
 
----@param argsTable table
+---@param curFrame table
 ---@param elapsed number
-function PlayerHealth47:_onUpdateHandler(argsTable, elapsed)
+function PlayerHealth47:_onUpdateHandler(curFrame, elapsed)
   if not self.mainFrame:IsVisible() then return end
   self._timeSinceLastUpdate = self._timeSinceLastUpdate + elapsed
   if (self._timeSinceLastUpdate > ZxSimpleUI.UPDATE_INTERVAL_SECONDS) then
@@ -116,7 +116,7 @@ end
 function PlayerHealth47:_registerEvents() self.mainFrame:RegisterEvent("UNIT_HEALTH") end
 
 function PlayerHealth47:_setOnShowOnHideHandlers()
-  self.mainFrame:SetScript("OnShow", function(argsTable, ...)
+  self.mainFrame:SetScript("OnShow", function(curFrame, ...)
     if self:IsEnabled() then
       self:_enableAllScriptHandlers()
     else
@@ -125,12 +125,12 @@ function PlayerHealth47:_setOnShowOnHideHandlers()
   end)
 
   self.mainFrame:SetScript("OnHide",
-    function(argsTable, ...) self:_disableAllScriptHandlers() end)
+    function(curFrame, ...) self:_disableAllScriptHandlers() end)
 end
 
 function PlayerHealth47:_enableAllScriptHandlers()
-  self.mainFrame:SetScript("OnUpdate", function(argsTable, elapsed)
-    self:_onUpdateHandler(argsTable, elapsed)
+  self.mainFrame:SetScript("OnUpdate", function(curFrame, elapsed)
+    self:_onUpdateHandler(curFrame, elapsed)
   end)
 end
 

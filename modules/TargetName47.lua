@@ -118,7 +118,7 @@ function TargetName47:_registerEvents()
 end
 
 function TargetName47:_setOnShowOnHideHandlers()
-  self.mainFrame:SetScript("OnShow", function(argsTable, ...)
+  self.mainFrame:SetScript("OnShow", function(curFrame, ...)
     if self:IsEnabled() then
       self:_enableAllScriptHandlers()
       -- Act as if target was just changed
@@ -129,18 +129,18 @@ function TargetName47:_setOnShowOnHideHandlers()
   end)
 
   self.mainFrame:SetScript("OnHide",
-    function(argsTable, ...) self:_disableAllScriptHandlers() end)
+    function(curFrame, ...) self:_disableAllScriptHandlers() end)
 end
 
 function TargetName47:_enableAllScriptHandlers()
-  self.mainFrame:SetScript("OnEvent", function(argsTable, event, unit, ...)
-    self:_onEventHandler(argsTable, event, unit)
+  self.mainFrame:SetScript("OnEvent", function(curFrame, event, unit, ...)
+    self:_onEventHandler(curFrame, event, unit)
   end)
 end
 
 function TargetName47:_disableAllScriptHandlers() self.mainFrame:SetScript("OnEvent", nil) end
 
-function TargetName47:_onEventHandler(argsTable, event, unit, ...)
+function TargetName47:_onEventHandler(curFrame, event, unit, ...)
   local isUnitHealthEvent = Utils47:stringEqualsIgnoreCase(event, "UNIT_HEALTH")
   local isSameUnit = Utils47:stringEqualsIgnoreCase(unit, self.unit)
   if isUnitHealthEvent and isSameUnit then

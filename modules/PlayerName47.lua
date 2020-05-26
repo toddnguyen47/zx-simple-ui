@@ -128,7 +128,7 @@ function PlayerName47:_getFormattedName()
 end
 
 function PlayerName47:_setOnShowOnHideHandlers()
-  self.mainFrame:SetScript("OnShow", function(argsTable, ...)
+  self.mainFrame:SetScript("OnShow", function(curFrame, ...)
     -- Even if shown, if the module is disabled, hide the frame!
     if not self:IsEnabled() then self.mainFrame:Hide() end
   end)

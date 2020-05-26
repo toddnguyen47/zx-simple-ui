@@ -86,7 +86,7 @@ function Totems47:handleOnEnable()
     self:_registerAllEvents()
     self:_enableAllScriptHandlers()
     self:refreshConfig()
-    self:_handlePlayerTotemUpdate()
+    for i = 1, MAX_TOTEMS do self:_handlePlayerTotemUpdate(self._totemBarList[i], i) end
     self.mainFrame:Show()
   end
 end
@@ -177,55 +177,53 @@ end
 ---@param curFrame table
 ---@param totemSlot integer 1-4, see TOTEM_TABLE
 function Totems47:_handlePlayerTotemUpdate(curFrame, totemSlot)
-  for i = 1, MAX_TOTEMS do
-    ---Ref: https://wow.gamepedia.com/API_GetTotemInfo
-    local haveTotem, totemName, startTime, duration, icon = GetTotemInfo(i)
-    local totemFrame = self._totemBarList[i]
-    if totemName ~= nil and totemName ~= "" then
-      ---Ref: https://wow.gamepedia.com/API_Texture_SetTexture
-      totemFrame.texture:SetTexture(icon)
-      local timeLeft = self:_getTimeLeft(startTime, duration)
-      local formatString = "%.0fs"
-      if (timeLeft > 60) then
-        timeLeft = math.ceil(timeLeft / 60)
-        formatString = "%dm"
-      end
+  ---Ref: https://wow.gamepedia.com/API_GetTotemInfo
+  local haveTotem, totemName, startTime, duration, icon = GetTotemInfo(totemSlot)
+  local totemFrame = self._totemBarList[totemSlot]
+  if totemName ~= nil and totemName ~= "" then
+    ---Ref: https://wow.gamepedia.com/API_Texture_SetTexture
+    totemFrame.texture:SetTexture(icon)
+    totemFrame.texture:SetAlpha(1.0)
+    local timeLeft = self:_getTimeLeft(startTime, duration)
+    self:_setDurationText(totemFrame, timeLeft)
+    totemFrame:Show()
+    totemFrame:SetScript("OnUpdate", function(curFrame, elapsedTime)
+      curFrame.lastUpdatedTime = curFrame.lastUpdatedTime + elapsedTime
+      -- Only update once a second until the last 2 seconds
+      timeLeft = self:_getTimeLeft(startTime, duration)
+      if (timeLeft > 3 and curFrame.lastUpdatedTime < 1.0) then return end
+      curFrame.lastUpdatedTime = 0
 
-      totemFrame.durationText:SetText(string.format(formatString, timeLeft))
-      totemFrame:Show()
-      totemFrame:SetScript("OnUpdate", function(curFrame, elapsedTime)
-        curFrame.lastUpdatedTime = curFrame.lastUpdatedTime + elapsedTime
-        -- Only update once a second until the last 2 seconds
-        timeLeft = self:_getTimeLeft(startTime, duration)
-        if (timeLeft > 2 and curFrame.lastUpdatedTime < 1.0) then return end
-
-        curFrame.lastUpdatedTime = 0
-        if timeLeft > 60 then
-          timeLeft = math.ceil(timeLeft / 60)
-          formatString = "%dm"
-        elseif timeLeft > 1.0 then
-          formatString = "%.0fs"
-        else
-          formatString = "%.1fs"
-        end
-        totemFrame.durationText:SetText(string.format(formatString, timeLeft))
-
-        if timeLeft < 2 then curFrame.texture:SetAlpha(0.4) end
-
-        if timeLeft <= 0 then
-          curFrame.texture:SetTexture(nil)
-          curFrame.durationText:SetText("")
-          curFrame:SetScript("OnUpdate", nil)
-          curFrame:Hide()
-        end
-      end)
-    else
-      totemFrame.texture:SetTexture(nil)
-      totemFrame.durationText:SetText("")
-      totemFrame:SetScript("OnUpdate", nil)
-      totemFrame:Hide()
-    end
+      self:_setDurationText(curFrame, timeLeft)
+      if timeLeft < 2 then curFrame.texture:SetAlpha(0.4) end
+      if timeLeft <= 0 then self:_handleTotemDurationComplete(curFrame) end
+    end)
+  else
+    self:_handleTotemDurationComplete(totemFrame)
   end
+end
+
+---@param totemFrame table
+function Totems47:_handleTotemDurationComplete(totemFrame)
+  totemFrame.texture:SetTexture(nil)
+  totemFrame.durationText:SetText("")
+  totemFrame:SetScript("OnUpdate", nil)
+  totemFrame:Hide()
+end
+
+---@param totemFrame table
+---@param timeLeft integer
+function Totems47:_setDurationText(totemFrame, timeLeft)
+  local formatString = ""
+  if timeLeft > 60 then
+    timeLeft = math.ceil(timeLeft / 60)
+    formatString = "%dm"
+  elseif timeLeft > 1.0 then
+    formatString = "%.0fs"
+  else
+    formatString = "%.1fs"
+  end
+  totemFrame.durationText:SetText(string.format(formatString, timeLeft))
 end
 
 function Totems47:_getTimeLeft(startTime, duration)

@@ -29,7 +29,10 @@ local _defaults = {
     yoffset = 0,
     font = "Friz Quadrata TT",
     fontsize = 12,
-    fontcolor = {1.0, 1.0, 1.0}
+    fontcolor = {1.0, 1.0, 1.0},
+    outline = true,
+    thickoutline = false,
+    monochrome = false
   }
 }
 
@@ -128,7 +131,7 @@ function Totems47:_refreshTotemBars()
     totemFrame:SetWidth(mainFrameHeight)
     totemFrame:SetHeight(mainFrameHeight)
     totemFrame.durationText:SetFont(media:Fetch("font", self._curDbProfile.font),
-      self._curDbProfile.fontsize, "OUTLINE")
+      self._curDbProfile.fontsize, self:_getFontFlags())
     totemFrame.durationText:SetTextColor(unpack(self._curDbProfile.fontcolor))
     if id == 1 then
       totemFrame:SetPoint("TOPLEFT", self._frameToAttachTo, "BOTTOMLEFT", 0,
@@ -153,7 +156,7 @@ function Totems47:_createTotemFrames()
     totemFrame.durationText = totemFrame:CreateFontString(nil, "BORDER")
     totemFrame.durationText:SetPoint("TOP", totemFrame, "BOTTOM", 0, -2)
     totemFrame.durationText:SetFont(media:Fetch("font", self._curDbProfile.font),
-      self._curDbProfile.fontsize, "OUTLINE")
+      self._curDbProfile.fontsize, self:_getFontFlags())
 
     totemFrame:Hide()
     self._totemBarList[i] = totemFrame
@@ -189,15 +192,19 @@ function Totems47:_handlePlayerTotemUpdate(curFrame, totemSlot)
   if totemName ~= nil and totemName ~= "" then
     ---Ref: https://wow.gamepedia.com/API_Texture_SetTexture
     totemFrame.texture:SetTexture(icon)
-    totemFrame.texture:SetAlpha(1.0)
+    totemFrame.texture:SetAlpha(1.0) -- this is needed, otherwise alpha might be stuck at 0.4
     local timeLeft = self:_getTimeLeft(startTime, duration)
     self:_setDurationText(totemFrame, timeLeft)
     totemFrame:Show()
     totemFrame:SetScript("OnUpdate", function(curFrame, elapsedTime)
       curFrame.lastUpdatedTime = curFrame.lastUpdatedTime + elapsedTime
-      -- Only update once a second until the last 2 seconds
+      -- Only update once every 500ms until the last 3 seconds
       timeLeft = self:_getTimeLeft(startTime, duration)
-      if (timeLeft > 3 and curFrame.lastUpdatedTime < 1.0) then return end
+      -- If time is greater than 60s, update once a second
+      if (timeLeft > 60 and curFrame.lastUpdatedTime < 1.0) then return end
+      -- If time is less than 60s, update once every half second
+      if (timeLeft > 3 and curFrame.lastUpdatedTime < 0.5) then return end
+
       curFrame.lastUpdatedTime = 0
 
       self:_setDurationText(curFrame, timeLeft)
@@ -237,4 +244,14 @@ function Totems47:_getTimeLeft(startTime, duration)
   local endTime = startTime + duration
   local timeLeft = endTime - currentTime
   return timeLeft
+end
+
+---@return string
+function Totems47:_getFontFlags()
+  local s = ""
+  if self._curDbProfile.outline then s = s .. "OUTLINE, " end
+  if self._curDbProfile.thickoutline then s = s .. "THICKOUTLINE, " end
+  if self._curDbProfile.monochrome then s = s .. "MONOCHROME, " end
+  if s ~= "" then s = string.sub(s, 0, (string.len(s) - 2)) end
+  return s
 end

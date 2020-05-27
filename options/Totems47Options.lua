@@ -86,6 +86,17 @@ function Totems47Options:getOptionTable()
           step = 1,
           order = self._coreOptions47:incrementOrderIndex()
         },
+        fontflags = {
+          name = "Font Flags",
+          type = "group",
+          inline = true,
+          order = self._coreOptions47:incrementOrderIndex(),
+          args = {
+            outline = {name = "Outline", type = "toggle", order = 1},
+            thickoutline = {name = "Thick Outline", type = "toggle", order = 2},
+            monochrome = {name = "Monochrome", type = "toggle", order = 3}
+          }
+        },
         fontcolor = {
           name = "Totem Duration Color",
           desc = "Totem Duration Color",

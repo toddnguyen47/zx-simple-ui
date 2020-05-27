@@ -15,6 +15,7 @@ local _DECORATIVE_NAME = "Player Power"
 local PlayerPower47 = ZxSimpleUI:NewModule(_MODULE_NAME)
 
 PlayerPower47.MODULE_NAME = _MODULE_NAME
+PlayerPower47.DECORATIVE_NAME = _DECORATIVE_NAME
 PlayerPower47.unit = "player"
 
 local _defaults = {
@@ -61,8 +62,8 @@ function PlayerPower47:OnInitialize()
   self._barTemplateOptions = BarTemplateOptions:new(self)
 
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
-  ZxSimpleUI:registerModuleOptions(_MODULE_NAME,
-    self._barTemplateOptions:getOptionTable(_DECORATIVE_NAME), _DECORATIVE_NAME)
+  -- ZxSimpleUI:registerModuleOptions(_MODULE_NAME, self._barTemplateOptions:getOptionTable(),
+  --   _DECORATIVE_NAME)
 end
 
 function PlayerPower47:OnEnable()

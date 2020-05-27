@@ -10,6 +10,7 @@ function InterfaceModule:handleOnEnable() end
 function InterfaceModule:handleOnDisable() end
 function InterfaceModule:handleShownOption() end
 function InterfaceModule:handleShownHideOption() end
+function InterfaceModule:getExtraOptions() end
 
 function InterfaceModule:_refreshAll() end
 function InterfaceModule:_registerAllEvents() end

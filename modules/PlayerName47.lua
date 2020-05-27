@@ -13,6 +13,7 @@ local _DECORATIVE_NAME = "Player Name"
 local PlayerName47 = ZxSimpleUI:NewModule(_MODULE_NAME)
 
 PlayerName47.MODULE_NAME = _MODULE_NAME
+PlayerName47.DECORATIVE_NAME = _DECORATIVE_NAME
 PlayerName47.bars = nil
 PlayerName47.unit = "player"
 
@@ -40,12 +41,8 @@ function PlayerName47:OnInitialize()
 
   self.bars = BarTemplate:new(self.db)
   self.bars.defaults = _defaults
-  self._barTemplateOptions = BarTemplateOptions:new(self)
-  local options = self._barTemplateOptions:getOptionTable(_DECORATIVE_NAME)
-  options = self:_appendEnableOption(options)
 
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
-  ZxSimpleUI:registerModuleOptions(_MODULE_NAME, options, _DECORATIVE_NAME)
 end
 
 function PlayerName47:OnEnable() self:handleOnEnable() end
@@ -90,22 +87,23 @@ end
 
 function PlayerName47:handleOnDisable() if self.mainFrame ~= nil then self.mainFrame:Hide() end end
 
--- ####################################
--- # PRIVATE FUNCTIONS
--- ####################################
-
----@param optionsTable table
 ---@return table
-function PlayerName47:_appendEnableOption(optionsTable)
-  -- Use parent's get/set functions
-  optionsTable.args["enabledToggle"] = {
-    type = "toggle",
-    name = "Enable",
-    desc = "Enable / Disable Module `" .. _DECORATIVE_NAME .. "`",
-    order = 1
+function PlayerName47:getExtraOptions()
+  local optionsTable = {
+    enabledToggle = {
+      -- Use parent's get/set functions
+      type = "toggle",
+      name = "Enable",
+      desc = "Enable / Disable Module `" .. _DECORATIVE_NAME .. "`",
+      order = 1
+    }
   }
   return optionsTable
 end
+
+-- ####################################
+-- # PRIVATE FUNCTIONS
+-- ####################################
 
 ---@return string formattedName
 function PlayerName47:_getFormattedName()

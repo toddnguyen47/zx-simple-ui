@@ -23,22 +23,30 @@ function BarTemplateOptions:__init__(currentModule)
   self._coreOptions47 = CoreOptions47:new(self._currentModule)
 end
 
-function BarTemplateOptions:registerModuleOptionsTable() error("Not implemented error") end
+function BarTemplateOptions:registerModuleOptionsTable()
+  ZxSimpleUI:registerModuleOptions(self._currentModule.MODULE_NAME, self:getOptionTable(),
+    self._currentModule.DECORATIVE_NAME)
+end
 
----@param decorativeName string
+---@param optionTable table
+function BarTemplateOptions:addOption(optionTable)
+  if next(self.options) == nil then self.options = self:getOptionTable() end
+  for k, v in pairs(optionTable) do self.options.args[k] = v end
+end
+
 ---@return table
-function BarTemplateOptions:getOptionTable(decorativeName)
+function BarTemplateOptions:getOptionTable()
   if next(self.options) == nil then
     self.options = {
       type = "group",
-      name = decorativeName,
+      name = self._currentModule.DECORATIVE_NAME,
       --- "Parent" get/set
       get = function(info) return self:getOption(info) end,
       set = function(info, value) self:setOption(info, value) end,
       args = {
         header = {
           type = "header",
-          name = decorativeName,
+          name = self._currentModule.DECORATIVE_NAME,
           order = ZxSimpleUI.HEADER_ORDER_INDEX
         },
         width = {

@@ -1,4 +1,5 @@
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
+local BarTemplateOptions = ZxSimpleUI.optionTables["BarTemplateOptions"]
 
 local PlayerHealth47 = ZxSimpleUI:GetModule("PlayerHealth47")
 local PlayerName47 = ZxSimpleUI:GetModule("PlayerName47")
@@ -29,9 +30,23 @@ end
 
 function Player47:__init__()
   self._barList = {
-    [PlayerHealth47.MODULE_NAME] = PlayerHealth47,
-    [PlayerName47.MODULE_NAME] = PlayerName47,
-    [PlayerPower47.MODULE_NAME] = PlayerPower47
+    [PlayerHealth47.MODULE_NAME] = {
+      module = PlayerHealth47,
+      options = BarTemplateOptions:new(PlayerHealth47)
+    },
+    [PlayerName47.MODULE_NAME] = {
+      module = PlayerName47,
+      options = BarTemplateOptions:new(PlayerName47)
+    },
+    [PlayerPower47.MODULE_NAME] = {
+      module = PlayerPower47,
+      options = BarTemplateOptions:new(PlayerPower47)
+    }
+  }
+
+  self._extraBarList = {
+    [Runes47.MODULE_NAME] = {parentFrame = nil, module = Runes47, options = Runes47Options},
+    [Totems47.MODULE_NAME] = {parentFrame = nil, module = Totems47, options = Totems47Options}
   }
 end
 
@@ -39,27 +54,39 @@ end
 -- # PRIVATE FUNCTIONS
 -- ####################################
 function Player47:_createBars()
-  for moduleName, module in pairs(self._barList) do module:createBar() end
+  for moduleName, t1 in pairs(self._barList) do
+    local module1 = t1.module
+    local options1 = t1.options
+    module1:createBar()
+    if type(module1.getExtraOptions) == "function" then
+      local extraOptionTable = module1:getExtraOptions()
+      options1:addOption(extraOptionTable)
+    end
+    options1:registerModuleOptionsTable()
+  end
   self:_createAdditionalBars()
 end
 
 function Player47:_createAdditionalBars()
-  self._barList[Runes47.MODULE_NAME] = Runes47
-  local parentFrame = self._barList[PlayerPower47.MODULE_NAME].mainFrame
-  self._barList[Runes47.MODULE_NAME]:createBar(parentFrame)
-  local runes47Options = Runes47Options:new(self._barList[Runes47.MODULE_NAME])
-  runes47Options:registerModuleOptionsTable()
+  local playerPowerFrame = self._barList[PlayerPower47.MODULE_NAME].module.mainFrame
+  self._extraBarList[Runes47.MODULE_NAME]["parentFrame"] = playerPowerFrame
+  self._extraBarList[Totems47.MODULE_NAME]["parentFrame"] = playerPowerFrame
 
-  self._barList[Totems47.MODULE_NAME] = Totems47
-  parentFrame = self._barList[PlayerPower47.MODULE_NAME].mainFrame
-  self._barList[Totems47.MODULE_NAME]:createBar(parentFrame)
-  local totems47Options = Totems47Options:new(self._barList[Totems47.MODULE_NAME])
-  totems47Options:registerModuleOptionsTable()
+  for moduleName, t1 in pairs(self._extraBarList) do
+    local module = t1.module
+    local options = t1.options
+    module:createBar(t1["parentFrame"])
+    local optionObject = options:new(module)
+    optionObject:registerModuleOptionsTable()
+
+    self._barList[moduleName] = {module = module, options = optionObject}
+  end
 end
 
 function Player47:_setEnableState()
   local count = 0
-  for moduleName, module in pairs(self._barList) do
+  for moduleName, t1 in pairs(self._barList) do
+    local module = t1.module
     module:handleEnableToggle()
     if module:IsEnabled() then
       module:handleOnEnable()

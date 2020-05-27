@@ -12,8 +12,9 @@ CoreOptionsInterface.lua
 CoreBarTemplate.lua
 
 options\CoreOptions47.lua
-options\Runes47Options.lua
 options\Combo47Options.lua
+options\Runes47Options.lua
+options\Totems47Options.lua
 
 modules\RegisterWatchHandler47.lua
 modules\PlayerHealth47.lua

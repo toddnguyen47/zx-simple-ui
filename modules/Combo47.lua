@@ -51,10 +51,8 @@ function Combo47:OnEnable() self:handleOnEnable() end
 function Combo47:OnDisable() self:handleOnDisable() end
 
 function Combo47:__init__()
-  self.options = {}
   self.mainFrame = nil
 
-  self._orderIndex = ZxSimpleUI.DEFAULT_ORDER_INDEX
   self._comboPointsTable = {}
   self._allComboPointsHidden = true
   self._playerEnglishClass = UnitClass("player")
@@ -82,10 +80,7 @@ end
 
 function Combo47:refreshConfig()
   self:handleEnableToggle()
-  if self:IsEnabled() then
-    self:_refreshBarFrame()
-    self:_refreshComboPointsDisplay()
-  end
+  if self:IsEnabled() then self:_refreshAll() end
 end
 
 function Combo47:handleEnableToggle()
@@ -124,6 +119,11 @@ end
 -- ####################################
 -- # PRIVATE FUNCTIONS
 -- ####################################
+
+function Combo47:_refreshAll()
+  self:_refreshBarFrame()
+  self:_refreshComboPointsDisplay()
+end
 
 function Combo47:_refreshBarFrame()
   self.mainFrame:SetWidth(self._frameToAttachTo:GetWidth())

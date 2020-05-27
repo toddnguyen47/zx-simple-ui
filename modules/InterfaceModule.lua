@@ -11,5 +11,6 @@ function InterfaceModule:handleOnDisable() end
 function InterfaceModule:handleShownOption() end
 function InterfaceModule:handleShownHideOption() end
 
+function InterfaceModule:_refreshAll() end
 function InterfaceModule:_registerAllEvents() end
 function InterfaceModule:_unregisterAllEvents() end

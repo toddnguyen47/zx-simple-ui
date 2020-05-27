@@ -46,8 +46,7 @@ function Runes47Options:getOptionTable()
           type = "toggle",
           name = "Enable",
           desc = "Enable / Disable this module",
-          order = ZxSimpleUI.HEADER_ORDER_INDEX + 1,
-          disabled = function(info) return self._curDbProfile.showbar end
+          order = ZxSimpleUI.HEADER_ORDER_INDEX + 1
         },
         texture = {
           name = "Bar Texture",

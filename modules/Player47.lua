@@ -6,6 +6,7 @@ local PlayerPower47 = ZxSimpleUI:GetModule("PlayerPower47")
 local Runes47 = ZxSimpleUI:GetModule("Runes47")
 local Runes47Options = ZxSimpleUI.optionTables["Runes47Options"]
 local Totems47 = ZxSimpleUI:GetModule("Totems47")
+local Totems47Options = ZxSimpleUI.optionTables["Totems47Options"]
 
 local NUM_MODULES = 5
 
@@ -52,6 +53,8 @@ function Player47:_createAdditionalBars()
   self._barList[Totems47.MODULE_NAME] = Totems47
   parentFrame = self._barList[PlayerPower47.MODULE_NAME].mainFrame
   self._barList[Totems47.MODULE_NAME]:createBar(parentFrame)
+  local totems47Options = Totems47Options:new(self._barList[Totems47.MODULE_NAME])
+  totems47Options:registerModuleOptionsTable()
 end
 
 function Player47:_setEnableState()

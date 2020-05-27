@@ -13,6 +13,7 @@ local media = LibStub("LibSharedMedia-3.0")
 local CreateFrame = CreateFrame
 
 Totems47.MODULE_NAME = _MODULE_NAME
+Totems47.DECORATIVE_NAME = _DECORATIVE_NAME
 Totems47.EVENT_TABLE = {"PLAYER_TOTEM_UPDATE"}
 Totems47.unit = "player"
 Totems47.PLAYER_ENGLISH_CLASS = select(2, UnitClass("player"))
@@ -23,7 +24,6 @@ local TOTEM_MAP = {[1] = 2, [2] = 1, [3] = 3, [4] = 4}
 
 local _defaults = {
   profile = {
-    showbar = false,
     enabledToggle = Totems47.PLAYER_ENGLISH_CLASS == "SHAMAN",
     height = 35,
     yoffset = 0,
@@ -41,7 +41,6 @@ function Totems47:OnInitialize()
   self._curDbProfile.showbar = _defaults.profile.showbar
 
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
-  ZxSimpleUI:registerModuleOptions(_MODULE_NAME, self:_getOptionTable(), _DECORATIVE_NAME)
 end
 
 function Totems47:OnEnable() self:handleOnEnable() end
@@ -49,11 +48,9 @@ function Totems47:OnEnable() self:handleOnEnable() end
 function Totems47:OnDisable() self:handleOnDisable() end
 
 function Totems47:__init__()
-  self.options = {}
   self.mainFrame = nil
 
   self._frameToAttachTo = nil
-  self._orderIndex = ZxSimpleUI.DEFAULT_ORDER_INDEX
   self._totemBarList = {}
 end
 
@@ -71,10 +68,7 @@ end
 
 function Totems47:refreshConfig()
   self:handleEnableToggle()
-  if self:IsEnabled() then
-    self:_refreshBarFrame()
-    self:_refreshTotemBars()
-  end
+  if self:IsEnabled() then self:_refreshAll() end
 end
 
 function Totems47:handleEnableToggle()
@@ -99,9 +93,21 @@ function Totems47:handleOnDisable()
   end
 end
 
+function Totems47:handleShownOption()
+  self:_refreshAll()
+  self.mainFrame:Show()
+end
+
+function Totems47:handleShownHideOption() self.mainFrame:Hide() end
+
 -- ####################################
 -- # PRIVATE FUNCTIONS
 -- ####################################
+
+function Totems47:_refreshAll()
+  self:_refreshBarFrame()
+  self:_refreshTotemBars()
+end
 
 function Totems47:_refreshBarFrame()
   self.mainFrame:SetWidth(self._frameToAttachTo:GetWidth())
@@ -232,123 +238,3 @@ function Totems47:_getTimeLeft(startTime, duration)
   local timeLeft = endTime - currentTime
   return timeLeft
 end
-
--- ####################################
--- # OPTION TABLE FUNCTIONS
--- ####################################
-
----@param info table
----Ref: https://www.wowace.com/projects/ace3/pages/ace-config-3-0-options-tables#title-4-1
-function Totems47:_getOption(info)
-  local keyLeafNode = info[#info]
-  return self._curDbProfile[keyLeafNode]
-end
-
----@param info table
----@param value any
----Ref: https://www.wowace.com/projects/ace3/pages/ace-config-3-0-options-tables#title-4-1
-function Totems47:_setOption(info, value)
-  local keyLeafNode = info[#info]
-  self._curDbProfile[keyLeafNode] = value
-  self:refreshConfig()
-end
-
----@param info table
-function Totems47:_getOptionColor(info) return unpack(self:_getOption(info)) end
-
----@param info table
-function Totems47:_setOptionColor(info, r, g, b, a) self:_setOption(info, {r, g, b, a}) end
-
-function Totems47:_getShownOption(info) return self:_getOption(info) end
-
----@param info table
----@param value boolean
-function Totems47:_setShownOption(info, value) self:_setOption(info, value) end
-
-function Totems47:_incrementOrderIndex()
-  local i = self._orderIndex
-  self._orderIndex = self._orderIndex + 1
-  return i
-end
-
----@return table
-function Totems47:_getOptionTable()
-  if next(self.options) == nil then
-    self.options = {
-      type = "group",
-      name = _DECORATIVE_NAME,
-      --- "Parent" get/set
-      get = function(info) return self:_getOption(info) end,
-      set = function(info, value) self:_setOption(info, value) end,
-      args = {
-        header = {
-          type = "header",
-          name = _DECORATIVE_NAME,
-          order = ZxSimpleUI.HEADER_ORDER_INDEX
-        },
-        enabledToggle = {
-          type = "toggle",
-          name = "Enable",
-          desc = "Enable / Disable this module",
-          order = ZxSimpleUI.HEADER_ORDER_INDEX + 1,
-          disabled = function(info) return self._curDbProfile.showbar end
-        },
-        showbar = {
-          type = "toggle",
-          name = "Show Display",
-          desc = "Show/Hide the Totem Display",
-          order = ZxSimpleUI.HEADER_ORDER_INDEX + 2,
-          get = function(info) return self:_getShownOption(info) end,
-          set = function(info, value) self:_setShownOption(info, value) end
-        },
-        height = {
-          name = "Totem Height",
-          desc = "Totem display height",
-          type = "range",
-          min = 2,
-          max = 50,
-          step = 1,
-          order = self:_incrementOrderIndex()
-        },
-        yoffset = {
-          name = "Y Offset",
-          desc = "Y Offset",
-          type = "range",
-          min = -30,
-          max = 30,
-          step = 1,
-          order = self:_incrementOrderIndex()
-        },
-        -- LSM30_ is LibSharedMedia's custom controls
-        font = {
-          name = "Totem Duration Font",
-          desc = "Totem Duration Font",
-          type = "select",
-          dialogControl = "LSM30_Font",
-          values = media:HashTable("font"),
-          order = self:_incrementOrderIndex()
-        },
-        fontsize = {
-          name = "Totem Duration Font Size",
-          desc = "Totem Duration Font Size",
-          type = "range",
-          min = 10,
-          max = 36,
-          step = 1,
-          order = self:_incrementOrderIndex()
-        },
-        fontcolor = {
-          name = "Totem Duration Color",
-          desc = "Totem Duration Color",
-          type = "color",
-          get = function(info) return self:_getOptionColor(info) end,
-          set = function(info, r, g, b, a) self:_setOptionColor(info, r, g, b, a) end,
-          hasAlpha = false,
-          order = self:_incrementOrderIndex()
-        }
-      }
-    }
-  end
-  return self.options
-end
-

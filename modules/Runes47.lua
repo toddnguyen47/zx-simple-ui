@@ -23,7 +23,6 @@ local RUNE_TYPE_TABLE = {[1] = "BLOOD", [2] = "UNHOLY_CHROMATIC", [3] = "FROST",
 
 local _defaults = {
   profile = {
-    showbar = false,
     enabledToggle = Runes47.PLAYER_ENGLISH_CLASS == "DEATHKNIGHT",
     texture = "Blizzard",
     height = 6,
@@ -52,11 +51,9 @@ function Runes47:OnEnable() self:handleOnEnable() end
 function Runes47:OnDisable() self:handleOnDisable() end
 
 function Runes47:__init__()
-  self.options = {}
   self.mainFrame = nil
 
   self._frameToAttachTo = nil
-  self._orderIndex = ZxSimpleUI.DEFAULT_ORDER_INDEX
   self._runeColors = {}
   self._runeBarList = {}
 end

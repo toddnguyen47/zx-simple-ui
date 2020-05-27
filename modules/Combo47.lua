@@ -108,6 +108,19 @@ function Combo47:handleOnDisable()
   end
 end
 
+function Combo47:handleShownOption()
+  self.mainFrame:Show()
+  for i, comboTexture in ipairs(self._comboPointsTable) do
+    self:_setComboPointsColor(i, comboTexture)
+    comboTexture:Show()
+  end
+end
+
+function Combo47:handleShownHideOption()
+  self:_hideAllComboPoints()
+  self.mainFrame:Hide()
+end
+
 -- ####################################
 -- # PRIVATE FUNCTIONS
 -- ####################################

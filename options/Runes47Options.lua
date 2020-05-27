@@ -173,7 +173,15 @@ function Runes47Options:_getShownOption(info) return self:_getOption(info) end
 
 ---@param info table
 ---@param value boolean
-function Runes47Options:_setShownOption(info, value) self:_setOption(info, value) end
+---Set the shown option.
+function Runes47Options:_setShownOption(info, value)
+  self:_setOption(info, value)
+  if (value == true) then
+    self._runesModule:handleShownOption()
+  else
+    self._runesModule:handleShownHideOption()
+  end
+end
 
 function Runes47Options:_incrementOrderIndex()
   local i = self._orderIndex

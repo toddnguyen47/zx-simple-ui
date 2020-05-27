@@ -149,14 +149,9 @@ function Combo47Options:_getShownOption(info) return self:_getOption(info) end
 function Combo47Options:_setShownOption(info, value)
   self:_setOption(info, value)
   if (value == true) then
-    self._comboModule.mainFrame:Show()
-    for i, comboTexture in ipairs(self._comboModule._comboPointsTable) do
-      self._comboModule:_setComboPointsColor(i, comboTexture)
-      comboTexture:Show()
-    end
+    self._comboModule:handleShownOption()
   else
-    self._comboModule:_hideAllComboPoints()
-    self._comboModule.mainFrame:Hide()
+    self._comboModule:handleShownHideOption()
   end
 end
 

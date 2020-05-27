@@ -8,6 +8,8 @@ function InterfaceModule:createBar() end
 function InterfaceModule:refreshConfig() end
 function InterfaceModule:handleOnEnable() end
 function InterfaceModule:handleOnDisable() end
+function InterfaceModule:handleShownOption() end
+function InterfaceModule:handleShownHideOption() end
 
 function InterfaceModule:_registerAllEvents() end
 function InterfaceModule:_unregisterAllEvents() end

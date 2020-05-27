@@ -79,11 +79,7 @@ end
 
 function Runes47:refreshConfig()
   self:handleEnableToggle()
-  if self:IsEnabled() then
-    self:_refreshBarFrame()
-    self:_refreshRuneColors()
-    self:_refreshRuneFrames()
-  end
+  if self:IsEnabled() then self:_refreshAll() end
 end
 
 function Runes47:handleEnableToggle()
@@ -107,9 +103,22 @@ function Runes47:handleOnDisable()
   end
 end
 
+function Runes47:handleShownOption()
+  self:_refreshAll()
+  self.mainFrame:Show()
+end
+
+function Runes47:handleShownHideOption() self.mainFrame:Hide() end
+
 -- ####################################
 -- # PRIVATE FUNCTIONS
 -- ####################################
+
+function Runes47:_refreshAll()
+  self:_refreshBarFrame()
+  self:_refreshRuneColors()
+  self:_refreshRuneFrames()
+end
 
 function Runes47:_refreshBarFrame()
   self.mainFrame:SetWidth(self._frameToAttachTo:GetWidth())

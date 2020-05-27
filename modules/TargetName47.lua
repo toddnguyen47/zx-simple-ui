@@ -1,19 +1,17 @@
+---upvalues to prevent warnings
+local UnitName, UnitHealth = UnitName, UnitHealth
+local UnitClassification = UnitClassification
+
+---include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
-local CoreBarTemplate = ZxSimpleUI.CoreBarTemplate
+local BarTemplate = ZxSimpleUI.BarTemplate
+local BarTemplateOptions = ZxSimpleUI.optionTables["BarTemplateOptions"]
 local Utils47 = ZxSimpleUI.Utils47
 local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
 
 local _MODULE_NAME = "TargetName47"
 local _DECORATIVE_NAME = "Target Name"
 local TargetName47 = ZxSimpleUI:NewModule(_MODULE_NAME)
-
-local media = LibStub("LibSharedMedia-3.0")
-
---- upvalues to prevent warnings
-local UnitName = UnitName
-local UnitName, UnitHealth = UnitName, UnitHealth
-local UnitClassification = UnitClassification
-local unpack = unpack
 
 TargetName47.MODULE_NAME = _MODULE_NAME
 TargetName47.bars = nil
@@ -39,7 +37,7 @@ function TargetName47:OnInitialize()
 
   self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, _defaults)
   self._curDbProfile = self.db.profile
-  self.bars = CoreBarTemplate:new(self._curDbProfile)
+  self.bars = BarTemplate:new(self.db)
   self.bars.defaults = _defaults
 
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
@@ -101,7 +99,8 @@ function TargetName47:handleOnDisable() if self.mainFrame ~= nil then self.mainF
 
 ---@return table
 function TargetName47:_getAppendedEnableOptionTable()
-  local options = self.bars:getOptionTable(_DECORATIVE_NAME)
+  local barTemplateOptions = BarTemplateOptions:new(self.bars)
+  local options = barTemplateOptions:getOptionTable(_DECORATIVE_NAME)
   -- Use parent's get/set functions
   options.args["enabledToggle"] = {
     type = "toggle",

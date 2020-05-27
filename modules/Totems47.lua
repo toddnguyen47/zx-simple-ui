@@ -1,7 +1,8 @@
---- Upvalues
-local LibStub = LibStub
+---upvalues
+local LibStub, CreateFrame = LibStub, CreateFrame
 local GetTime, MAX_TOTEMS, GetTotemInfo = GetTime, MAX_TOTEMS, GetTotemInfo
 
+---include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local Utils47 = ZxSimpleUI.Utils47
 
@@ -9,8 +10,6 @@ local _MODULE_NAME = "Totems47"
 local _DECORATIVE_NAME = "Totems Display"
 local Totems47 = ZxSimpleUI:NewModule(_MODULE_NAME)
 local media = LibStub("LibSharedMedia-3.0")
-
-local CreateFrame = CreateFrame
 
 Totems47.MODULE_NAME = _MODULE_NAME
 Totems47.DECORATIVE_NAME = _DECORATIVE_NAME

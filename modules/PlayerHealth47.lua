@@ -3,9 +3,10 @@ local LibStub = LibStub
 local UnitHealth, UnitHealthMax = UnitHealth, UnitHealthMax
 local UnitName = UnitName
 
-local media = LibStub("LibSharedMedia-3.0")
+--- include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
-local CoreBarTemplate = ZxSimpleUI.CoreBarTemplate
+local BarTemplate = ZxSimpleUI.BarTemplate
+local BarTemplateOptions = ZxSimpleUI.optionTables["BarTemplateOptions"]
 local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
 
 local _MODULE_NAME = "PlayerHealth47"
@@ -36,12 +37,14 @@ function PlayerHealth47:OnInitialize()
 
   self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, _defaults)
   self._curDbProfile = self.db.profile
-  self.bars = CoreBarTemplate:new(self._curDbProfile)
+  self.bars = BarTemplate:new(self.db)
   self.bars.defaults = _defaults
 
+  local barTemplateOptions = BarTemplateOptions:new(self.bars)
+
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
-  ZxSimpleUI:registerModuleOptions(_MODULE_NAME, self.bars:getOptionTable(_DECORATIVE_NAME),
-    _DECORATIVE_NAME)
+  ZxSimpleUI:registerModuleOptions(_MODULE_NAME,
+    barTemplateOptions:getOptionTable(_DECORATIVE_NAME), _DECORATIVE_NAME)
 end
 
 function PlayerHealth47:OnEnable() self:handleOnEnable() end

@@ -1,5 +1,6 @@
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
-local CoreBarTemplate = ZxSimpleUI.CoreBarTemplate
+local BarTemplate = ZxSimpleUI.BarTemplate
+local BarTemplateOptions = ZxSimpleUI.optionTables["BarTemplateOptions"]
 local Utils47 = ZxSimpleUI.Utils47
 local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
 
@@ -36,7 +37,7 @@ function PlayerName47:OnInitialize()
 
   self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, _defaults)
   self._curDbProfile = self.db.profile
-  self.bars = CoreBarTemplate:new(self._curDbProfile)
+  self.bars = BarTemplate:new(self.db)
   self.bars.defaults = _defaults
 
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
@@ -58,7 +59,7 @@ end
 function PlayerName47:createBar()
   local percentage = 1.0
   self.mainFrame = self.bars:createBar(percentage)
-  self.bars:_setTextOnly(self:_getFormattedName())
+  self.bars:setTextOnly(self:_getFormattedName())
 
   self:_setOnShowOnHideHandlers()
   RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
@@ -108,7 +109,8 @@ end
 
 ---@return table
 function PlayerName47:_getAppendedEnableOptionTable()
-  local options = self.bars:getOptionTable(_DECORATIVE_NAME)
+  local barTemplateOptions = BarTemplateOptions:new(self.bars)
+  local options = barTemplateOptions:getOptionTable(_DECORATIVE_NAME)
   -- Use parent's get/set functions
   options.args["enabledToggle"] = {
     type = "toggle",

@@ -9,13 +9,14 @@ embeds.xml
 Core.lua
 Utils47.lua
 CoreOptionsInterface.lua
-CoreBarTemplate.lua
 
 options\CoreOptions47.lua
+options\BarTemplateOptions.lua
 options\Combo47Options.lua
 options\Runes47Options.lua
 options\Totems47Options.lua
 
+BarTemplate.lua
 modules\RegisterWatchHandler47.lua
 modules\PlayerHealth47.lua
 modules\PlayerName47.lua

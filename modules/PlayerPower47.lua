@@ -1,12 +1,14 @@
-local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
-local CoreBarTemplate = ZxSimpleUI.CoreBarTemplate
-local Utils47 = ZxSimpleUI.Utils47
-local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
-
 --- upvalues to prevent warnings
 local LibStub = LibStub
 local UnitPower, UnitPowerMax = UnitPower, UnitPowerMax
 local UnitClass, UnitPowerType = UnitClass, UnitPowerType
+
+--- include files
+local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
+local BarTemplate = ZxSimpleUI.BarTemplate
+local BarTemplateOptions = ZxSimpleUI.optionTables["BarTemplateOptions"]
+local Utils47 = ZxSimpleUI.Utils47
+local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
 
 local _MODULE_NAME = "PlayerPower47"
 local _DECORATIVE_NAME = "Player Power"
@@ -53,12 +55,14 @@ function PlayerPower47:OnInitialize()
 
   self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, _defaults)
   self._curDbProfile = self.db.profile
-  self.bars = CoreBarTemplate:new(self._curDbProfile)
+  self.bars = BarTemplate:new(self.db)
   self.bars.defaults = _defaults
 
+  local barTemplateOptions = BarTemplateOptions:new(self.bars)
+
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
-  ZxSimpleUI:registerModuleOptions(_MODULE_NAME, self.bars:getOptionTable(_DECORATIVE_NAME),
-    _DECORATIVE_NAME)
+  ZxSimpleUI:registerModuleOptions(_MODULE_NAME,
+    barTemplateOptions:getOptionTable(_DECORATIVE_NAME), _DECORATIVE_NAME)
 end
 
 function PlayerPower47:OnEnable()

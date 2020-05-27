@@ -1,22 +1,22 @@
 -- Target appears when
 -- 1. Selected
 -- 2. Being attacked
+--- upvalues to prevent warnings
+local LibStub = LibStub
+local CreateFrame, UnitHealth, UnitHealthMax = CreateFrame, UnitHealth, UnitHealthMax
+local UnitName, UnitClassification = UnitName, UnitClassification
+local unpack = unpack
+
+---Include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
-local CoreBarTemplate = ZxSimpleUI.CoreBarTemplate
+local BarTemplate = ZxSimpleUI.BarTemplate
+local BarTemplateOptions = ZxSimpleUI.optionTables["BarTemplateOptions"]
 local Utils47 = ZxSimpleUI.Utils47
 local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
 
 local _MODULE_NAME = "TargetHealth47"
 local _DECORATIVE_NAME = "Target Health"
 local TargetHealth47 = ZxSimpleUI:NewModule(_MODULE_NAME)
-
-local media = LibStub("LibSharedMedia-3.0")
-
---- upvalues to prevent warnings
-local LibStub = LibStub
-local CreateFrame, UnitHealth, UnitHealthMax = CreateFrame, UnitHealth, UnitHealthMax
-local UnitName, UnitClassification = UnitName, UnitClassification
-local unpack = unpack
 
 TargetHealth47.MODULE_NAME = _MODULE_NAME
 TargetHealth47.bars = nil
@@ -42,12 +42,14 @@ function TargetHealth47:OnInitialize()
 
   self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, _defaults)
   self._curDbProfile = self.db.profile
-  self.bars = CoreBarTemplate:new(self._curDbProfile)
+  self.bars = BarTemplate:new(self.db)
   self.bars.defaults = _defaults
 
+  local barTemplateOptions = BarTemplateOptions:new(self.bars)
+
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
-  local optionsTable = self.bars:getOptionTable(_DECORATIVE_NAME)
-  ZxSimpleUI:registerModuleOptions(_MODULE_NAME, optionsTable, _DECORATIVE_NAME)
+  ZxSimpleUI:registerModuleOptions(_MODULE_NAME,
+    barTemplateOptions:getOptionTable(_DECORATIVE_NAME), _DECORATIVE_NAME)
 end
 
 function TargetHealth47:OnEnable() self:handleOnEnable() end

@@ -3,7 +3,6 @@
 -- 2. Being attacked
 --- upvalues to prevent warnings
 local LibStub = LibStub
-local UIParent, CreateFrame = UIParent, CreateFrame
 local UnitPower, UnitPowerMax = UnitPower, UnitPowerMax
 local UnitName, UnitPowerType = UnitName, UnitPowerType
 local unpack = unpack
@@ -23,8 +22,28 @@ TargetPower47.MODULE_NAME = _MODULE_NAME
 TargetPower47.bars = nil
 TargetPower47.unit = "target"
 
+local _powerEventColorTable = {
+  ["UNIT_MANA"] = {0.0, 0.0, 1.0, 1.0},
+  ["UNIT_RAGE"] = {1.0, 0.0, 0.0, 1.0},
+  ["UNIT_FOCUS"] = {1.0, 0.65, 0.0, 1.0},
+  ["UNIT_ENERGY"] = {1.0, 1.0, 0.0, 1.0},
+  ["UNIT_RUNIC_POWER"] = {0.0, 1.0, 1.0, 1.0}
+}
+
+local _unitPowerTypeTable = {
+  ["MANA"] = 0,
+  ["RAGE"] = 1,
+  ["FOCUS"] = 2,
+  ["ENERGY"] = 3,
+  ["COMBOPOINTS"] = 4,
+  ["RUNES"] = 5,
+  ["RUNICPOWER"] = 6
+}
+
 local _defaults = {
   profile = {
+    enabledToggle = true,
+    showbar = false,
     width = 200,
     height = 26,
     positionx = 700,
@@ -33,37 +52,29 @@ local _defaults = {
     font = "Friz Quadrata TT",
     fontcolor = {1.0, 1.0, 1.0},
     texture = "Blizzard",
-    color = {0.0, 0.0, 1.0, 1.0},
+    color = _powerEventColorTable["UNIT_MANA"], -- need this option for createBar() to work 
+    colorMana = _powerEventColorTable["UNIT_MANA"],
+    colorRage = _powerEventColorTable["UNIT_RAGE"],
+    colorFocus = _powerEventColorTable["UNIT_FOCUS"],
+    colorEnergy = _powerEventColorTable["UNIT_ENERGY"],
+    colorRunicPower = _powerEventColorTable["UNIT_RUNIC_POWER"],
     border = "None"
   }
 }
-
-local _powerEventColorTable = {}
-_powerEventColorTable["UNIT_MANA"] = {0.0, 0.0, 1.0, 1.0}
-_powerEventColorTable["UNIT_RAGE"] = {1.0, 0.0, 0.0, 1.0}
-_powerEventColorTable["UNIT_FOCUS"] = {1.0, 0.65, 0.0, 1.0}
-_powerEventColorTable["UNIT_ENERGY"] = {1.0, 1.0, 0.0, 1.0}
-_powerEventColorTable["UNIT_RUNIC_POWER"] = {0.0, 1.0, 1.0, 1.0}
-
-local _unitPowerTypeTable = {}
-_unitPowerTypeTable["MANA"] = 0
-_unitPowerTypeTable["RAGE"] = 1
-_unitPowerTypeTable["FOCUS"] = 2
-_unitPowerTypeTable["ENERGY"] = 3
-_unitPowerTypeTable["COMBOPOINTS"] = 4
-_unitPowerTypeTable["RUNES"] = 5
-_unitPowerTypeTable["RUNICPOWER"] = 6
 
 function TargetPower47:OnInitialize()
   self:__init__()
 
   self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, _defaults)
   self._curDbProfile = self.db.profile
+  -- Always set the showbar option to false on initialize
+  self._curDbProfile.showbar = _defaults.profile.showbar
 
   self.bars = BarTemplate:new(self.db)
   self.bars.defaults = _defaults
-  local barTemplateOptions = BarTemplateOptions:new(self)
-  local options = barTemplateOptions:getOptionTable(_DECORATIVE_NAME)
+  self._barTemplateOptions = BarTemplateOptions:new(self)
+  local options = self._barTemplateOptions:getOptionTable(_DECORATIVE_NAME)
+  options = self:_appendColorOptions(options)
   -- Don't allow user to change target power color since the color should be determined
   -- by the Target's power type
   options.args.color = nil
@@ -77,10 +88,12 @@ function TargetPower47:OnEnable() self:handleOnEnable() end
 function TargetPower47:OnDisable() self:handleOnDisable() end
 
 function TargetPower47:__init__()
+  self.mainFrame = nil
+
   self._timeSinceLastUpdate = 0
   self._prevTargetPower47 = UnitPowerMax(self.unit)
-  self.mainFrame = nil
   self._powerType, self._powerTypeString = nil, nil
+  self._currentPowerColorEdited = _powerEventColorTable["UNIT_MANA"]
 end
 
 function TargetPower47:createBar()
@@ -102,8 +115,13 @@ end
 
 function TargetPower47:refreshConfig()
   if self:IsEnabled() and self.mainFrame:IsVisible() then
-    self.bars:refreshConfig()
-    self:_setColor()
+    --- if we are currently in shown mode
+    if self._curDbProfile.showbar == true then
+      self.mainFrame.statusBar:SetStatusBarColor(unpack(self._currentPowerColorEdited))
+    else
+      self.bars:refreshConfig()
+      self:_setRefreshColor()
+    end
   end
 end
 
@@ -119,9 +137,77 @@ end
 
 function TargetPower47:handleOnDisable() if self.mainFrame ~= nil then self.mainFrame:Hide() end end
 
+function TargetPower47:handleShownOption() self.mainFrame:Show() end
+
+function TargetPower47:handleShownHideOption() self.mainFrame:Hide() end
+
 -- ####################################
 -- # PRIVATE FUNCTIONS
 -- ####################################
+
+---@param optionTables table
+---@return table
+function TargetPower47:_appendColorOptions(optionTables)
+  optionTables.args["colorgroup"] = {
+    name = "Power Colors",
+    type = "group",
+    inline = true,
+    get = function(info) return self._barTemplateOptions:getOptionColor(info) end,
+    set = function(info, r, g, b, a)
+      self._currentPowerColorEdited = {r, g, b, a}
+      self._barTemplateOptions:setOptionColor(info, r, g, b, a)
+    end,
+    order = self._barTemplateOptions:incrementOrderIndex(),
+    args = {
+      showbar = {
+        name = "Show Color",
+        desc = "Show the currently edited power color",
+        type = "toggle",
+        order = 1,
+        disabled = function(info) return not self._curDbProfile.enabledToggle end,
+        get = function(info) return self._barTemplateOptions:getOption(info) end,
+        set = function(info, value) self._barTemplateOptions:setOption(info, value) end
+      },
+      colorMana = {
+        name = "Mana",
+        desc = "UNIT_MANA",
+        type = "color",
+        hasAlpha = true,
+        order = 5
+      },
+      colorRage = {
+        name = "Rage",
+        desc = "UNIT_RAGE",
+        type = "color",
+        hasAlpha = true,
+        order = 6
+      },
+      colorFocus = {
+        name = "Focus",
+        desc = "UNIT_FOCUS",
+        type = "color",
+        hasAlpha = true,
+        order = 7
+      },
+      colorEnergy = {
+        name = "Energy",
+        desc = "UNIT_ENERGY",
+        type = "color",
+        hasAlpha = true,
+        order = 8
+      },
+      colorRunicPower = {
+        name = "Runic Power",
+        desc = "UNIT_RUNIC_POWER",
+        type = "color",
+        hasAlpha = true,
+        order = 9
+      }
+    }
+  }
+
+  return optionTables
+end
 
 function TargetPower47:_registerEvents()
   for powerEvent, _ in pairs(_powerEventColorTable) do
@@ -174,13 +260,13 @@ end
 
 function TargetPower47:_handlePlayerTargetChanged()
   local targetName = UnitName(self.unit)
-  if targetName ~= nil and targetName ~= "" then self:_setColor() end
+  if targetName ~= nil and targetName ~= "" then self:_setRefreshColor() end
 end
 
 function TargetPower47:_handlePowerChanged()
   self:_setUnitPowerType()
   self:refreshConfig()
-  self:_setColor()
+  self:_setRefreshColor()
 end
 
 function TargetPower47:_handleUnitPowerEvent(curUnitPower)
@@ -207,13 +293,24 @@ function TargetPower47:_setUnitPowerType()
   self._powerType, self._powerTypeString = UnitPowerType(self.unit)
 end
 
-function TargetPower47:_setColor()
+function TargetPower47:_setRefreshColor()
+  local colorOptionTable = self:_getColorsInOptions()
   self:_setUnitPowerType()
   local upperType = string.upper(self._powerTypeString)
-  local colorTable = _powerEventColorTable["UNIT_" .. upperType]
-  colorTable = colorTable or _powerEventColorTable["UNIT_MANA"]
 
-  _defaults.profile.color = colorTable
-  self._curDbProfile.color = colorTable
-  self.mainFrame.statusBar:SetStatusBarColor(unpack(colorTable))
+  local t1 = colorOptionTable["UNIT_" .. upperType]
+  t1 = t1 or colorOptionTable["UNIT_MANA"]
+  self.mainFrame.statusBar:SetStatusBarColor(unpack(t1))
+end
+
+---@return table
+function TargetPower47:_getColorsInOptions()
+  local t1 = {
+    ["UNIT_MANA"] = self._curDbProfile.colorMana,
+    ["UNIT_RAGE"] = self._curDbProfile.colorRage,
+    ["UNIT_FOCUS"] = self._curDbProfile.colorFocus,
+    ["UNIT_ENERGY"] = self._curDbProfile.colorEnergy,
+    ["UNIT_RUNIC_POWER"] = self._curDbProfile.colorRunicPower
+  }
+  return t1
 end

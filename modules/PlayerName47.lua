@@ -40,8 +40,8 @@ function PlayerName47:OnInitialize()
 
   self.bars = BarTemplate:new(self.db)
   self.bars.defaults = _defaults
-  local barTemplateOptions = BarTemplateOptions:new(self)
-  local options = barTemplateOptions:getOptionTable(_DECORATIVE_NAME)
+  self._barTemplateOptions = BarTemplateOptions:new(self)
+  local options = self._barTemplateOptions:getOptionTable(_DECORATIVE_NAME)
   options = self:_appendEnableOption(options)
 
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))

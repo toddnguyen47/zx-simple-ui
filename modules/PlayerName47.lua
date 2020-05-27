@@ -37,12 +37,15 @@ function PlayerName47:OnInitialize()
 
   self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, _defaults)
   self._curDbProfile = self.db.profile
+
   self.bars = BarTemplate:new(self.db)
   self.bars.defaults = _defaults
+  local barTemplateOptions = BarTemplateOptions:new(self)
+  local options = barTemplateOptions:getOptionTable(_DECORATIVE_NAME)
+  options = self:_appendEnableOption(options)
 
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
-  ZxSimpleUI:registerModuleOptions(_MODULE_NAME, self:_getAppendedEnableOptionTable(),
-    _DECORATIVE_NAME)
+  ZxSimpleUI:registerModuleOptions(_MODULE_NAME, options, _DECORATIVE_NAME)
 end
 
 function PlayerName47:OnEnable() self:handleOnEnable() end
@@ -91,36 +94,17 @@ function PlayerName47:handleOnDisable() if self.mainFrame ~= nil then self.mainF
 -- # PRIVATE FUNCTIONS
 -- ####################################
 
----@param info table
----Ref: https://www.wowace.com/projects/ace3/pages/ace-config-3-0-options-tables#title-4-1
-function PlayerName47:_getOption(info)
-  local keyLeafNode = info[#info]
-  return self._curDbProfile[keyLeafNode]
-end
-
----@param info table
----@param value any
----Ref: https://www.wowace.com/projects/ace3/pages/ace-config-3-0-options-tables#title-4-1
-function PlayerName47:_setOption(info, value)
-  local keyLeafNode = info[#info]
-  self._curDbProfile[keyLeafNode] = value
-  self:refreshConfig()
-end
-
+---@param optionsTable table
 ---@return table
-function PlayerName47:_getAppendedEnableOptionTable()
-  local barTemplateOptions = BarTemplateOptions:new(self.bars)
-  local options = barTemplateOptions:getOptionTable(_DECORATIVE_NAME)
+function PlayerName47:_appendEnableOption(optionsTable)
   -- Use parent's get/set functions
-  options.args["enabledToggle"] = {
+  optionsTable.args["enabledToggle"] = {
     type = "toggle",
     name = "Enable",
     desc = "Enable / Disable Module `" .. _DECORATIVE_NAME .. "`",
-    order = 1,
-    get = function(info) return self:_getOption(info) end,
-    set = function(info, value) self:_setOption(info, value) end
+    order = 1
   }
-  return options
+  return optionsTable
 end
 
 ---@return string formattedName

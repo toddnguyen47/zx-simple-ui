@@ -59,14 +59,17 @@ function TargetPower47:OnInitialize()
 
   self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, _defaults)
   self._curDbProfile = self.db.profile
+
   self.bars = BarTemplate:new(self.db)
   self.bars.defaults = _defaults
-  local barTemplateOptions = BarTemplateOptions:new(self.bars)
+  local barTemplateOptions = BarTemplateOptions:new(self)
+  local options = barTemplateOptions:getOptionTable(_DECORATIVE_NAME)
+  -- Don't allow user to change target power color since the color should be determined
+  -- by the Target's power type
+  options.args.color = nil
 
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
-  local optionsTable = barTemplateOptions:getOptionTable(_DECORATIVE_NAME)
-  optionsTable.args.color = nil
-  ZxSimpleUI:registerModuleOptions(_MODULE_NAME, optionsTable, _DECORATIVE_NAME)
+  ZxSimpleUI:registerModuleOptions(_MODULE_NAME, options, _DECORATIVE_NAME)
 end
 
 function TargetPower47:OnEnable() self:handleOnEnable() end

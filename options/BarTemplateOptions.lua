@@ -7,22 +7,23 @@ BarTemplateOptions.__index = BarTemplateOptions
 BarTemplateOptions.OPTION_NAME = "BarTemplateOptions"
 ZxSimpleUI.optionTables[BarTemplateOptions.OPTION_NAME] = BarTemplateOptions
 
----@param barTemplateModule table
-function BarTemplateOptions:new(barTemplateModule)
-  assert(barTemplateModule ~= nil)
+---@param currentModule table
+function BarTemplateOptions:new(currentModule)
+  assert(currentModule ~= nil)
+  assert(currentModule.bars ~= nil, "Remember to initialize a bar template object first!")
   local newInstance = setmetatable({}, self)
-  newInstance:__init__(barTemplateModule)
+  newInstance:__init__(currentModule)
   return newInstance
 end
 
-function BarTemplateOptions:__init__(barTemplateModule)
+function BarTemplateOptions:__init__(currentModule)
   self.options = {}
-  self._barTemplateModule = barTemplateModule
-  self._curDbProfile = barTemplateModule.db.profile
-  self._coreOptions47 = CoreOptions47:new(self._barTemplateModule)
+  self._currentModule = currentModule
+  self._curDbProfile = currentModule.db.profile
+  self._coreOptions47 = CoreOptions47:new(self._currentModule)
 end
 
-function BarTemplateOptions:registerModuleOptionsTable() end
+function BarTemplateOptions:registerModuleOptionsTable() error("Not implemented error") end
 
 ---@param decorativeName string
 ---@return table
@@ -71,7 +72,7 @@ function BarTemplateOptions:getOptionTable(decorativeName)
           name = "Center Bar X",
           desc = "Center Bar X Position",
           type = "execute",
-          func = function(...) self._barTemplateModule:handlePositionXCenter() end,
+          func = function(...) self._currentModule.bars:handlePositionXCenter() end,
           order = self._coreOptions47:incrementOrderIndex()
         },
         positiony = {
@@ -87,7 +88,7 @@ function BarTemplateOptions:getOptionTable(decorativeName)
           name = "Center Bar Y",
           desc = "Center Bar Y Position",
           type = "execute",
-          func = function(...) self._barTemplateModule:handlePositionYCenter() end,
+          func = function(...) self._currentModule.bars:handlePositionYCenter() end,
           order = self._coreOptions47:incrementOrderIndex()
         },
         fontsize = {

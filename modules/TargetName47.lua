@@ -37,12 +37,15 @@ function TargetName47:OnInitialize()
 
   self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, _defaults)
   self._curDbProfile = self.db.profile
+
   self.bars = BarTemplate:new(self.db)
   self.bars.defaults = _defaults
+  local barTemplateOptions = BarTemplateOptions:new(self)
+  local options = barTemplateOptions:getOptionTable(_DECORATIVE_NAME)
+  options = self:_appendEnableOption(options)
 
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
-  ZxSimpleUI:registerModuleOptions(_MODULE_NAME, self:_getAppendedEnableOptionTable(),
-    _DECORATIVE_NAME)
+  ZxSimpleUI:registerModuleOptions(_MODULE_NAME, options, _DECORATIVE_NAME)
 end
 
 function TargetName47:OnEnable() self:handleOnEnable() end
@@ -97,18 +100,17 @@ function TargetName47:handleOnDisable() if self.mainFrame ~= nil then self.mainF
 -- # PRIVATE FUNCTIONS
 -- ####################################
 
+---@param optionsTable table
 ---@return table
-function TargetName47:_getAppendedEnableOptionTable()
-  local barTemplateOptions = BarTemplateOptions:new(self.bars)
-  local options = barTemplateOptions:getOptionTable(_DECORATIVE_NAME)
+function TargetName47:_appendEnableOption(optionsTable)
   -- Use parent's get/set functions
-  options.args["enabledToggle"] = {
+  optionsTable.args["enabledToggle"] = {
     type = "toggle",
     name = "Enable",
     desc = "Enable / Disable Module `" .. _DECORATIVE_NAME .. "`",
     order = 1
   }
-  return options
+  return optionsTable
 end
 
 function TargetName47:_registerEvents()

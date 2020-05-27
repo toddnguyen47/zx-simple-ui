@@ -11,6 +11,8 @@ Utils47.lua
 CoreOptionsInterface.lua
 CoreBarTemplate.lua
 
+options\Runes47Options.lua
+
 modules\RegisterWatchHandler47.lua
 modules\PlayerHealth47.lua
 modules\PlayerName47.lua

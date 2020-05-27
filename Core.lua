@@ -31,8 +31,7 @@ ZxSimpleUI.UPDATE_INTERVAL_SECONDS = 16 * refreshEveryNFrame / 1000.0
 ZxSimpleUI.moduleOptionsTable = {}
 ZxSimpleUI.moduleKeySorted = {}
 ZxSimpleUI.blizOptionTable = {}
-ZxSimpleUI.playerBars = {}
-ZxSimpleUI.targetBars = {}
+ZxSimpleUI.optionTables = {}
 ZxSimpleUI.db = nil
 
 function ZxSimpleUI:OnInitialize()

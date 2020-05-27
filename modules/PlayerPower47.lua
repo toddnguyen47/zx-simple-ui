@@ -18,21 +18,6 @@ PlayerPower47.MODULE_NAME = _MODULE_NAME
 PlayerPower47.DECORATIVE_NAME = _DECORATIVE_NAME
 PlayerPower47.unit = "player"
 
-local _defaults = {
-  profile = {
-    width = 200,
-    height = 26,
-    positionx = 400,
-    positiony = 240,
-    fontsize = 14,
-    font = "Friz Quadrata TT",
-    fontcolor = {1.0, 1.0, 1.0},
-    texture = "Blizzard",
-    color = {0.0, 0.0, 1.0, 1.0},
-    border = "None"
-  }
-}
-
 local _powerEventColorTable = {
   ["UNIT_MANA"] = {0.0, 0.0, 1.0, 1.0},
   ["UNIT_RAGE"] = {1.0, 0.0, 0.0, 1.0},
@@ -51,19 +36,41 @@ local _unitPowerTypeTable = {
   ["RUNICPOWER"] = 6
 }
 
+local _defaults = {
+  profile = {
+    enabledToggle = true,
+    showbar = false,
+    width = 200,
+    height = 26,
+    positionx = 400,
+    positiony = 240,
+    fontsize = 14,
+    font = "Friz Quadrata TT",
+    fontcolor = {1.0, 1.0, 1.0},
+    texture = "Blizzard",
+    color = _powerEventColorTable["UNIT_MANA"], -- need this option for createBar() to work
+    colorMana = _powerEventColorTable["UNIT_MANA"],
+    colorRage = _powerEventColorTable["UNIT_RAGE"],
+    colorFocus = _powerEventColorTable["UNIT_FOCUS"],
+    colorEnergy = _powerEventColorTable["UNIT_ENERGY"],
+    colorRunicPower = _powerEventColorTable["UNIT_RUNIC_POWER"],
+    border = "None"
+  }
+}
+
 function PlayerPower47:OnInitialize()
   self:__init__()
 
   self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, _defaults)
   self._curDbProfile = self.db.profile
+  -- Always set the showbar option to false on initialize
+  self._curDbProfile.showbar = _defaults.profile.showbar
 
   self.bars = BarTemplate:new(self.db)
   self.bars.defaults = _defaults
   self._barTemplateOptions = BarTemplateOptions:new(self)
 
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
-  -- ZxSimpleUI:registerModuleOptions(_MODULE_NAME, self._barTemplateOptions:getOptionTable(),
-  --   _DECORATIVE_NAME)
 end
 
 function PlayerPower47:OnEnable()
@@ -79,6 +86,8 @@ function PlayerPower47:OnDisable() self:handleOnDisable() end
 
 function PlayerPower47:__init__()
   self.mainFrame = nil
+  self.currentPowerColorEdited = _powerEventColorTable["UNIT_MANA"]
+
   self._timeSinceLastUpdate = 0
   self._prevPowerValue = UnitPowerMax(self.unit)
   self._playerClass = UnitClass(self.unit)
@@ -86,18 +95,26 @@ function PlayerPower47:__init__()
   self._powerTypeString = ""
 end
 
-function PlayerPower47:refreshConfig() if self:IsEnabled() then self.bars:refreshConfig() end end
+function PlayerPower47:refreshConfig()
+  if self:IsEnabled() then
+    -- If the show option is currently selected
+    if self._curDbProfile.showbar == true then
+      self.mainFrame.statusBar:SetStatusBarColor(unpack(self.currentPowerColorEdited))
+    else
+      self:_setRefreshColor()
+      self.bars:refreshConfig()
+    end
+  end
+end
 
 ---@return table
 function PlayerPower47:createBar()
-  self:_setUnitPowerType()
-  self:_setDefaultColor()
-
   local curUnitPower = UnitPower(self.unit)
   local maxUnitPower = UnitPowerMax(self.unit)
   local percentage = ZxSimpleUI:calcPercentSafely(curUnitPower, maxUnitPower)
   self.mainFrame = self.bars:createBar(percentage)
 
+  self:_setRefreshColor()
   self:_registerEvents()
   self:_setOnShowOnHideHandlers()
   self:_enableAllScriptHandlers()
@@ -156,11 +173,7 @@ function PlayerPower47:_setPowerValue(curUnitPower)
   self.bars:setStatusBarValue(powerPercent)
 end
 
-function PlayerPower47:_handlePowerChanged()
-  self:_setUnitPowerType()
-  self:_setDefaultColor()
-  self:refreshConfig()
-end
+function PlayerPower47:_handlePowerChanged() self:refreshConfig() end
 
 function PlayerPower47:_registerEvents()
   for powerEvent, _ in pairs(_powerEventColorTable) do
@@ -201,10 +214,25 @@ function PlayerPower47:_setUnitPowerType()
   self._powerType, self._powerTypeString = UnitPowerType(self.unit)
 end
 
-function PlayerPower47:_setDefaultColor()
-  local powerTypeUpper = string.upper(self._powerTypeString)
-  local colorTable = _powerEventColorTable["UNIT_" .. powerTypeUpper]
-  if colorTable == nil then colorTable = _powerEventColorTable["UNIT_MANA"] end
-  _defaults.profile.color = colorTable
-  self._curDbProfile.color = colorTable
+function PlayerPower47:_setRefreshColor()
+  self:_setUnitPowerType()
+  local upperType = string.upper(self._powerTypeString)
+  local colorOptionTable = self:_getColorsInOptions()
+  local t1 = colorOptionTable["UNIT_" .. upperType]
+  t1 = t1 or colorOptionTable["UNIT_MANA"]
+
+  self._curDbProfile.color = t1
+  self.mainFrame.statusBar:SetStatusBarColor(unpack(t1))
+end
+
+---@return table
+function PlayerPower47:_getColorsInOptions()
+  local t1 = {
+    ["UNIT_MANA"] = self._curDbProfile.colorMana,
+    ["UNIT_RAGE"] = self._curDbProfile.colorRage,
+    ["UNIT_FOCUS"] = self._curDbProfile.colorFocus,
+    ["UNIT_ENERGY"] = self._curDbProfile.colorEnergy,
+    ["UNIT_RUNIC_POWER"] = self._curDbProfile.colorRunicPower
+  }
+  return t1
 end

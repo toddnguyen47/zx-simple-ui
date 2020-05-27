@@ -13,6 +13,7 @@ CoreOptionsInterface.lua
 options\CoreOptions47.lua
 options\BarTemplateOptions.lua
 options\Combo47Options.lua
+options\Power47Options.lua
 options\Runes47Options.lua
 options\Totems47Options.lua
 

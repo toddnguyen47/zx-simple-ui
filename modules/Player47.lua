@@ -5,8 +5,10 @@ local PlayerHealth47 = ZxSimpleUI:GetModule("PlayerHealth47")
 local PlayerName47 = ZxSimpleUI:GetModule("PlayerName47")
 local PlayerPower47 = ZxSimpleUI:GetModule("PlayerPower47")
 local Runes47 = ZxSimpleUI:GetModule("Runes47")
-local Runes47Options = ZxSimpleUI.optionTables["Runes47Options"]
 local Totems47 = ZxSimpleUI:GetModule("Totems47")
+
+local Power47Options = ZxSimpleUI.optionTables["Power47Options"]
+local Runes47Options = ZxSimpleUI.optionTables["Runes47Options"]
 local Totems47Options = ZxSimpleUI.optionTables["Totems47Options"]
 
 local NUM_MODULES = 5
@@ -40,7 +42,7 @@ function Player47:__init__()
     },
     [PlayerPower47.MODULE_NAME] = {
       module = PlayerPower47,
-      options = BarTemplateOptions:new(PlayerPower47)
+      options = Power47Options:new(PlayerPower47)
     }
   }
 

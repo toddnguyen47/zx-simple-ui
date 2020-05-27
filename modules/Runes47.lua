@@ -73,7 +73,6 @@ function Runes47:createBar(frameToAttachTo)
   self.mainFrame.bgTexture:SetAllPoints()
 
   self:_createRuneFrames()
-  self.mainFrame:Show()
   return self.mainFrame
 end
 

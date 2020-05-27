@@ -11,6 +11,7 @@ Utils47.lua
 CoreOptionsInterface.lua
 CoreBarTemplate.lua
 
+options\CoreOptions47.lua
 options\Runes47Options.lua
 options\Combo47Options.lua
 

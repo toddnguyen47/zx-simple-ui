@@ -1,6 +1,7 @@
 local MAX_COMBO_POINTS = MAX_COMBO_POINTS
 
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
+local CoreOptions47 = ZxSimpleUI.optionTables["CoreOptions47"]
 local media = LibStub("LibSharedMedia-3.0")
 
 local Combo47Options = {}
@@ -19,8 +20,8 @@ end
 function Combo47Options:__init__(comboModule)
   self.options = {}
   self._comboModule = comboModule
-  self._curDbProfile = self._comboModule.db.profile
-  self._orderIndex = ZxSimpleUI.DEFAULT_ORDER_INDEX
+  self._curDbProfile = comboModule.db.profile
+  self._coreOptions47 = CoreOptions47:new(self._comboModule)
 end
 
 function Combo47Options:registerModuleOptionsTable()
@@ -35,8 +36,8 @@ function Combo47Options:getOptionTable()
       type = "group",
       name = self._comboModule.DECORATIVE_NAME,
       --- "Parent" get/set
-      get = function(info) return self:_getOption(info) end,
-      set = function(info, value) self:_setOption(info, value) end,
+      get = function(info) return self._coreOptions47:getOption(info) end,
+      set = function(info, value) self._coreOptions47:setOption(info, value) end,
       args = {
         header = {
           type = "header",
@@ -55,8 +56,9 @@ function Combo47Options:getOptionTable()
           name = "Show Display",
           desc = "Show/Hide the Combo Points Display",
           order = ZxSimpleUI.HEADER_ORDER_INDEX + 2,
-          get = function(info) return self:_getShownOption(info) end,
-          set = function(info, value) self:_setShownOption(info, value) end
+          disabled = function(info) return not self._curDbProfile.enabledToggle end,
+          get = function(info) return self._coreOptions47:getShownOption(info) end,
+          set = function(info, value) self._coreOptions47:setShownOption(info, value) end
         },
         texture = {
           name = "Bar Texture",
@@ -64,7 +66,7 @@ function Combo47Options:getOptionTable()
           type = "select",
           dialogControl = "LSM30_Statusbar",
           values = media:HashTable("statusbar"),
-          order = self:_incrementOrderIndex()
+          order = self._coreOptions47:incrementOrderIndex()
         },
         height = {
           name = "Combo Height",
@@ -73,7 +75,7 @@ function Combo47Options:getOptionTable()
           min = 2,
           max = 20,
           step = 1,
-          order = self:_incrementOrderIndex()
+          order = self._coreOptions47:incrementOrderIndex()
         },
         horizGap = {
           name = "Horizontal Gap",
@@ -82,7 +84,7 @@ function Combo47Options:getOptionTable()
           min = 0,
           max = 30,
           step = 1,
-          order = self:_incrementOrderIndex()
+          order = self._coreOptions47:incrementOrderIndex()
         },
         yoffset = {
           name = "Y Offset",
@@ -91,9 +93,13 @@ function Combo47Options:getOptionTable()
           min = -30,
           max = 30,
           step = 1,
-          order = self:_incrementOrderIndex()
+          order = self._coreOptions47:incrementOrderIndex()
         },
-        colorHeader = {name = "Colors", type = "header", order = self:_incrementOrderIndex()},
+        colorHeader = {
+          name = "Colors",
+          type = "header",
+          order = self._coreOptions47:incrementOrderIndex()
+        },
         mediumComboPoints = {
           name = "Medium Combo Points",
           desc = "For combo points > 0 and < " .. MAX_COMBO_POINTS .. ". Set to 0 to disable.",
@@ -101,84 +107,44 @@ function Combo47Options:getOptionTable()
           min = 0,
           max = MAX_COMBO_POINTS - 1,
           step = 1,
-          order = self:_incrementOrderIndex()
+          order = self._coreOptions47:incrementOrderIndex()
         },
         lowComboColor = {
           name = "Low Combo Color",
           desc = "Color for low (below medium setpoint) combo points",
           type = "color",
-          get = function(info) return self:_getOptionColor(info) end,
-          set = function(info, r, g, b, a) self:_setOptionColor(info, r, g, b, a) end,
+          get = function(info) return self._coreOptions47:getOptionColor(info) end,
+          set = function(info, r, g, b, a)
+            self._coreOptions47:setOptionColor(info, r, g, b, a)
+          end,
           hasAlpha = false,
-          order = self:_incrementOrderIndex()
+          order = self._coreOptions47:incrementOrderIndex()
         },
         medComboColor = {
           name = "Medium Combo Color",
           desc = "Color for medium combo points (greater than or equal to " ..
             "Medium Combo Points, but less than MAX)",
           type = "color",
-          get = function(info) return self:_getOptionColor(info) end,
-          set = function(info, r, g, b, a) self:_setOptionColor(info, r, g, b, a) end,
+          get = function(info) return self._coreOptions47:getOptionColor(info) end,
+          set = function(info, r, g, b, a)
+            self._coreOptions47:setOptionColor(info, r, g, b, a)
+          end,
           hasAlpha = false,
-          order = self:_incrementOrderIndex()
+          order = self._coreOptions47:incrementOrderIndex()
         },
         maxComboColor = {
           name = "Max Combo Color",
           desc = "Color for MAX combo points",
           type = "color",
-          get = function(info) return self:_getOptionColor(info) end,
-          set = function(info, r, g, b, a) self:_setOptionColor(info, r, g, b, a) end,
+          get = function(info) return self._coreOptions47:getOptionColor(info) end,
+          set = function(info, r, g, b, a)
+            self._coreOptions47:setOptionColor(info, r, g, b, a)
+          end,
           hasAlpha = false,
-          order = self:_incrementOrderIndex()
+          order = self._coreOptions47:incrementOrderIndex()
         }
       }
     }
   end
   return self.options
-end
-
--- ####################################
--- # PRIVATE FUNCTIONS
--- ####################################
-
-function Combo47Options:_getShownOption(info) return self:_getOption(info) end
-
----@param info table
----@param value boolean
----Set the shown option.
-function Combo47Options:_setShownOption(info, value)
-  self:_setOption(info, value)
-  if (value == true) then
-    self._comboModule:handleShownOption()
-  else
-    self._comboModule:handleShownHideOption()
-  end
-end
-
----@param info table
----Ref: https://www.wowace.com/projects/ace3/pages/ace-config-3-0-options-tables#title-4-1
-function Combo47Options:_getOption(info)
-  local keyLeafNode = info[#info]
-  return self._curDbProfile[keyLeafNode]
-end
-
----@param info table
----@param value any
----Ref: https://www.wowace.com/projects/ace3/pages/ace-config-3-0-options-tables#title-4-1
-function Combo47Options:_setOption(info, value)
-  local keyLeafNode = info[#info]
-  self._curDbProfile[keyLeafNode] = value
-  self._comboModule:refreshConfig()
-end
-
----@param info table
-function Combo47Options:_getOptionColor(info) return unpack(self:_getOption(info)) end
-
----@param info table
-function Combo47Options:_setOptionColor(info, r, g, b, a) self:_setOption(info, {r, g, b, a}) end
-
-function Combo47Options:_incrementOrderIndex()
-  local i = self._orderIndex
-  self._orderIndex = self._orderIndex + 1
-  return i
 end

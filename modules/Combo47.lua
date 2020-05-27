@@ -14,6 +14,7 @@ local UnitName, UnitClass = UnitName, UnitClass
 local unpack = unpack
 
 Combo47.MODULE_NAME = _MODULE_NAME
+Combo47.DECORATIVE_NAME = _DECORATIVE_NAME
 Combo47.PLAYER_ENGLISH_CLASS = select(2, UnitClass("player"))
 Combo47.EVENT_TABLE = {"PLAYER_TARGET_CHANGED", "UNIT_COMBO_POINTS"}
 Combo47.bars = nil
@@ -43,7 +44,6 @@ function Combo47:OnInitialize()
   self._curDbProfile.showbar = _defaults.profile.showbar
 
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
-  ZxSimpleUI:registerModuleOptions(_MODULE_NAME, self:_getOptionTable(), _DECORATIVE_NAME)
 end
 
 function Combo47:OnEnable() self:handleOnEnable() end
@@ -207,159 +207,4 @@ function Combo47:_createIndividualComboPointsDisplay()
     comboTexture:Hide()
     self._comboPointsTable[i] = comboTexture
   end
-end
-
----@param info table
----Ref: https://www.wowace.com/projects/ace3/pages/ace-config-3-0-options-tables#title-4-1
-function Combo47:_getOption(info)
-  local keyLeafNode = info[#info]
-  return self._curDbProfile[keyLeafNode]
-end
-
----@param info table
----@param value any
----Ref: https://www.wowace.com/projects/ace3/pages/ace-config-3-0-options-tables#title-4-1
-function Combo47:_setOption(info, value)
-  local keyLeafNode = info[#info]
-  self._curDbProfile[keyLeafNode] = value
-  self:refreshConfig()
-end
-
----@param info table
-function Combo47:_getOptionColor(info) return unpack(self:_getOption(info)) end
-
----@param info table
-function Combo47:_setOptionColor(info, r, g, b, a) self:_setOption(info, {r, g, b, a}) end
-
-function Combo47:_getShownOption(info) return self:_getOption(info) end
-
----@param info table
----@param value boolean
-function Combo47:_setShownOption(info, value)
-  self:_setOption(info, value)
-  if (value == true) then
-    self.mainFrame:Show()
-    for i, comboTexture in ipairs(self._comboPointsTable) do
-      self:_setComboPointsColor(i, comboTexture)
-      comboTexture:Show()
-    end
-  else
-    self:_hideAllComboPoints()
-    self.mainFrame:Hide()
-  end
-end
-
-function Combo47:_incrementOrderIndex()
-  local i = self._orderIndex
-  self._orderIndex = self._orderIndex + 1
-  return i
-end
-
----@return table
-function Combo47:_getOptionTable()
-  if next(self.options) == nil then
-    self.options = {
-      type = "group",
-      name = _DECORATIVE_NAME,
-      --- "Parent" get/set
-      get = function(info) return self:_getOption(info) end,
-      set = function(info, value) self:_setOption(info, value) end,
-      args = {
-        header = {
-          type = "header",
-          name = _DECORATIVE_NAME,
-          order = ZxSimpleUI.HEADER_ORDER_INDEX
-        },
-        enabledToggle = {
-          type = "toggle",
-          name = "Enable",
-          desc = "Enable / Disable this module",
-          order = ZxSimpleUI.HEADER_ORDER_INDEX + 1,
-          disabled = function(info) return self._curDbProfile.showbar end
-        },
-        showbar = {
-          type = "toggle",
-          name = "Show Display",
-          desc = "Show/Hide the Combo Points Display",
-          order = ZxSimpleUI.HEADER_ORDER_INDEX + 2,
-          get = function(info) return self:_getShownOption(info) end,
-          set = function(info, value) self:_setShownOption(info, value) end
-        },
-        texture = {
-          name = "Bar Texture",
-          desc = "Bar Texture",
-          type = "select",
-          dialogControl = "LSM30_Statusbar",
-          values = media:HashTable("statusbar"),
-          order = self:_incrementOrderIndex()
-        },
-        height = {
-          name = "Combo Height",
-          desc = "Combo display height",
-          type = "range",
-          min = 2,
-          max = 20,
-          step = 1,
-          order = self:_incrementOrderIndex()
-        },
-        horizGap = {
-          name = "Horizontal Gap",
-          desc = "Horizontal Gap between each combo point bar",
-          type = "range",
-          min = 0,
-          max = 30,
-          step = 1,
-          order = self:_incrementOrderIndex()
-        },
-        yoffset = {
-          name = "Y Offset",
-          desc = "Y Offset",
-          type = "range",
-          min = -30,
-          max = 30,
-          step = 1,
-          order = self:_incrementOrderIndex()
-        },
-        colorHeader = {name = "Colors", type = "header", order = self:_incrementOrderIndex()},
-        mediumComboPoints = {
-          name = "Medium Combo Points",
-          desc = "For combo points > 0 and < " .. MAX_COMBO_POINTS .. ". Set to 0 to disable.",
-          type = "range",
-          min = 0,
-          max = MAX_COMBO_POINTS - 1,
-          step = 1,
-          order = self:_incrementOrderIndex()
-        },
-        lowComboColor = {
-          name = "Low Combo Color",
-          desc = "Color for low (below medium setpoint) combo points",
-          type = "color",
-          get = function(info) return self:_getOptionColor(info) end,
-          set = function(info, r, g, b, a) self:_setOptionColor(info, r, g, b, a) end,
-          hasAlpha = false,
-          order = self:_incrementOrderIndex()
-        },
-        medComboColor = {
-          name = "Medium Combo Color",
-          desc = "Color for medium combo points (greater than or equal to " ..
-            "Medium Combo Points, but less than MAX)",
-          type = "color",
-          get = function(info) return self:_getOptionColor(info) end,
-          set = function(info, r, g, b, a) self:_setOptionColor(info, r, g, b, a) end,
-          hasAlpha = false,
-          order = self:_incrementOrderIndex()
-        },
-        maxComboColor = {
-          name = "Max Combo Color",
-          desc = "Color for MAX combo points",
-          type = "color",
-          get = function(info) return self:_getOptionColor(info) end,
-          set = function(info, r, g, b, a) self:_setOptionColor(info, r, g, b, a) end,
-          hasAlpha = false,
-          order = self:_incrementOrderIndex()
-        }
-      }
-    }
-  end
-  return self.options
 end

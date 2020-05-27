@@ -1,10 +1,13 @@
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
+
 local PlayerHealth47 = ZxSimpleUI:GetModule("PlayerHealth47")
 local PlayerName47 = ZxSimpleUI:GetModule("PlayerName47")
 local PlayerPower47 = ZxSimpleUI:GetModule("PlayerPower47")
 local Runes47 = ZxSimpleUI:GetModule("Runes47")
 local Runes47Options = ZxSimpleUI.optionTables["Runes47Options"]
 local Totems47 = ZxSimpleUI:GetModule("Totems47")
+
+local NUM_MODULES = 5
 
 local _MODULE_NAME = "Player47"
 local _DECORATIVE_NAME = "Player Factory"
@@ -46,18 +49,22 @@ function Player47:_createAdditionalBars()
   local runes47Options = Runes47Options:new(self._barList[Runes47.MODULE_NAME])
   runes47Options:registerModuleOptionsTable()
 
-  self._barList[Runes47.MODULE_NAME] = Totems47
+  self._barList[Totems47.MODULE_NAME] = Totems47
   parentFrame = self._barList[PlayerPower47.MODULE_NAME].mainFrame
-  self._barList[Runes47.MODULE_NAME]:createBar(parentFrame)
+  self._barList[Totems47.MODULE_NAME]:createBar(parentFrame)
 end
 
 function Player47:_setEnableState()
-  for _, module in pairs(self._barList) do
+  local count = 0
+  for moduleName, module in pairs(self._barList) do
     module:handleEnableToggle()
     if module:IsEnabled() then
       module:handleOnEnable()
     else
       module:handleOnDisable()
     end
+    count = count + 1
   end
+  assert(count == NUM_MODULES,
+    string.format("Number of modules was not met! Num Modules: %d", NUM_MODULES))
 end

@@ -1,8 +1,12 @@
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
+
 local TargetHealth47 = ZxSimpleUI:GetModule("TargetHealth47")
 local TargetName47 = ZxSimpleUI:GetModule("TargetName47")
 local TargetPower47 = ZxSimpleUI:GetModule("TargetPower47")
 local Combo47 = ZxSimpleUI:GetModule("Combo47")
+local Combo47Options = ZxSimpleUI.optionTables["Combo47Options"]
+
+local NUM_MODULES = 4
 
 local _MODULE_NAME = "Target47"
 local _DECORATIVE_NAME = "Target Factory"
@@ -41,9 +45,12 @@ function Target47:_createAdditionalBars()
   self._barList[Combo47.MODULE_NAME] = Combo47
   local parentFrame = self._barList[TargetPower47.MODULE_NAME].mainFrame
   self._barList[Combo47.MODULE_NAME]:createBar(parentFrame)
+  local combo47Options = Combo47Options:new(self._barList[Combo47.MODULE_NAME])
+  combo47Options:registerModuleOptionsTable()
 end
 
 function Target47:_setEnableState()
+  local count = 0
   for _, module in pairs(self._barList) do
     module:handleEnableToggle()
     if module:IsEnabled() then
@@ -51,5 +58,8 @@ function Target47:_setEnableState()
     else
       module:handleOnDisable()
     end
+    count = count + 1
   end
+  assert(count == NUM_MODULES,
+    string.format("Number of modules was not met! Num Modules: %d", NUM_MODULES))
 end

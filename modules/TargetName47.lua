@@ -14,6 +14,7 @@ local _DECORATIVE_NAME = "Target Name"
 local TargetName47 = ZxSimpleUI:NewModule(_MODULE_NAME)
 
 TargetName47.MODULE_NAME = _MODULE_NAME
+TargetName47.DECORATIVE_NAME = _DECORATIVE_NAME
 TargetName47.bars = nil
 
 local _defaults = {
@@ -41,7 +42,7 @@ function TargetName47:OnInitialize()
   self.bars = BarTemplate:new(self.db)
   self.bars.defaults = _defaults
   self._barTemplateOptions = BarTemplateOptions:new(self)
-  local options = self._barTemplateOptions:getOptionTable(_DECORATIVE_NAME)
+  local options = self._barTemplateOptions:getOptionTable()
   options = self:_appendEnableOption(options)
 
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))

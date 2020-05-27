@@ -19,6 +19,7 @@ local _DECORATIVE_NAME = "Target Power"
 local TargetPower47 = ZxSimpleUI:NewModule(_MODULE_NAME)
 
 TargetPower47.MODULE_NAME = _MODULE_NAME
+TargetPower47.DECORATIVE_NAME = _DECORATIVE_NAME
 TargetPower47.bars = nil
 TargetPower47.unit = "target"
 
@@ -73,7 +74,7 @@ function TargetPower47:OnInitialize()
   self.bars = BarTemplate:new(self.db)
   self.bars.defaults = _defaults
   self._barTemplateOptions = BarTemplateOptions:new(self)
-  local options = self._barTemplateOptions:getOptionTable(_DECORATIVE_NAME)
+  local options = self._barTemplateOptions:getOptionTable()
   options = self:_appendColorOptions(options)
   -- Don't allow user to change target power color since the color should be determined
   -- by the Target's power type

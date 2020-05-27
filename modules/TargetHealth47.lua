@@ -19,6 +19,7 @@ local _DECORATIVE_NAME = "Target Health"
 local TargetHealth47 = ZxSimpleUI:NewModule(_MODULE_NAME)
 
 TargetHealth47.MODULE_NAME = _MODULE_NAME
+TargetHealth47.DECORATIVE_NAME = _DECORATIVE_NAME
 TargetHealth47.bars = nil
 TargetHealth47.unit = "target"
 
@@ -48,8 +49,8 @@ function TargetHealth47:OnInitialize()
   self._barTemplateOptions = BarTemplateOptions:new(self)
 
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
-  ZxSimpleUI:registerModuleOptions(_MODULE_NAME,
-    self._barTemplateOptions:getOptionTable(_DECORATIVE_NAME), _DECORATIVE_NAME)
+  ZxSimpleUI:registerModuleOptions(_MODULE_NAME, self._barTemplateOptions:getOptionTable(),
+    _DECORATIVE_NAME)
 end
 
 function TargetHealth47:OnEnable() self:handleOnEnable() end

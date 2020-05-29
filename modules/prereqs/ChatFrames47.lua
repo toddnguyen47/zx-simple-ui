@@ -7,8 +7,9 @@ local _DECORATIVE_NAME = "Chat Frame"
 local ChatFrames47 = ZxSimpleUI:NewModule(_MODULE_NAME)
 ChatFrames47.MODULE_NAME = _MODULE_NAME
 ChatFrames47.DECORATIVE_NAME = _DECORATIVE_NAME
-ChatFrames47.MAX_CHATFRAMES = 9
+ChatFrames47.MAX_CHATFRAMES = 10
 ChatFrames47.FACTORY_DEFAULT_FONT = "Arial Narrow"
+ChatFrames47.KEY_SUFFIXES = {"", "EditBox", "EditBoxHeader"}
 
 local _defaults = {profile = {enabledToggle = true, font = "Friz Quadrata TT"}}
 
@@ -48,19 +49,23 @@ end
 function ChatFrames47:printGlobalChatFrameKeys()
   local sortedTable = {}
   for k, v in pairs(_G) do
-    -- Look for "ChatFrameNUM" first
     if k:find("ChatFrame%d+") then
-      -- Now look for ChatFrameNUM, exclusively
-      if k:find("ChatFrame%d+.+") == nil then table.insert(sortedTable, k) end
+      if type(v.GetFont) == "function" then
+        local index = tonumber(k:match("%d+"))
+        if sortedTable[index] == nil then sortedTable[index] = {} end
+        table.insert(sortedTable[index], k)
+      end
     end
   end
 
-  table.sort(sortedTable)
-  for _, v in pairs(sortedTable) do
-    local globalKey = v
-    local globalValue = _G[globalKey]
-    ZxSimpleUI:Print(string.format("Key: %s, Value: %s", globalKey,
-                       tostring(globalValue:GetFont())))
+  for _, tableOfKeys in pairs(sortedTable) do
+    table.sort(tableOfKeys)
+    for _, globalKey in pairs(tableOfKeys) do
+      local globalValue = _G[globalKey]:GetFont()
+      globalValue = globalValue:gsub("\\", "/")
+      globalValue = globalValue:match(".*/(%S+)")
+      ZxSimpleUI:Print(string.format("Key: [%s], Value: [%s]", globalKey, globalValue))
+    end
   end
 end
 
@@ -114,14 +119,20 @@ function ChatFrames47:_refreshAll() self:_setChatFrameFonts() end
 
 function ChatFrames47:_setChatFrameFonts()
   for i = 1, self.MAX_CHATFRAMES do
-    local key = "ChatFrame" .. i
-    _G[key]:SetFont(media:Fetch("font", self._curDbProfile.font), 14, "")
+    local str1 = "ChatFrame" .. i
+    for _, key in ipairs(self.KEY_SUFFIXES) do
+      local k1 = str1 .. key
+      _G[k1]:SetFont(media:Fetch("font", self._curDbProfile.font), 14, "")
+    end
   end
 end
 
 function ChatFrames47:_resetFactoryDefaultFonts()
   for i = 1, self.MAX_CHATFRAMES do
-    local key = "ChatFrame" .. i
-    _G[key]:SetFont(media:Fetch("font", self.FACTORY_DEFAULT_FONT), 14, "")
+    local str1 = "ChatFrame" .. i
+    for _, key in ipairs(self.KEY_SUFFIXES) do
+      local k1 = str1 .. key
+      _G[key]:SetFont(media:Fetch("font", self.FACTORY_DEFAULT_FONT), 14, "")
+    end
   end
 end

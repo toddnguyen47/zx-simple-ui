@@ -1,12 +1,13 @@
+--- upvalues to prevent warnings
+local LibStub = LibStub
+local UnitName = UnitName
+
+--- include
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local BarTemplate = ZxSimpleUI.BarTemplate
 local BarTemplateOptions = ZxSimpleUI.optionTables["BarTemplateOptions"]
 local Utils47 = ZxSimpleUI.Utils47
 local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
-
---- upvalues to prevent warnings
-local LibStub = LibStub
-local UnitName = UnitName
 
 local _MODULE_NAME = "PlayerName47"
 local _DECORATIVE_NAME = "Player Name"

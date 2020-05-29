@@ -1,0 +1,7 @@
+<Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+  <Script file="TargetHealth47.lua" />
+  <Script file="TargetName47.lua" />
+  <Script file="TargetPower47.lua" />
+  <Script file="Combo47.lua" />
+  <Script file="Target47.lua" />
+</Ui>

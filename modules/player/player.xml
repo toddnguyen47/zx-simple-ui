@@ -1,0 +1,8 @@
+<Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+  <Script file="PlayerHealth47.lua" />
+  <Script file="PlayerName47.lua" />
+  <Script file="PlayerPower47.lua" />
+  <Script file="Runes47.lua" />
+  <Script file="Totems47.lua" />
+  <Script file="Player47.lua" />
+</Ui>

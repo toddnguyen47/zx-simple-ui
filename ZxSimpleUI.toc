@@ -6,6 +6,8 @@
 ## SavedVariables: ZxSimpleUI_DB
 
 embeds.xml
-core.xml
+Core.lua
+core\core.xml
+
 options\options.xml
 modules\modules.xml

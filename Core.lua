@@ -1,10 +1,28 @@
-local ZxSimpleUI = LibStub("AceAddon-3.0"):NewAddon("ZxSimpleUI", "AceConsole-3.0")
+---Upvalues
+local LibStub, ChatFrame1 = LibStub, ChatFrame1
+local GetScreenWidth, GetScreenHeight = GetScreenWidth, GetScreenHeight
+local UnitFrame_OnEnter, UnitFrame_OnLeave = UnitFrame_OnEnter, UnitFrame_OnLeave
+
+--- AddOn Declaration
+local ADDON_NAME = "ZxSimpleUI"
+local ZxSimpleUI = LibStub("AceAddon-3.0"):NewAddon(ADDON_NAME, "AceConsole-3.0")
 
 ---LibSharedMedia registers
 local media = LibStub("LibSharedMedia-3.0")
 media:Register("font", "PT Sans Bold", "Interface\\AddOns\\ZxSimpleUI\\fonts\\PTSansBold.ttf")
 
---- "PRIVATE" variables
+--- All this below is needed!
+ZxSimpleUI.ADDON_NAME = ADDON_NAME
+ZxSimpleUI.DECORATIVE_NAME = "Zx Simple UI"
+ZxSimpleUI.SLASH_COMMANDS = {"zxsimpleui", "zxsui"}
+ZxSimpleUI.moduleOptionsTable = {}
+ZxSimpleUI.moduleKeySorted = {}
+ZxSimpleUI.blizOptionTable = {}
+ZxSimpleUI.optionTables = {}
+ZxSimpleUI.db = nil
+ZxSimpleUI.DEFAULT_FRAME_LEVEL = 15 -- maximum number with 4 bits
+ZxSimpleUI.DEFAULT_ORDER_INDEX = 7
+ZxSimpleUI.HEADER_ORDER_INDEX = 1
 local _defaults = {
   profile = {
     modules = {
@@ -13,26 +31,15 @@ local _defaults = {
     }
   }
 }
+--- End
 
---- "CONSTANTS"
-ZxSimpleUI.ADDON_NAME = "ZxSimpleUI"
-ZxSimpleUI.DECORATIVE_NAME = "Zx Simple UI"
-ZxSimpleUI.SLASH_COMMANDS = {"zxsimpleui", "zxsui"}
+--- Extra CONSTANTS
 ZxSimpleUI.SCREEN_WIDTH = math.floor(GetScreenWidth())
 ZxSimpleUI.SCREEN_HEIGHT = math.floor(GetScreenHeight())
-ZxSimpleUI.DEFAULT_FRAME_LEVEL = 15 -- maximum number with 4 bits
-ZxSimpleUI.DEFAULT_ORDER_INDEX = 7
-ZxSimpleUI.HEADER_ORDER_INDEX = 1
 
 -- if 60 FPS, then 1 frame will be refreshed in 16.67 milliseconds.
 local refreshEveryNFrame = 10
 ZxSimpleUI.UPDATE_INTERVAL_SECONDS = 16 * refreshEveryNFrame / 1000.0
-
-ZxSimpleUI.moduleOptionsTable = {}
-ZxSimpleUI.moduleKeySorted = {}
-ZxSimpleUI.blizOptionTable = {}
-ZxSimpleUI.optionTables = {}
-ZxSimpleUI.db = nil
 
 function ZxSimpleUI:OnInitialize()
   ---Must initialize db AFTER SavedVariables is loaded!

@@ -100,8 +100,10 @@ function ZxSimpleUI:calcPercentSafely(currentValue, maxValue)
 end
 
 ---@param module string
-function ZxSimpleUI:getModuleEnabledState(module) return
-  self.db.profile.modules[module].enabled end
+function ZxSimpleUI:getModuleEnabledState(module)
+  ---return statement
+  return self.db.profile.modules[module].enabled
+end
 
 ---@param module string
 ---@param isEnabled boolean

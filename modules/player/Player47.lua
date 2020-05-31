@@ -80,7 +80,7 @@ function Player47:_createAdditionalBars()
     module:createBar(t1["parentFrame"])
     local optionObject = options:new(module)
     optionObject:registerModuleOptionsTable()
-
+    -- Add to barList so we can call its handleOnEnable() function
     self._barList[moduleName] = {module = module, options = optionObject}
   end
 end

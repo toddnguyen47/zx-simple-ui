@@ -5,7 +5,6 @@ local UnitClassification = UnitClassification
 ---include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local BarTemplate = ZxSimpleUI.BarTemplate
-local BarTemplateOptions = ZxSimpleUI.optionTables["BarTemplateOptions"]
 local Utils47 = ZxSimpleUI.Utils47
 local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
 
@@ -41,12 +40,8 @@ function TargetName47:OnInitialize()
 
   self.bars = BarTemplate:new(self.db)
   self.bars.defaults = _defaults
-  self._barTemplateOptions = BarTemplateOptions:new(self)
-  local options = self._barTemplateOptions:getOptionTable()
-  options = self:_appendEnableOption(options)
 
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
-  ZxSimpleUI:registerModuleOptions(_MODULE_NAME, options, _DECORATIVE_NAME)
 end
 
 function TargetName47:OnEnable() self:handleOnEnable() end
@@ -97,22 +92,23 @@ end
 
 function TargetName47:handleOnDisable() if self.mainFrame ~= nil then self.mainFrame:Hide() end end
 
+
+---@return table
+function TargetName47:getExtraOptions()
+  local optionTable = {
+    enabledToggle = {
+      type = "toggle",
+      name = "Enable",
+      desc = "Enable / Disable Module `" .. _DECORATIVE_NAME .. "`",
+      order = 1
+    }
+  }
+  return optionTable
+end
+
 -- ####################################
 -- # PRIVATE FUNCTIONS
 -- ####################################
-
----@param optionsTable table
----@return table
-function TargetName47:_appendEnableOption(optionsTable)
-  -- Use parent's get/set functions
-  optionsTable.args["enabledToggle"] = {
-    type = "toggle",
-    name = "Enable",
-    desc = "Enable / Disable Module `" .. _DECORATIVE_NAME .. "`",
-    order = 1
-  }
-  return optionsTable
-end
 
 function TargetName47:_registerEvents()
   self.mainFrame:RegisterEvent("UNIT_HEALTH")

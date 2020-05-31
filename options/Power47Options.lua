@@ -40,6 +40,15 @@ function Power47Options:getOptionTable()
   return self.options
 end
 
+---@param optionTable table
+function Power47Options:addOption(optionTable)
+  self._barTemplateOptions:addOption(optionTable)
+end
+
+-- ####################################
+-- # PRIVATE FUNCTIONS
+-- ####################################
+
 function Power47Options:_getExtraOptionTable()
   local t1 = {
     colorgroup = {

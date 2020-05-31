@@ -10,7 +10,6 @@ local unpack = unpack
 ---Include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local BarTemplate = ZxSimpleUI.BarTemplate
-local BarTemplateOptions = ZxSimpleUI.optionTables["BarTemplateOptions"]
 local Utils47 = ZxSimpleUI.Utils47
 local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
 
@@ -73,15 +72,8 @@ function TargetPower47:OnInitialize()
 
   self.bars = BarTemplate:new(self.db)
   self.bars.defaults = _defaults
-  self._barTemplateOptions = BarTemplateOptions:new(self)
-  local options = self._barTemplateOptions:getOptionTable()
-  options = self:_appendColorOptions(options)
-  -- Don't allow user to change target power color since the color should be determined
-  -- by the Target's power type
-  options.args.color = nil
-
+  
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
-  ZxSimpleUI:registerModuleOptions(_MODULE_NAME, options, _DECORATIVE_NAME)
 end
 
 function TargetPower47:OnEnable() self:handleOnEnable() end
@@ -90,11 +82,11 @@ function TargetPower47:OnDisable() self:handleOnDisable() end
 
 function TargetPower47:__init__()
   self.mainFrame = nil
+  self.currentPowerColorEdited = _powerEventColorTable["UNIT_MANA"]
 
   self._timeSinceLastUpdate = 0
   self._prevTargetPower47 = UnitPowerMax(self.unit)
   self._powerType, self._powerTypeString = nil, nil
-  self._currentPowerColorEdited = _powerEventColorTable["UNIT_MANA"]
 end
 
 function TargetPower47:createBar()
@@ -118,7 +110,7 @@ function TargetPower47:refreshConfig()
   if self:IsEnabled() and self.mainFrame:IsVisible() then
     --- if we are currently in shown mode
     if self._curDbProfile.showbar == true then
-      self.mainFrame.statusBar:SetStatusBarColor(unpack(self._currentPowerColorEdited))
+      self.mainFrame.statusBar:SetStatusBarColor(unpack(self.currentPowerColorEdited))
     else
       self.bars:refreshConfig()
       self:_setRefreshColor()
@@ -145,70 +137,6 @@ function TargetPower47:handleShownHideOption() self.mainFrame:Hide() end
 -- ####################################
 -- # PRIVATE FUNCTIONS
 -- ####################################
-
----@param optionTables table
----@return table
-function TargetPower47:_appendColorOptions(optionTables)
-  optionTables.args["colorgroup"] = {
-    name = "Power Colors",
-    type = "group",
-    inline = true,
-    get = function(info) return self._barTemplateOptions:getOptionColor(info) end,
-    set = function(info, r, g, b, a)
-      self._currentPowerColorEdited = {r, g, b, a}
-      self._barTemplateOptions:setOptionColor(info, r, g, b, a)
-    end,
-    order = self._barTemplateOptions:incrementOrderIndex(),
-    args = {
-      showbar = {
-        name = "Show Color",
-        desc = "Show the currently edited power color",
-        type = "toggle",
-        order = 1,
-        disabled = function(info) return not self._curDbProfile.enabledToggle end,
-        get = function(info) return self._barTemplateOptions:getOption(info) end,
-        set = function(info, value) self._barTemplateOptions:setOption(info, value) end
-      },
-      colorMana = {
-        name = "Mana",
-        desc = "UNIT_MANA",
-        type = "color",
-        hasAlpha = true,
-        order = 5
-      },
-      colorRage = {
-        name = "Rage",
-        desc = "UNIT_RAGE",
-        type = "color",
-        hasAlpha = true,
-        order = 6
-      },
-      colorFocus = {
-        name = "Focus",
-        desc = "UNIT_FOCUS",
-        type = "color",
-        hasAlpha = true,
-        order = 7
-      },
-      colorEnergy = {
-        name = "Energy",
-        desc = "UNIT_ENERGY",
-        type = "color",
-        hasAlpha = true,
-        order = 8
-      },
-      colorRunicPower = {
-        name = "Runic Power",
-        desc = "UNIT_RUNIC_POWER",
-        type = "color",
-        hasAlpha = true,
-        order = 9
-      }
-    }
-  }
-
-  return optionTables
-end
 
 function TargetPower47:_registerEvents()
   for powerEvent, _ in pairs(_powerEventColorTable) do

@@ -10,7 +10,6 @@ local unpack = unpack
 ---Include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local BarTemplate = ZxSimpleUI.BarTemplate
-local BarTemplateOptions = ZxSimpleUI.optionTables["BarTemplateOptions"]
 local Utils47 = ZxSimpleUI.Utils47
 local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
 
@@ -46,11 +45,8 @@ function TargetHealth47:OnInitialize()
 
   self.bars = BarTemplate:new(self.db)
   self.bars.defaults = _defaults
-  self._barTemplateOptions = BarTemplateOptions:new(self)
 
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
-  ZxSimpleUI:registerModuleOptions(_MODULE_NAME, self._barTemplateOptions:getOptionTable(),
-    _DECORATIVE_NAME)
 end
 
 function TargetHealth47:OnEnable() self:handleOnEnable() end

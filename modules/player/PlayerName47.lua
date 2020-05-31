@@ -5,7 +5,6 @@ local UnitName = UnitName
 --- include
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local BarTemplate = ZxSimpleUI.BarTemplate
-local BarTemplateOptions = ZxSimpleUI.optionTables["BarTemplateOptions"]
 local Utils47 = ZxSimpleUI.Utils47
 local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
 

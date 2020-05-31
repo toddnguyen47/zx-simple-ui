@@ -6,7 +6,6 @@ local UnitClass, UnitPowerType = UnitClass, UnitPowerType
 --- include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local BarTemplate = ZxSimpleUI.BarTemplate
-local BarTemplateOptions = ZxSimpleUI.optionTables["BarTemplateOptions"]
 local Utils47 = ZxSimpleUI.Utils47
 local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
 
@@ -68,7 +67,6 @@ function PlayerPower47:OnInitialize()
 
   self.bars = BarTemplate:new(self.db)
   self.bars.defaults = _defaults
-  self._barTemplateOptions = BarTemplateOptions:new(self)
 
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
 end

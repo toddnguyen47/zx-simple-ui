@@ -1,7 +1,7 @@
 ## Interface: 30300
 ## Title: ZxSimpleUI
 ## Author: ZxScepter
-## Notes: Display power as a text
+## Notes: Simple Unit Frames
 ## Version: 0.1
 ## SavedVariables: ZxSimpleUI_DB
 

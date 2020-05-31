@@ -8,7 +8,6 @@ local unpack = unpack
 ---include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local Utils47 = ZxSimpleUI.Utils47
-local TargetPower47 = ZxSimpleUI:GetModule("TargetPower47")
 
 local _MODULE_NAME = "Combo47"
 local _DECORATIVE_NAME = "Combo Points Display"

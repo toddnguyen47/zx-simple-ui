@@ -6,7 +6,6 @@ local UnitName = UnitName
 --- include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local BarTemplate = ZxSimpleUI.BarTemplate
-local BarTemplateOptions = ZxSimpleUI.optionTables["BarTemplateOptions"]
 local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
 
 local _MODULE_NAME = "PlayerHealth47"

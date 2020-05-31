@@ -22,20 +22,6 @@ function CoreOptions47:__init__(moduleInput)
   self._orderIndex = ZxSimpleUI.DEFAULT_ORDER_INDEX
 end
 
-function CoreOptions47:getShownOption(info) return self:getOption(info) end
-
----@param info table
----@param value boolean
----Set the shown option.
-function CoreOptions47:setShownOption(info, value)
-  self:setOption(info, value)
-  if (value == true) then
-    self._module:handleShownOption()
-  else
-    self._module:handleShownHideOption()
-  end
-end
-
 ---@param info table
 ---Ref: https://www.wowace.com/projects/ace3/pages/ace-config-3-0-options-tables#title-4-1
 function CoreOptions47:getOption(info)
@@ -50,6 +36,20 @@ function CoreOptions47:setOption(info, value)
   local keyLeafNode = info[#info]
   self._curDbProfile[keyLeafNode] = value
   self._module:refreshConfig()
+end
+
+function CoreOptions47:getShownOption(info) return self:getOption(info) end
+
+---@param info table
+---@param value boolean
+---Set the shown option.
+function CoreOptions47:setShownOption(info, value)
+  self:setOption(info, value)
+  if (value == true) then
+    self._module:handleShownOption()
+  else
+    self._module:handleShownHideOption()
+  end
 end
 
 ---@param info table

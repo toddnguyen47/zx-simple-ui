@@ -57,8 +57,8 @@ end
 -- ####################################
 function Player47:_createBars()
   for moduleName, t1 in pairs(self._barList) do
-    local module1 = t1.module
-    local options1 = t1.options
+    local module1 = t1["module"]
+    local options1 = t1["options"]
     module1:createBar()
     if type(module1.getExtraOptions) == "function" then
       local extraOptionTable = module1:getExtraOptions()
@@ -70,13 +70,13 @@ function Player47:_createBars()
 end
 
 function Player47:_createAdditionalBars()
-  local playerPowerFrame = self._barList[PlayerPower47.MODULE_NAME].module.mainFrame
+  local playerPowerFrame = self._barList[PlayerPower47.MODULE_NAME]["module"].mainFrame
   self._extraBarList[Runes47.MODULE_NAME]["parentFrame"] = playerPowerFrame
   self._extraBarList[Totems47.MODULE_NAME]["parentFrame"] = playerPowerFrame
 
   for moduleName, t1 in pairs(self._extraBarList) do
-    local module = t1.module
-    local options = t1.options
+    local module = t1["module"]
+    local options = t1["options"]
     module:createBar(t1["parentFrame"])
     local optionObject = options:new(module)
     optionObject:registerModuleOptionsTable()
@@ -88,7 +88,7 @@ end
 function Player47:_setEnableState()
   local count = 0
   for moduleName, t1 in pairs(self._barList) do
-    local module = t1.module
+    local module = t1["module"]
     module:handleEnableToggle()
     if module:IsEnabled() then
       module:handleOnEnable()

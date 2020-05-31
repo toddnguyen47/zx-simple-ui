@@ -25,9 +25,8 @@ ZxSimpleUI.DEFAULT_ORDER_INDEX = 7
 ZxSimpleUI.HEADER_ORDER_INDEX = 1
 local _defaults = {
   profile = {
-    modules = {
-      ["*"] = {enabled = true}
-      -- PlayerName = {enabled = false}
+    ["modules"] = {
+      ["*"] = {["enabled"] = true}
     }
   }
 }
@@ -47,7 +46,6 @@ function ZxSimpleUI:OnInitialize()
   self.db = LibStub("AceDB-3.0"):New(dbName, _defaults, true)
 
   self:Print(ChatFrame1, "YO")
-  -- self:CreateFrame()
 end
 
 function ZxSimpleUI:OnEnable()
@@ -55,22 +53,6 @@ function ZxSimpleUI:OnEnable()
   self.db.RegisterCallback(self, "OnProfileCopied", "refreshConfig")
   self.db.RegisterCallback(self, "OnProfileReset", "refreshConfig")
 end
-
--- function ZxSimpleUI:CreateFrame()
---   local frame = AceGUI:Create("Frame")
---   frame:SetTitle("Example Frame")
---   -- frame:SetStatusText("AceGUI-3.0 Example Container Frame")
---   frame:SetCallback("OnClose", function(widget)
---     -- Always release your frames once your UI doesn't need them anymore!
---     AceGUI:Release(widget)
---   end)
---   frame:SetLayout("Flow")
-
---   local healthbar = AceGUI:Create("Label")
---   healthbar:SetWidth(200)
---   healthbar:SetText(UnitHealthMax("PLAYER"))
---   frame:AddChild(healthbar)
--- end
 
 ---Refresh the configuration for this AddOn as well as any modules
 ---that are added to this AddOn
@@ -93,9 +75,6 @@ end
 function ZxSimpleUI:registerModuleOptions(name, optTable, displayName)
   self.moduleOptionsTable[name] = optTable
   table.insert(self.moduleKeySorted, name)
-  -- self.blizOptionTable[name] = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(
-  --                                 self.ADDON_NAME, displayName or name, self.DECORATIVE_NAME,
-  --                                 name)
 end
 
 ---@param currentValue number
@@ -109,14 +88,14 @@ end
 ---@param module string
 function ZxSimpleUI:getModuleEnabledState(module)
   ---return statement
-  return self.db.profile.modules[module].enabled
+  return self.db.profile["modules"][module]["enabled"]
 end
 
 ---@param module string
 ---@param isEnabled boolean
 function ZxSimpleUI:setModuleEnabledState(module, isEnabled)
-  local oldEnabledValue = self.db.profile.modules[module].enabled
-  self.db.profile.modules[module].enabled = isEnabled
+  local oldEnabledValue = self.db.profile["modules"][module]["enabled"]
+  self.db.profile["modules"][module]["enabled"] = isEnabled
   if oldEnabledValue ~= isEnabled then
     if isEnabled then
       self:EnableModule(module)

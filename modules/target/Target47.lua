@@ -56,8 +56,8 @@ end
 -- ####################################
 function Target47:_createBars()
   for moduleName, t1 in pairs(self._barList) do
-    local module1 = t1.module
-    local options1 = t1.options
+    local module1 = t1["module"]
+    local options1 = t1["options"]
     module1:createBar()
     if type(module1.getExtraOptions) == "function" then
       local extraOptionTable = module1:getExtraOptions()
@@ -69,12 +69,12 @@ function Target47:_createBars()
 end
 
 function Target47:_createAdditionalBars()
-  local targetPowerFrame = self._barList[TargetPower47.MODULE_NAME]["module"]["mainFrame"]
+  local targetPowerFrame = self._barList[TargetPower47.MODULE_NAME]["module"].mainFrame
   self._extraBarList[Combo47.MODULE_NAME]["parentFrame"] = targetPowerFrame
 
   for moduleName, t1 in pairs(self._extraBarList) do
-    local module = t1.module
-    local options = t1.options
+    local module = t1["module"]
+    local options = t1["options"]
     module:createBar(t1["parentFrame"])
     local optionObject = options:new(module)
     optionObject:registerModuleOptionsTable()
@@ -86,7 +86,7 @@ end
 function Target47:_setEnableState()
   local count = 0
   for moduleName, t1 in pairs(self._barList) do
-    local module = t1.module
+    local module = t1["module"]
     if module:IsEnabled() then
       module:handleOnEnable()
     else

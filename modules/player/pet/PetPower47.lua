@@ -48,15 +48,10 @@ local _defaults = {
     xoffset = 0,
     yoffset = -2,
     fontsize = 14,
-    font = "Friz Quadrata TT",
+    font = "PT Sans Bold",
     fontcolor = {1.0, 1.0, 1.0},
-    texture = "Blizzard",
-    color = _powerEventColorTable["UNIT_MANA"], -- need this option for createBar() to work
-    colorMana = _powerEventColorTable["UNIT_MANA"],
-    colorRage = _powerEventColorTable["UNIT_RAGE"],
-    colorFocus = _powerEventColorTable["UNIT_FOCUS"],
-    colorEnergy = _powerEventColorTable["UNIT_ENERGY"],
-    colorRunicPower = _powerEventColorTable["UNIT_RUNIC_POWER"],
+    texture = "Skewed",
+    color = _powerEventColorTable["UNIT_MANA"],
     border = "None",
     selfCurrentPoint = "TOPRIGHT",
     relativePoint = "BOTTOMRIGHT"
@@ -125,7 +120,6 @@ function PetPower47:refreshConfig()
     if self._curDbProfile.showbar == true then
       self.mainFrame.statusBar:SetStatusBarColor(unpack(self.currentPowerColorEdited))
     else
-      self:_setRefreshColor()
       self.bars:refreshConfig()
     end
   end
@@ -221,27 +215,15 @@ function PetPower47:_setUnitPowerType()
   self._powerType, self._powerTypeString = UnitPowerType(self.unit)
 end
 
-function PetPower47:_setRefreshColor()
+function PetPower47:_setInitialColor()
   self:_setUnitPowerType()
   local upperType = string.upper(self._powerTypeString)
-  local colorOptionTable = self:_getColorsInOptions()
-  local t1 = colorOptionTable["UNIT_" .. upperType]
-  t1 = t1 or colorOptionTable["UNIT_MANA"]
+  local t1 = _powerEventColorTable["UNIT_" .. upperType]
+  t1 = t1 or _powerEventColorTable["UNIT_MANA"]
 
+  self._newDefaults.profile.color = t1
   self._curDbProfile.color = t1
   self.mainFrame.statusBar:SetStatusBarColor(unpack(t1))
-end
-
----@return table
-function PetPower47:_getColorsInOptions()
-  local t1 = {
-    ["UNIT_MANA"] = self._curDbProfile.colorMana,
-    ["UNIT_RAGE"] = self._curDbProfile.colorRage,
-    ["UNIT_FOCUS"] = self._curDbProfile.colorFocus,
-    ["UNIT_ENERGY"] = self._curDbProfile.colorEnergy,
-    ["UNIT_RUNIC_POWER"] = self._curDbProfile.colorRunicPower
-  }
-  return t1
 end
 
 function PetPower47:_setInitialOnUpdateColor()
@@ -253,7 +235,7 @@ function PetPower47:_setInitialOnUpdateColor()
       tempTimeSinceLastUpdate = 0
       self:_setUnitPowerType()
       if self._powerTypeString ~= "" then
-        self:_setRefreshColor()
+        self:_setInitialColor()
         tempFrame:SetScript("OnUpdate", nil)
         tempFrame = nil
       end

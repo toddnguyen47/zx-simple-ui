@@ -32,6 +32,12 @@ local _defaults = {
   }
 }
 
+function PlayerHealth47:__init__()
+  self._timeSinceLastUpdate = 0
+  self._prevHealth = UnitHealthMax(self.unit)
+  self.mainFrame = nil
+end
+
 function PlayerHealth47:OnInitialize()
   self:__init__()
 
@@ -47,12 +53,6 @@ end
 function PlayerHealth47:OnEnable() self:handleOnEnable() end
 
 function PlayerHealth47:OnDisable() self:handleOnDisable() end
-
-function PlayerHealth47:__init__()
-  self._timeSinceLastUpdate = 0
-  self._prevHealth = UnitHealthMax(self.unit)
-  self.mainFrame = nil
-end
 
 function PlayerHealth47:refreshConfig() if self:IsEnabled() then self.bars:refreshConfig() end end
 

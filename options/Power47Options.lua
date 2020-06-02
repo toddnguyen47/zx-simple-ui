@@ -9,19 +9,20 @@ Power47Options.OPTION_NAME = "Power47Options"
 ZxSimpleUI.optionTables[Power47Options.OPTION_NAME] = Power47Options
 
 ---@param currentModule table
-function Power47Options:new(currentModule)
-  assert(currentModule ~= nil)
-  local newInstance = setmetatable({}, self)
-  newInstance:__init__(currentModule)
-  return newInstance
-end
-
 function Power47Options:__init__(currentModule)
   self.options = {}
   self._currentModule = currentModule
   self._curDbProfile = currentModule.db.profile
   self._coreOptions47 = CoreOptions47:new(self._currentModule)
   self._barTemplateOptions = BarTemplateOptions:new(self._currentModule)
+end
+
+---@param currentModule table
+function Power47Options:new(currentModule)
+  assert(currentModule ~= nil)
+  local newInstance = setmetatable({}, self)
+  newInstance:__init__(currentModule)
+  return newInstance
 end
 
 function Power47Options:registerModuleOptionsTable()
@@ -41,9 +42,7 @@ function Power47Options:getOptionTable()
 end
 
 ---@param optionTable table
-function Power47Options:addOption(optionTable)
-  self._barTemplateOptions:addOption(optionTable)
-end
+function Power47Options:addOption(optionTable) self._barTemplateOptions:addOption(optionTable) end
 
 -- ####################################
 -- # PRIVATE FUNCTIONS

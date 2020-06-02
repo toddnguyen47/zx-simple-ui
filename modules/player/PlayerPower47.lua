@@ -57,6 +57,17 @@ local _defaults = {
   }
 }
 
+function PlayerPower47:__init__()
+  self.mainFrame = nil
+  self.currentPowerColorEdited = _powerEventColorTable["UNIT_MANA"]
+
+  self._timeSinceLastUpdate = 0
+  self._prevPowerValue = UnitPowerMax(self.unit)
+  self._playerClass = UnitClass(self.unit)
+  self._powerType = 0
+  self._powerTypeString = ""
+end
+
 function PlayerPower47:OnInitialize()
   self:__init__()
 
@@ -81,17 +92,6 @@ end
 function PlayerPower47:OnEnable() self:handleOnEnable() end
 
 function PlayerPower47:OnDisable() self:handleOnDisable() end
-
-function PlayerPower47:__init__()
-  self.mainFrame = nil
-  self.currentPowerColorEdited = _powerEventColorTable["UNIT_MANA"]
-
-  self._timeSinceLastUpdate = 0
-  self._prevPowerValue = UnitPowerMax(self.unit)
-  self._playerClass = UnitClass(self.unit)
-  self._powerType = 0
-  self._powerTypeString = ""
-end
 
 function PlayerPower47:refreshConfig()
   if self:IsEnabled() then

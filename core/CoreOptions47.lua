@@ -9,17 +9,18 @@ CoreOptions47.OPTION_NAME = "CoreOptions47"
 ZxSimpleUI.optionTables[CoreOptions47.OPTION_NAME] = CoreOptions47
 
 ---@param moduleInput table
+function CoreOptions47:__init__(moduleInput)
+  self._module = moduleInput
+  self._curDbProfile = self._module.db.profile
+  self._orderIndex = ZxSimpleUI.DEFAULT_ORDER_INDEX
+end
+
+---@param moduleInput table
 function CoreOptions47:new(moduleInput)
   assert(moduleInput ~= nil)
   local newInstance = setmetatable({}, self)
   newInstance:__init__(moduleInput)
   return newInstance
-end
-
-function CoreOptions47:__init__(moduleInput)
-  self._module = moduleInput
-  self._curDbProfile = self._module.db.profile
-  self._orderIndex = ZxSimpleUI.DEFAULT_ORDER_INDEX
 end
 
 ---@param info table

@@ -10,18 +10,19 @@ Combo47Options.OPTION_NAME = "Combo47Options"
 ZxSimpleUI.optionTables[Combo47Options.OPTION_NAME] = Combo47Options
 
 ---@param comboModule table
-function Combo47Options:new(comboModule)
-  assert(comboModule ~= nil)
-  local newInstance = setmetatable({}, self)
-  newInstance:__init__(comboModule)
-  return newInstance
-end
-
 function Combo47Options:__init__(comboModule)
   self.options = {}
   self._comboModule = comboModule
   self._curDbProfile = comboModule.db.profile
   self._coreOptions47 = CoreOptions47:new(self._comboModule)
+end
+
+---@param comboModule table
+function Combo47Options:new(comboModule)
+  assert(comboModule ~= nil)
+  local newInstance = setmetatable({}, self)
+  newInstance:__init__(comboModule)
+  return newInstance
 end
 
 function Combo47Options:registerModuleOptionsTable()

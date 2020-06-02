@@ -35,6 +35,13 @@ local _defaults = {
   }
 }
 
+function Totems47:__init__()
+  self.mainFrame = nil
+
+  self._frameToAttachTo = nil
+  self._totemBarList = {}
+end
+
 function Totems47:OnInitialize()
   self:__init__()
   self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, _defaults)
@@ -48,13 +55,6 @@ end
 function Totems47:OnEnable() self:handleOnEnable() end
 
 function Totems47:OnDisable() self:handleOnDisable() end
-
-function Totems47:__init__()
-  self.mainFrame = nil
-
-  self._frameToAttachTo = nil
-  self._totemBarList = {}
-end
 
 function Totems47:createBar(frameToAttachTo)
   assert(frameToAttachTo ~= nil)

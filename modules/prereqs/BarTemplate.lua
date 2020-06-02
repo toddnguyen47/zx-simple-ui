@@ -12,20 +12,14 @@ local BarTemplate = {}
 BarTemplate.__index = BarTemplate
 ZxSimpleUI.BarTemplate = BarTemplate
 
-function BarTemplate:new(db)
-  local newInstance = setmetatable({}, BarTemplate)
-  newInstance:__init__(db)
-  return newInstance
-end
-
 ---@param db table
 function BarTemplate:__init__(db)
   assert(db ~= nil)
+  self.db = db
+  self.mainFrame = nil
   -- Start order index at DEFAULT_ORDER_INDEX so other modules can easily put options in front
   self._orderIndex = ZxSimpleUI.DEFAULT_ORDER_INDEX
-  self.db = db
   self._curDbProfile = self.db.profile
-  self.mainFrame = nil
 
   self.defaults = {
     profile = {
@@ -49,6 +43,12 @@ function BarTemplate:__init__(db)
     insets = {left = 4, right = 4, top = 4, bottom = 4}
   }
   self.options = {}
+end
+
+function BarTemplate:new(db)
+  local newInstance = setmetatable({}, BarTemplate)
+  newInstance:__init__(db)
+  return newInstance
 end
 
 ---@param percentValue number 0 to 1

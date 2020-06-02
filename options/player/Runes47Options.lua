@@ -8,18 +8,19 @@ Runes47Options.OPTION_NAME = "Runes47Options"
 ZxSimpleUI.optionTables[Runes47Options.OPTION_NAME] = Runes47Options
 
 ---@param runesModule table
-function Runes47Options:new(runesModule)
-  assert(runesModule ~= nil)
-  local newInstance = setmetatable({}, self)
-  newInstance:__init__(runesModule)
-  return newInstance
-end
-
 function Runes47Options:__init__(runesModule)
   self.options = {}
   self._runesModule = runesModule
   self._curDbProfile = self._runesModule.db.profile
   self._coreOptions47 = CoreOptions47:new(self._runesModule)
+end
+
+---@param runesModule table
+function Runes47Options:new(runesModule)
+  assert(runesModule ~= nil)
+  local newInstance = setmetatable({}, self)
+  newInstance:__init__(runesModule)
+  return newInstance
 end
 
 function Runes47Options:registerModuleOptionsTable()

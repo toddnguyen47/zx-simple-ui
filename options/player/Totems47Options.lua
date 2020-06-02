@@ -10,18 +10,19 @@ Totems47Options.OPTION_NAME = "Totems47Options"
 ZxSimpleUI.optionTables[Totems47Options.OPTION_NAME] = Totems47Options
 
 ---@param totemModule table
-function Totems47Options:new(totemModule)
-  assert(totemModule ~= nil)
-  local newInstance = setmetatable({}, self)
-  newInstance:__init__(totemModule)
-  return newInstance
-end
-
 function Totems47Options:__init__(totemModule)
   self.options = {}
   self._totemModule = totemModule
   self._curDbProfile = totemModule.db.profile
   self._coreOptions47 = CoreOptions47:new(self._totemModule)
+end
+
+---@param totemModule table
+function Totems47Options:new(totemModule)
+  assert(totemModule ~= nil)
+  local newInstance = setmetatable({}, self)
+  newInstance:__init__(totemModule)
+  return newInstance
 end
 
 function Totems47Options:registerModuleOptionsTable()

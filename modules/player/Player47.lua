@@ -20,16 +20,6 @@ local Player47 = ZxSimpleUI:NewModule(_MODULE_NAME)
 Player47.MODULE_NAME = _MODULE_NAME
 Player47.unit = "player"
 
-function Player47:OnInitialize()
-  self:__init__()
-  self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
-end
-
-function Player47:OnEnable()
-  self:_createBars()
-  self:_setEnableState()
-end
-
 function Player47:__init__()
   self._barList = {
     [PlayerHealth47.MODULE_NAME] = {
@@ -50,6 +40,16 @@ function Player47:__init__()
     [Runes47.MODULE_NAME] = {parentFrame = nil, module = Runes47, options = Runes47Options},
     [Totems47.MODULE_NAME] = {parentFrame = nil, module = Totems47, options = Totems47Options}
   }
+end
+
+function Player47:OnInitialize()
+  self:__init__()
+  self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
+end
+
+function Player47:OnEnable()
+  self:_createBars()
+  self:_setEnableState()
 end
 
 -- ####################################

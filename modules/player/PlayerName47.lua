@@ -33,6 +33,12 @@ local _defaults = {
   }
 }
 
+function PlayerName47:__init__()
+  self._timeSinceLastUpdate = 0
+  self._prevName = UnitName(self.unit)
+  self.mainFrame = nil
+end
+
 function PlayerName47:OnInitialize()
   self:__init__()
 
@@ -48,12 +54,6 @@ end
 function PlayerName47:OnEnable() self:handleOnEnable() end
 
 function PlayerName47:OnDisable() self:handleOnDisable() end
-
-function PlayerName47:__init__()
-  self._timeSinceLastUpdate = 0
-  self._prevName = UnitName(self.unit)
-  self.mainFrame = nil
-end
 
 ---@return table
 function PlayerName47:createBar()

@@ -37,6 +37,14 @@ local _defaults = {
   }
 }
 
+function Runes47:__init__()
+  self.mainFrame = nil
+
+  self._frameToAttachTo = nil
+  self._runeColors = {}
+  self._runeBarList = {}
+end
+
 function Runes47:OnInitialize()
   self:__init__()
   self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, _defaults)
@@ -50,14 +58,6 @@ end
 function Runes47:OnEnable() self:handleOnEnable() end
 
 function Runes47:OnDisable() self:handleOnDisable() end
-
-function Runes47:__init__()
-  self.mainFrame = nil
-
-  self._frameToAttachTo = nil
-  self._runeColors = {}
-  self._runeBarList = {}
-end
 
 function Runes47:createBar(frameToAttachTo)
   assert(frameToAttachTo ~= nil)

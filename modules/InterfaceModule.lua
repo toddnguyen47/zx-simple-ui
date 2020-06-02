@@ -1,6 +1,9 @@
 ---Interface class. All modules should have the following functions:
 local InterfaceModule = {}
 
+function InterfaceModule:__init__() end
+function InterfaceModule:new() end
+
 function InterfaceModule:OnInitialization() end
 function InterfaceModule:refreshConfig() end
 

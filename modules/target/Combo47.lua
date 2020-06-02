@@ -23,7 +23,7 @@ Combo47.unit = "target"
 
 local _defaults = {
   profile = {
-    texture = "Blizzard",
+    texture = "Skewed",
     mediumComboPoints = 3,
     lowComboColor = {1.0, 1.0, 0.0, 1.0},
     medComboColor = {1.0, 0.65, 0.0, 1.0},

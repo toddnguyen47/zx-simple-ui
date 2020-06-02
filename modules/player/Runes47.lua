@@ -25,7 +25,7 @@ local RUNE_TYPE_TABLE = {[1] = "BLOOD", [2] = "UNHOLY_CHROMATIC", [3] = "FROST",
 local _defaults = {
   profile = {
     enabledToggle = Runes47.PLAYER_ENGLISH_CLASS == "DEATHKNIGHT",
-    texture = "Blizzard",
+    texture = "Skewed",
     height = 6,
     horizGap = 2,
     yoffset = 0,

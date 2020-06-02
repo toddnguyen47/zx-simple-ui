@@ -29,10 +29,10 @@ local _defaults = {
     height = 26,
     xoffset = 700,
     yoffset = 268,
-    fontsize = 14,
-    font = "Friz Quadrata TT",
+    fontsize = 16,
+    font = "PT Sans Bold",
     fontcolor = {1.0, 1.0, 1.0},
-    texture = "Blizzard",
+    texture = "Skewed",
     color = {0.0, 1.0, 0.0, 1.0},
     border = "None"
   }

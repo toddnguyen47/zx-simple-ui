@@ -26,7 +26,7 @@ local _defaults = {
     enabledToggle = Totems47.PLAYER_ENGLISH_CLASS == "SHAMAN",
     height = 35,
     yoffset = 0,
-    font = "Friz Quadrata TT",
+    font = "PT Sans Bold",
     fontsize = 12,
     fontcolor = {1.0, 1.0, 1.0},
     outline = true,

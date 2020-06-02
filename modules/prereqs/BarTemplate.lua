@@ -70,7 +70,7 @@ function BarTemplate:createBar(percentValue)
 
   self.mainFrame.bgFrame = self.mainFrame:CreateTexture(nil, "BACKGROUND")
   self.mainFrame.bgFrame:SetTexture(0, 0, 0, 0.8)
-  self.mainFrame.bgFrame:SetAllPoints()
+  self.mainFrame.bgFrame:SetAllPoints(self.mainFrame)
 
   self.mainFrame.statusBar = CreateFrame("StatusBar", nil, self.mainFrame)
   self.mainFrame.statusBar:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details

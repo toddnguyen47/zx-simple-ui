@@ -153,7 +153,7 @@ function Totems47:_createTotemFrames()
     totemFrame:SetFrameLevel(self.mainFrame:GetFrameLevel() + 1)
 
     totemFrame.texture = totemFrame:CreateTexture(nil, "OVERLAY")
-    totemFrame.texture:SetAllPoints()
+    totemFrame.texture:SetAllPoints(totemFrame)
 
     totemFrame.durationText = totemFrame:CreateFontString(nil, "BORDER")
     totemFrame.durationText:SetPoint("TOP", totemFrame, "BOTTOM", 0, -2)

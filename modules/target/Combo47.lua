@@ -70,7 +70,7 @@ function Combo47:createBar(frameToAnchorTo)
 
   self.mainFrame.bgTexture = self.mainFrame:CreateTexture(nil, "BACKGROUND")
   self.mainFrame.bgTexture:SetTexture(0, 0, 0, 0.5)
-  self.mainFrame.bgTexture:SetAllPoints()
+  self.mainFrame.bgTexture:SetAllPoints(self.mainFrame)
 
   self:_createIndividualComboPointsDisplay()
   self:_setOnEventScript()

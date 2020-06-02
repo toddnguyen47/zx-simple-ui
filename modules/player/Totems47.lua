@@ -38,7 +38,7 @@ local _defaults = {
 function Totems47:__init__()
   self.mainFrame = nil
 
-  self._frameToAttachTo = nil
+  self._frameToAnchorTo = nil
   self._totemBarList = {}
 end
 
@@ -56,11 +56,11 @@ function Totems47:OnEnable() self:handleOnEnable() end
 
 function Totems47:OnDisable() self:handleOnDisable() end
 
-function Totems47:createBar(frameToAttachTo)
-  assert(frameToAttachTo ~= nil)
-  self._frameToAttachTo = frameToAttachTo
+function Totems47:createBar(frameToAnchorTo)
+  assert(frameToAnchorTo ~= nil)
+  self._frameToAnchorTo = frameToAnchorTo
 
-  self.mainFrame = CreateFrame("Frame", nil, self._frameToAttachTo)
+  self.mainFrame = CreateFrame("Frame", nil, self._frameToAnchorTo)
   self.mainFrame:SetFrameLevel(ZxSimpleUI.DEFAULT_FRAME_LEVEL + 2)
 
   self:_createTotemFrames()
@@ -112,9 +112,9 @@ function Totems47:_refreshAll()
 end
 
 function Totems47:_refreshBarFrame()
-  self.mainFrame:SetWidth(self._frameToAttachTo:GetWidth())
+  self.mainFrame:SetWidth(self._frameToAnchorTo:GetWidth())
   self.mainFrame:SetHeight(self._curDbProfile.height)
-  self.mainFrame:SetPoint("TOPLEFT", self._frameToAttachTo, "BOTTOMLEFT", 0,
+  self.mainFrame:SetPoint("TOPLEFT", self._frameToAnchorTo, "BOTTOMLEFT", 0,
     self._curDbProfile.yoffset)
 end
 
@@ -133,7 +133,7 @@ function Totems47:_refreshTotemBars()
       self._curDbProfile.fontsize, self:_getFontFlags())
     totemFrame.durationText:SetTextColor(unpack(self._curDbProfile.fontcolor))
     if id == 1 then
-      totemFrame:SetPoint("TOPLEFT", self._frameToAttachTo, "BOTTOMLEFT", 0,
+      totemFrame:SetPoint("TOPLEFT", self._frameToAnchorTo, "BOTTOMLEFT", 0,
         self._curDbProfile.yoffset)
     else
       totemFrame:SetPoint("TOPLEFT", self._totemBarList[TOTEM_MAP[id - 1]], "TOPRIGHT",

@@ -57,15 +57,15 @@ function Combo47:__init__()
   self._comboPointsTable = {}
   self._allComboPointsHidden = true
   self._playerEnglishClass = UnitClass("player")
-  self._frameToAttachTo = nil
+  self._frameToAnchorTo = nil
 end
 
----@param frameToAttachTo table
-function Combo47:createBar(frameToAttachTo)
-  assert(frameToAttachTo ~= nil)
-  self._frameToAttachTo = frameToAttachTo
+---@param frameToAnchorTo table
+function Combo47:createBar(frameToAnchorTo)
+  assert(frameToAnchorTo ~= nil)
+  self._frameToAnchorTo = frameToAnchorTo
 
-  self.mainFrame = CreateFrame("Frame", nil, self._frameToAttachTo)
+  self.mainFrame = CreateFrame("Frame", nil, self._frameToAnchorTo)
   self.mainFrame:SetFrameLevel(ZxSimpleUI.DEFAULT_FRAME_LEVEL + 2)
 
   self.mainFrame.bgTexture = self.mainFrame:CreateTexture(nil, "BACKGROUND")
@@ -127,22 +127,22 @@ function Combo47:_refreshAll()
 end
 
 function Combo47:_refreshBarFrame()
-  self.mainFrame:SetWidth(self._frameToAttachTo:GetWidth())
+  self.mainFrame:SetWidth(self._frameToAnchorTo:GetWidth())
   self.mainFrame:SetHeight(self._curDbProfile.height)
-  self.mainFrame:SetPoint("TOPLEFT", self._frameToAttachTo, "BOTTOMLEFT", 0,
+  self.mainFrame:SetPoint("TOPLEFT", self._frameToAnchorTo, "BOTTOMLEFT", 0,
     self._curDbProfile.yoffset)
 end
 
 function Combo47:_refreshComboPointsDisplay()
   local totalNumberOfGaps = self._curDbProfile.horizGap * (MAX_COMBO_POINTS - 1)
-  local comboWidth = (self._frameToAttachTo:GetWidth() - totalNumberOfGaps) / MAX_COMBO_POINTS
+  local comboWidth = (self._frameToAnchorTo:GetWidth() - totalNumberOfGaps) / MAX_COMBO_POINTS
   for i, comboTexture in ipairs(self._comboPointsTable) do
     comboTexture:SetWidth(comboWidth)
     comboTexture:SetHeight(self.mainFrame:GetHeight())
     comboTexture:SetTexture(media:Fetch("statusbar", self._curDbProfile.texture), "BORDER")
     self:_setComboPointsColor(i, comboTexture)
     if i == 1 then
-      comboTexture:SetPoint("TOPLEFT", self._frameToAttachTo, "BOTTOMLEFT", 0,
+      comboTexture:SetPoint("TOPLEFT", self._frameToAnchorTo, "BOTTOMLEFT", 0,
         self._curDbProfile.yoffset)
     else
       comboTexture:SetPoint("TOPLEFT", self._comboPointsTable[i - 1], "TOPRIGHT",

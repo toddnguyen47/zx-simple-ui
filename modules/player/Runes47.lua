@@ -40,7 +40,7 @@ local _defaults = {
 function Runes47:__init__()
   self.mainFrame = nil
 
-  self._frameToAttachTo = nil
+  self._frameToAnchorTo = nil
   self._runeColors = {}
   self._runeBarList = {}
 end
@@ -59,11 +59,11 @@ function Runes47:OnEnable() self:handleOnEnable() end
 
 function Runes47:OnDisable() self:handleOnDisable() end
 
-function Runes47:createBar(frameToAttachTo)
-  assert(frameToAttachTo ~= nil)
-  self._frameToAttachTo = frameToAttachTo
+function Runes47:createBar(frameToAnchorTo)
+  assert(frameToAnchorTo ~= nil)
+  self._frameToAnchorTo = frameToAnchorTo
 
-  self.mainFrame = CreateFrame("Frame", nil, self._frameToAttachTo)
+  self.mainFrame = CreateFrame("Frame", nil, self._frameToAnchorTo)
   self.mainFrame:SetFrameLevel(ZxSimpleUI.DEFAULT_FRAME_LEVEL + 2)
 
   self.mainFrame.bgTexture = self.mainFrame:CreateTexture(nil, "BACKGROUND")
@@ -118,9 +118,9 @@ function Runes47:_refreshAll()
 end
 
 function Runes47:_refreshBarFrame()
-  self.mainFrame:SetWidth(self._frameToAttachTo:GetWidth())
+  self.mainFrame:SetWidth(self._frameToAnchorTo:GetWidth())
   self.mainFrame:SetHeight(self._curDbProfile.height)
-  self.mainFrame:SetPoint("TOPLEFT", self._frameToAttachTo, "BOTTOMLEFT", 0,
+  self.mainFrame:SetPoint("TOPLEFT", self._frameToAnchorTo, "BOTTOMLEFT", 0,
     self._curDbProfile.yoffset)
 end
 
@@ -135,7 +135,7 @@ end
 
 function Runes47:_refreshRuneFrames()
   local totalNumberOfGaps = self._curDbProfile.horizGap * (self.MAX_RUNE_NUMBER - 1)
-  local runeWidth = (self._frameToAttachTo:GetWidth() - totalNumberOfGaps) /
+  local runeWidth = (self._frameToAnchorTo:GetWidth() - totalNumberOfGaps) /
                       self.MAX_RUNE_NUMBER
 
   -- Important! Do a regular for loop so we can use RUNE_MAP
@@ -149,7 +149,7 @@ function Runes47:_refreshRuneFrames()
     self:_setRuneColor(runeStatusBar)
 
     if id == 1 then
-      runeStatusBar:SetPoint("TOPLEFT", self._frameToAttachTo, "BOTTOMLEFT", 0,
+      runeStatusBar:SetPoint("TOPLEFT", self._frameToAnchorTo, "BOTTOMLEFT", 0,
         self._curDbProfile.yoffset)
     else
       runeStatusBar:SetPoint("TOPLEFT", self._runeBarList[RUNE_MAP[id - 1]], "TOPRIGHT",

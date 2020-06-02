@@ -18,7 +18,7 @@ function BarTemplate:__init__(db)
   assert(db ~= nil)
   self.db = db
   self.mainFrame = nil
-  self.frameToAttachTo = UIParent
+  self.frameToAnchorTo = UIParent
   -- Start order index at DEFAULT_ORDER_INDEX so other modules can easily put options in front
   self._orderIndex = ZxSimpleUI.DEFAULT_ORDER_INDEX
   self._curDbProfile = self.db.profile
@@ -62,7 +62,7 @@ function BarTemplate:createBar(percentValue)
   self.mainFrame:SetFrameLevel(ZxSimpleUI.DEFAULT_FRAME_LEVEL)
   self.mainFrame:SetBackdrop(self.frameBackdropTable)
   self.mainFrame:SetBackdropColor(1, 0, 0, 1)
-  self.mainFrame:SetPoint("BOTTOMLEFT", self.frameToAttachTo, "BOTTOMLEFT",
+  self.mainFrame:SetPoint("BOTTOMLEFT", self.frameToAnchorTo, "BOTTOMLEFT",
     self._curDbProfile.positionx, self._curDbProfile.positiony)
 
   self:_setMouseClicks()
@@ -139,7 +139,7 @@ function BarTemplate:_setFrameWidthHeight()
 end
 
 function BarTemplate:_refreshBarFrame()
-  self.mainFrame:SetPoint("BOTTOMLEFT", self.frameToAttachTo, "BOTTOMLEFT",
+  self.mainFrame:SetPoint("BOTTOMLEFT", self.frameToAnchorTo, "BOTTOMLEFT",
     self._curDbProfile.positionx, self._curDbProfile.positiony)
   self.mainFrame:SetBackdrop(self.frameBackdropTable)
 

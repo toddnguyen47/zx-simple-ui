@@ -1,12 +1,13 @@
 ---References:
 ---https://wowwiki.fandom.com/wiki/SecureActionButtonTemplate
-local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
-local media = LibStub("LibSharedMedia-3.0")
-
 --- upvalues to prevent warnings
 local LibStub = LibStub
 local UIParent, CreateFrame = UIParent, CreateFrame
 local unpack, next = unpack, next
+
+--- Includes
+local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
+local media = LibStub("LibSharedMedia-3.0")
 
 local BarTemplate = {}
 BarTemplate.__index = BarTemplate
@@ -17,6 +18,7 @@ function BarTemplate:__init__(db)
   assert(db ~= nil)
   self.db = db
   self.mainFrame = nil
+  self.frameToAttachTo = UIParent
   -- Start order index at DEFAULT_ORDER_INDEX so other modules can easily put options in front
   self._orderIndex = ZxSimpleUI.DEFAULT_ORDER_INDEX
   self._curDbProfile = self.db.profile
@@ -35,6 +37,7 @@ function BarTemplate:__init__(db)
       border = "None"
     }
   }
+
   self.frameBackdropTable = {
     bgFile = "Interface\\DialogFrame\\UI-Tooltip-Background",
     tile = true,
@@ -59,8 +62,8 @@ function BarTemplate:createBar(percentValue)
   self.mainFrame:SetFrameLevel(ZxSimpleUI.DEFAULT_FRAME_LEVEL)
   self.mainFrame:SetBackdrop(self.frameBackdropTable)
   self.mainFrame:SetBackdropColor(1, 0, 0, 1)
-  self.mainFrame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", self._curDbProfile.positionx,
-    self._curDbProfile.positiony)
+  self.mainFrame:SetPoint("BOTTOMLEFT", self.frameToAttachTo, "BOTTOMLEFT",
+    self._curDbProfile.positionx, self._curDbProfile.positiony)
 
   self:_setMouseClicks()
 
@@ -136,8 +139,8 @@ function BarTemplate:_setFrameWidthHeight()
 end
 
 function BarTemplate:_refreshBarFrame()
-  self.mainFrame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", self._curDbProfile.positionx,
-    self._curDbProfile.positiony)
+  self.mainFrame:SetPoint("BOTTOMLEFT", self.frameToAttachTo, "BOTTOMLEFT",
+    self._curDbProfile.positionx, self._curDbProfile.positiony)
   self.mainFrame:SetBackdrop(self.frameBackdropTable)
 
   self.frameBackdropTable.edgeFile = media:Fetch("border", self._curDbProfile.border)

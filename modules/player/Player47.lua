@@ -7,12 +7,14 @@ local PlayerPower47 = ZxSimpleUI:GetModule("PlayerPower47")
 local Runes47 = ZxSimpleUI:GetModule("Runes47")
 local Totems47 = ZxSimpleUI:GetModule("Totems47")
 local PetHealth47 = ZxSimpleUI:GetModule("PetHealth47")
+local PetPower47 = ZxSimpleUI:GetModule("PetPower47")
 
+local BarTemplateEnableOptions = ZxSimpleUI.optionTables["BarTemplateEnableOptions"]
 local Power47Options = ZxSimpleUI.optionTables["Power47Options"]
 local Runes47Options = ZxSimpleUI.optionTables["Runes47Options"]
 local Totems47Options = ZxSimpleUI.optionTables["Totems47Options"]
 
-local NUM_MODULES = 6
+local NUM_MODULES = 7
 
 local _MODULE_NAME = "Player47"
 local _DECORATIVE_NAME = "Player Factory"
@@ -43,7 +45,12 @@ function Player47:__init__()
     [PetHealth47.MODULE_NAME] = {
       parentFrame = nil,
       module = PetHealth47,
-      options = BarTemplateOptions
+      options = BarTemplateEnableOptions
+    },
+    [PetPower47.MODULE_NAME] = {
+      parentFrame = nil,
+      module = PetPower47,
+      options = BarTemplateEnableOptions
     }
   }
 end
@@ -54,6 +61,7 @@ function Player47:OnInitialize()
 end
 
 function Player47:OnEnable()
+  -- Ref: https://wow.gamepedia.com/AddOn_loading_process
   self:_createBars()
   self:_setEnableState()
 end
@@ -76,12 +84,21 @@ function Player47:_createBars()
 end
 
 function Player47:_createAdditionalBars()
+  local sortedBarList = {
+    Runes47.MODULE_NAME, Totems47.MODULE_NAME, PetHealth47.MODULE_NAME, PetPower47.MODULE_NAME
+  }
+
   local playerPowerFrame = self._barList[PlayerPower47.MODULE_NAME]["module"].mainFrame
   self._extraBarList[Runes47.MODULE_NAME]["parentFrame"] = playerPowerFrame
   self._extraBarList[Totems47.MODULE_NAME]["parentFrame"] = playerPowerFrame
   self._extraBarList[PetHealth47.MODULE_NAME]["parentFrame"] = playerPowerFrame
 
-  for moduleName, t1 in pairs(self._extraBarList) do
+  for _, moduleName in ipairs(sortedBarList) do
+    local t1 = self._extraBarList[moduleName]
+    if (moduleName == "PetPower47") then
+      t1["parentFrame"] = self._extraBarList[PetHealth47.MODULE_NAME]["module"].mainFrame
+    end
+
     local module = t1["module"]
     local options = t1["options"]
     module:createBar(t1["parentFrame"])

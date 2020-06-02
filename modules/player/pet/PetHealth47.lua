@@ -18,9 +18,12 @@ PetHealth47.MODULE_NAME = _MODULE_NAME
 PetHealth47.DECORATIVE_NAME = _DECORATIVE_NAME
 PetHealth47.bars = nil
 PetHealth47.unit = "pet"
+PetHealth47.PLAYER_ENGLISH_CLASS = string.upper(select(2, UnitClass("player")))
 
 local _defaults = {
   profile = {
+    enabledToggle = PetHealth47.PLAYER_ENGLISH_CLASS == "HUNTER" or
+      PetHealth47.PLAYER_ENGLISH_CLASS == "WARLOCK",
     width = 150,
     height = 20,
     xoffset = 0,
@@ -61,7 +64,10 @@ function PetHealth47:OnEnable() self:handleOnEnable() end
 
 function PetHealth47:OnDisable() self:handleOnDisable() end
 
-function PetHealth47:refreshConfig() if self:IsEnabled() then self.bars:refreshConfig() end end
+function PetHealth47:refreshConfig()
+  self:handleEnableToggle()
+  if self:IsEnabled() then self.bars:refreshConfig() end
+end
 
 ---@param frameToAnchorTo table
 ---@return table
@@ -79,12 +85,12 @@ function PetHealth47:createBar(frameToAnchorTo)
 
   RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
 
-  self.mainFrame:Show()
   return self.mainFrame
 end
 
----Don't have to do anything here. Maybe in the future I'll add an option to disable this bar.
-function PetHealth47:handleEnableToggle() end
+function PetHealth47:handleEnableToggle()
+  ZxSimpleUI:setModuleEnabledState(_MODULE_NAME, self._curDbProfile.enabledToggle)
+end
 
 function PetHealth47:handleOnEnable()
   if self.mainFrame ~= nil then

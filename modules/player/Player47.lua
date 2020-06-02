@@ -6,12 +6,13 @@ local PlayerName47 = ZxSimpleUI:GetModule("PlayerName47")
 local PlayerPower47 = ZxSimpleUI:GetModule("PlayerPower47")
 local Runes47 = ZxSimpleUI:GetModule("Runes47")
 local Totems47 = ZxSimpleUI:GetModule("Totems47")
+local PetHealth47 = ZxSimpleUI:GetModule("PetHealth47")
 
 local Power47Options = ZxSimpleUI.optionTables["Power47Options"]
 local Runes47Options = ZxSimpleUI.optionTables["Runes47Options"]
 local Totems47Options = ZxSimpleUI.optionTables["Totems47Options"]
 
-local NUM_MODULES = 5
+local NUM_MODULES = 6
 
 local _MODULE_NAME = "Player47"
 local _DECORATIVE_NAME = "Player Factory"
@@ -38,7 +39,12 @@ function Player47:__init__()
 
   self._extraBarList = {
     [Runes47.MODULE_NAME] = {parentFrame = nil, module = Runes47, options = Runes47Options},
-    [Totems47.MODULE_NAME] = {parentFrame = nil, module = Totems47, options = Totems47Options}
+    [Totems47.MODULE_NAME] = {parentFrame = nil, module = Totems47, options = Totems47Options},
+    [PetHealth47.MODULE_NAME] = {
+      parentFrame = nil,
+      module = PetHealth47,
+      options = BarTemplateOptions
+    }
   }
 end
 
@@ -73,6 +79,7 @@ function Player47:_createAdditionalBars()
   local playerPowerFrame = self._barList[PlayerPower47.MODULE_NAME]["module"].mainFrame
   self._extraBarList[Runes47.MODULE_NAME]["parentFrame"] = playerPowerFrame
   self._extraBarList[Totems47.MODULE_NAME]["parentFrame"] = playerPowerFrame
+  self._extraBarList[PetHealth47.MODULE_NAME]["parentFrame"] = playerPowerFrame
 
   for moduleName, t1 in pairs(self._extraBarList) do
     local module = t1["module"]

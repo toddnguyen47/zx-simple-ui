@@ -19,17 +19,12 @@ ZxSimpleUI.moduleOptionsTable = {}
 ZxSimpleUI.moduleKeySorted = {}
 ZxSimpleUI.blizOptionTable = {}
 ZxSimpleUI.optionTables = {}
+ZxSimpleUI.prereqTables = {}
 ZxSimpleUI.db = nil
 ZxSimpleUI.DEFAULT_FRAME_LEVEL = 15 -- maximum number with 4 bits
 ZxSimpleUI.DEFAULT_ORDER_INDEX = 7
 ZxSimpleUI.HEADER_ORDER_INDEX = 1
-local _defaults = {
-  profile = {
-    ["modules"] = {
-      ["*"] = {["enabled"] = true}
-    }
-  }
-}
+local _defaults = {profile = {["modules"] = {["*"] = {["enabled"] = true}}}}
 --- End
 
 --- Extra CONSTANTS

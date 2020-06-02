@@ -42,8 +42,8 @@ function BarTemplateOptions:getOptionTable()
       type = "group",
       name = self._currentModule.DECORATIVE_NAME,
       --- "Parent" get/set
-      get = function(info) return self:getOption(info) end,
-      set = function(info, value) self:setOption(info, value) end,
+      get = function(info) return self._coreOptions47:getOption(info) end,
+      set = function(info, value) self._coreOptions47:setOption(info, value) end,
       args = {
         header = {
           type = "header",
@@ -57,7 +57,7 @@ function BarTemplateOptions:getOptionTable()
           min = 0,
           max = math.floor(ZxSimpleUI.SCREEN_WIDTH / 2),
           step = 2,
-          order = self:incrementOrderIndex()
+          order = self._coreOptions47:incrementOrderIndex()
         },
         height = {
           name = "Bar Height",
@@ -66,7 +66,41 @@ function BarTemplateOptions:getOptionTable()
           min = 0,
           max = math.floor(ZxSimpleUI.SCREEN_WIDTH / 2),
           step = 2,
-          order = self:incrementOrderIndex()
+          order = self._coreOptions47:incrementOrderIndex()
+        },
+        selfCurrentPoint = {
+          name = "Point",
+          desc = "Frame's Anchor Point",
+          type = "select",
+          order = self._coreOptions47:incrementOrderIndex(),
+          values = {
+            ["TOP"] = "TOP",
+            ["RIGHT"] = "RIGHT",
+            ["BOTTOM"] = "BOTTOM",
+            ["LEFT"] = "LEFT",
+            ["TOPRIGHT"] = "TOPRIGHT",
+            ["TOPLEFT"] = "TOPLEFT",
+            ["BOTTOMLEFT"] = "BOTTOMLEFT",
+            ["BOTTOMRIGHT"] = "BOTTOMRIGHT",
+            ["CENTER"] = "CENTER"
+          }
+        },
+        relativePoint = {
+          name = "Relative Point",
+          desc = "Relative Point: Frame to anchor to",
+          type = "select",
+          order = self._coreOptions47:incrementOrderIndex(),
+          values = {
+            ["TOP"] = "TOP",
+            ["RIGHT"] = "RIGHT",
+            ["BOTTOM"] = "BOTTOM",
+            ["LEFT"] = "LEFT",
+            ["TOPRIGHT"] = "TOPRIGHT",
+            ["TOPLEFT"] = "TOPLEFT",
+            ["BOTTOMLEFT"] = "BOTTOMLEFT",
+            ["BOTTOMRIGHT"] = "BOTTOMRIGHT",
+            ["CENTER"] = "CENTER"
+          }
         },
         positionx = {
           name = "Bar X",
@@ -75,14 +109,14 @@ function BarTemplateOptions:getOptionTable()
           min = 0,
           max = ZxSimpleUI.SCREEN_WIDTH,
           step = 1,
-          order = self:incrementOrderIndex()
+          order = self._coreOptions47:incrementOrderIndex()
         },
         positionx_center = {
           name = "Center Bar X",
           desc = "Center Bar X Position",
           type = "execute",
           func = function(...) self._currentModule.bars:handlePositionXCenter() end,
-          order = self:incrementOrderIndex()
+          order = self._coreOptions47:incrementOrderIndex()
         },
         positiony = {
           name = "Bar Y",
@@ -91,14 +125,14 @@ function BarTemplateOptions:getOptionTable()
           min = 0,
           max = ZxSimpleUI.SCREEN_HEIGHT,
           step = 1,
-          order = self:incrementOrderIndex()
+          order = self._coreOptions47:incrementOrderIndex()
         },
         positiony_center = {
           name = "Center Bar Y",
           desc = "Center Bar Y Position",
           type = "execute",
           func = function(...) self._currentModule.bars:handlePositionYCenter() end,
-          order = self:incrementOrderIndex()
+          order = self._coreOptions47:incrementOrderIndex()
         },
         fontsize = {
           name = "Bar Font Size",
@@ -107,7 +141,7 @@ function BarTemplateOptions:getOptionTable()
           min = 10,
           max = 36,
           step = 1,
-          order = self:incrementOrderIndex()
+          order = self._coreOptions47:incrementOrderIndex()
         },
         -- LSM30_ is LibSharedMedia's custom controls
         font = {
@@ -116,16 +150,18 @@ function BarTemplateOptions:getOptionTable()
           type = "select",
           dialogControl = "LSM30_Font",
           values = media:HashTable("font"),
-          order = self:incrementOrderIndex()
+          order = self._coreOptions47:incrementOrderIndex()
         },
         fontcolor = {
           name = "Bar Font Color",
           desc = "Bar Font Color",
           type = "color",
-          get = function(info) return self:getOptionColor(info) end,
-          set = function(info, r, g, b, a) self:setOptionColor(info, r, g, b, a) end,
+          get = function(info) return self._coreOptions47:getOptionColor(info) end,
+          set = function(info, r, g, b, a)
+            self._coreOptions47:setOptionColor(info, r, g, b, a)
+          end,
           hasAlpha = false,
-          order = self:incrementOrderIndex()
+          order = self._coreOptions47:incrementOrderIndex()
         },
         texture = {
           name = "Bar Texture",
@@ -133,7 +169,7 @@ function BarTemplateOptions:getOptionTable()
           type = "select",
           dialogControl = "LSM30_Statusbar",
           values = media:HashTable("statusbar"),
-          order = self:incrementOrderIndex()
+          order = self._coreOptions47:incrementOrderIndex()
         },
         border = {
           name = "Bar Border",
@@ -141,53 +177,21 @@ function BarTemplateOptions:getOptionTable()
           type = "select",
           dialogControl = "LSM30_Border",
           values = media:HashTable("border"),
-          order = self:incrementOrderIndex()
+          order = self._coreOptions47:incrementOrderIndex()
         },
         color = {
           name = "Bar Color",
           desc = "Bar Color",
           type = "color",
-          get = function(info) return self:getOptionColor(info) end,
-          set = function(info, r, g, b, a) self:setOptionColor(info, r, g, b, a) end,
+          get = function(info) return self._coreOptions47:getOptionColor(info) end,
+          set = function(info, r, g, b, a)
+            self._coreOptions47:setOptionColor(info, r, g, b, a)
+          end,
           hasAlpha = true,
-          order = self:incrementOrderIndex()
+          order = self._coreOptions47:incrementOrderIndex()
         }
       }
     }
   end
   return self.options
-end
-
-function BarTemplateOptions:getOption(info) return self._coreOptions47:getOption(info) end
-function BarTemplateOptions:setOption(info, value) self._coreOptions47:setOption(info, value) end
-
----@param info table
-function BarTemplateOptions:getOptionColor(info)
-  --- return!
-  return self._coreOptions47:getOptionColor(info)
-end
-
----@param info table
----@param r number from 0.0 - 1.0
----@param g number from 0.0 - 1.0
----@param b number from 0.0 - 1.0
----@param a number from 0.0 - 1.0
-function BarTemplateOptions:setOptionColor(info, r, g, b, a)
-  self._coreOptions47:setOptionColor(info, r, g, b, a)
-end
-
-function BarTemplateOptions:incrementOrderIndex()
-  return self._coreOptions47:incrementOrderIndex()
-end
-
-function BarTemplateOptions:getShownOption(info)
-  ---Return!
-  return self._coreOptions47:getShownOption(info)
-end
-
----@param info table
----@param value boolean
----Set the shown option.
-function BarTemplateOptions:setShownOption(info, value)
-  self._coreOptions47:setShownOption(info, value)
 end

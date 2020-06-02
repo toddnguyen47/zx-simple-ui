@@ -4,8 +4,9 @@ local UnitName = UnitName
 
 --- include
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
-local BarTemplate = ZxSimpleUI.BarTemplate
 local Utils47 = ZxSimpleUI.Utils47
+local BarTemplateDefaults = ZxSimpleUI.prereqTables["BarTemplateDefaults"]
+local BarTemplate = ZxSimpleUI.prereqTables["BarTemplate"]
 local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
 
 local _MODULE_NAME = "PlayerName47"
@@ -37,16 +38,19 @@ function PlayerName47:__init__()
   self._timeSinceLastUpdate = 0
   self._prevName = UnitName(self.unit)
   self.mainFrame = nil
+
+  self._barTemplateDefaults = BarTemplateDefaults:new()
+  self._newDefaults = self._barTemplateDefaults.defaults
+  Utils47:replaceTableValue(self._newDefaults.profile, _defaults.profile)
 end
 
 function PlayerName47:OnInitialize()
   self:__init__()
 
-  self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, _defaults)
+  self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, self._newDefaults)
   self._curDbProfile = self.db.profile
 
   self.bars = BarTemplate:new(self.db)
-  self.bars.defaults = _defaults
 
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
 end

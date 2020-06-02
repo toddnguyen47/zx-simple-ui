@@ -5,7 +5,8 @@ local UnitClass, UnitPowerType = UnitClass, UnitPowerType
 
 --- include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
-local BarTemplate = ZxSimpleUI.BarTemplate
+local BarTemplateDefaults = ZxSimpleUI.prereqTables["BarTemplateDefaults"]
+local BarTemplate = ZxSimpleUI.prereqTables["BarTemplate"]
 local Utils47 = ZxSimpleUI.Utils47
 local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
 
@@ -66,18 +67,21 @@ function PlayerPower47:__init__()
   self._playerClass = UnitClass(self.unit)
   self._powerType = 0
   self._powerTypeString = ""
+
+  self._barTemplateDefaults = BarTemplateDefaults:new()
+  self._newDefaults = self._barTemplateDefaults.defaults
+  Utils47:replaceTableValue(self._newDefaults.profile, _defaults.profile)
 end
 
 function PlayerPower47:OnInitialize()
   self:__init__()
 
-  self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, _defaults)
+  self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, self._newDefaults)
   self._curDbProfile = self.db.profile
   -- Always set the showbar option to false on initialize
   self._curDbProfile.showbar = _defaults.profile.showbar
 
   self.bars = BarTemplate:new(self.db)
-  self.bars.defaults = _defaults
 
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
 end

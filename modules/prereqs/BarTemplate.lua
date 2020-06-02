@@ -11,7 +11,7 @@ local media = LibStub("LibSharedMedia-3.0")
 
 local BarTemplate = {}
 BarTemplate.__index = BarTemplate
-ZxSimpleUI.BarTemplate = BarTemplate
+ZxSimpleUI.prereqTables["BarTemplate"] = BarTemplate
 
 ---@param db table
 function BarTemplate:__init__(db)
@@ -23,21 +23,6 @@ function BarTemplate:__init__(db)
   self._orderIndex = ZxSimpleUI.DEFAULT_ORDER_INDEX
   self._curDbProfile = self.db.profile
 
-  self.defaults = {
-    profile = {
-      width = 200,
-      height = 26,
-      positionx = 400,
-      positiony = 280,
-      fontsize = 14,
-      font = "Friz Quadrata TT",
-      fontcolor = {1.0, 1.0, 1.0},
-      texture = "Blizzard",
-      color = {0.0, 1.0, 0.0, 1.0},
-      border = "None"
-    }
-  }
-
   self.frameBackdropTable = {
     bgFile = "Interface\\DialogFrame\\UI-Tooltip-Background",
     tile = true,
@@ -45,6 +30,7 @@ function BarTemplate:__init__(db)
     edgeSize = 16,
     insets = {left = 4, right = 4, top = 4, bottom = 4}
   }
+
   self.options = {}
 end
 
@@ -63,8 +49,10 @@ function BarTemplate:createBar(percentValue)
   self.mainFrame:SetBackdrop(self.frameBackdropTable)
   self.mainFrame:SetBackdropColor(1, 0, 0, 1)
   self.mainFrame:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details
-  self.mainFrame:SetPoint("BOTTOMLEFT", self.frameToAnchorTo, "BOTTOMLEFT",
-    self._curDbProfile.positionx, self._curDbProfile.positiony)
+
+  self.mainFrame:SetPoint(self._curDbProfile.selfCurrentPoint, self.frameToAnchorTo,
+    self._curDbProfile.relativePoint, self._curDbProfile.positionx,
+    self._curDbProfile.positiony)
 
   self:_setMouseClicks()
 
@@ -142,8 +130,9 @@ end
 
 function BarTemplate:_refreshBarFrame()
   self.mainFrame:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details
-  self.mainFrame:SetPoint("BOTTOMLEFT", self.frameToAnchorTo, "BOTTOMLEFT",
-    self._curDbProfile.positionx, self._curDbProfile.positiony)
+  self.mainFrame:SetPoint(self._curDbProfile.selfCurrentPoint, self.frameToAnchorTo,
+    self._curDbProfile.relativePoint, self._curDbProfile.positionx,
+    self._curDbProfile.positiony)
   self.mainFrame:SetBackdrop(self.frameBackdropTable)
 
   self.frameBackdropTable.edgeFile = media:Fetch("border", self._curDbProfile.border)

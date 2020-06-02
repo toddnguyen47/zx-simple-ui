@@ -82,3 +82,10 @@ function Utils47:round(input)
   local num = input + 0.5
   return math.floor(num)
 end
+
+---@param initTable table
+---@param inputTable table
+---Replace all key/value pairs in `initTable` with key/value pairs in `inputTable`
+function Utils47:replaceTableValue(initTable, inputTable)
+  for k, v in pairs(inputTable) do initTable[k] = v end
+end

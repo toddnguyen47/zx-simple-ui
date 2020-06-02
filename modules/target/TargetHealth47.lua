@@ -9,7 +9,8 @@ local unpack = unpack
 
 ---Include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
-local BarTemplate = ZxSimpleUI.BarTemplate
+local BarTemplateDefaults = ZxSimpleUI.prereqTables["BarTemplateDefaults"]
+local BarTemplate = ZxSimpleUI.prereqTables["BarTemplate"]
 local Utils47 = ZxSimpleUI.Utils47
 local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
 
@@ -37,14 +38,24 @@ local _defaults = {
   }
 }
 
+function TargetHealth47:__init__()
+  self._timeSinceLastUpdate = 0
+  self._prevTargetHealth47 = UnitHealthMax(self.unit)
+  self._unitClassification = ""
+  self.mainFrame = nil
+
+  self._barTemplateDefaults = BarTemplateDefaults:new()
+  self._newDefaults = self._barTemplateDefaults.defaults
+  Utils47:replaceTableValue(self._newDefaults.profile, _defaults.profile)
+end
+
 function TargetHealth47:OnInitialize()
   self:__init__()
 
-  self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, _defaults)
+  self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, self._newDefaults)
   self._curDbProfile = self.db.profile
 
   self.bars = BarTemplate:new(self.db)
-  self.bars.defaults = _defaults
 
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
 end
@@ -52,13 +63,6 @@ end
 function TargetHealth47:OnEnable() self:handleOnEnable() end
 
 function TargetHealth47:OnDisable() self:handleOnDisable() end
-
-function TargetHealth47:__init__()
-  self._timeSinceLastUpdate = 0
-  self._prevTargetHealth47 = UnitHealthMax(self.unit)
-  self._unitClassification = ""
-  self.mainFrame = nil
-end
 
 function TargetHealth47:createBar()
   local targetUnitHealth = UnitHealth(self.unit)

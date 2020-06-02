@@ -51,8 +51,7 @@ function BarTemplate:createBar(percentValue)
   self.mainFrame:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details
 
   self.mainFrame:SetPoint(self._curDbProfile.selfCurrentPoint, self.frameToAnchorTo,
-    self._curDbProfile.relativePoint, self._curDbProfile.positionx,
-    self._curDbProfile.positiony)
+    self._curDbProfile.relativePoint, self._curDbProfile.xoffset, self._curDbProfile.yoffset)
 
   self:_setMouseClicks()
 
@@ -103,7 +102,7 @@ function BarTemplate:handlePositionXCenter()
   local width = self._curDbProfile.width
 
   local centerXPos = math.floor(ZxSimpleUI.SCREEN_WIDTH / 2 - width / 2)
-  self._curDbProfile.positionx = centerXPos
+  self._curDbProfile.xoffset = centerXPos
   self:refreshConfig()
 end
 
@@ -111,7 +110,7 @@ function BarTemplate:handlePositionYCenter()
   local height = self._curDbProfile.height
 
   local centerYPos = math.floor(ZxSimpleUI.SCREEN_HEIGHT / 2 - height / 2)
-  self._curDbProfile.positiony = centerYPos
+  self._curDbProfile.yoffset = centerYPos
   self:refreshConfig()
 end
 
@@ -131,8 +130,7 @@ end
 function BarTemplate:_refreshBarFrame()
   self.mainFrame:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details
   self.mainFrame:SetPoint(self._curDbProfile.selfCurrentPoint, self.frameToAnchorTo,
-    self._curDbProfile.relativePoint, self._curDbProfile.positionx,
-    self._curDbProfile.positiony)
+    self._curDbProfile.relativePoint, self._curDbProfile.xoffset, self._curDbProfile.yoffset)
   self.mainFrame:SetBackdrop(self.frameBackdropTable)
 
   self.frameBackdropTable.edgeFile = media:Fetch("border", self._curDbProfile.border)

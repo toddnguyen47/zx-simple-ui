@@ -89,3 +89,10 @@ end
 function Utils47:replaceTableValue(initTable, inputTable)
   for k, v in pairs(inputTable) do initTable[k] = v end
 end
+
+---@param numberInput number
+function Utils47:floorToEven(numberInput)
+  local num = math.floor(numberInput)
+  if num % 2 == 1 then num = num + 1 end
+  return num
+end

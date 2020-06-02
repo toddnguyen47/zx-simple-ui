@@ -1,4 +1,5 @@
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
+local Utils47 = ZxSimpleUI.Utils47
 local CoreOptions47 = ZxSimpleUI.optionTables["CoreOptions47"]
 local media = LibStub("LibSharedMedia-3.0")
 
@@ -55,7 +56,7 @@ function BarTemplateOptions:getOptionTable()
           desc = "Bar Width Size",
           type = "range",
           min = 0,
-          max = math.floor(ZxSimpleUI.SCREEN_WIDTH / 2),
+          max = Utils47:floorToEven(ZxSimpleUI.SCREEN_WIDTH / 2),
           step = 2,
           order = self._coreOptions47:incrementOrderIndex()
         },
@@ -64,7 +65,7 @@ function BarTemplateOptions:getOptionTable()
           desc = "Bar Height Size",
           type = "range",
           min = 0,
-          max = math.floor(ZxSimpleUI.SCREEN_WIDTH / 2),
+          max = Utils47:floorToEven(ZxSimpleUI.SCREEN_WIDTH / 2),
           step = 2,
           order = self._coreOptions47:incrementOrderIndex()
         },
@@ -102,13 +103,13 @@ function BarTemplateOptions:getOptionTable()
             ["CENTER"] = "CENTER"
           }
         },
-        positionx = {
-          name = "Bar X",
-          desc = "Bar X Position",
+        xoffset = {
+          name = "Bar X Offset",
+          desc = "Bar X Offset",
           type = "range",
-          min = 0,
-          max = ZxSimpleUI.SCREEN_WIDTH,
-          step = 1,
+          min = -Utils47:floorToEven(ZxSimpleUI.SCREEN_WIDTH / 2),
+          max = Utils47:floorToEven(ZxSimpleUI.SCREEN_WIDTH / 2),
+          step = 2,
           order = self._coreOptions47:incrementOrderIndex()
         },
         positionx_center = {
@@ -118,13 +119,13 @@ function BarTemplateOptions:getOptionTable()
           func = function(...) self._currentModule.bars:handlePositionXCenter() end,
           order = self._coreOptions47:incrementOrderIndex()
         },
-        positiony = {
-          name = "Bar Y",
-          desc = "Bar Y Position",
+        yoffset = {
+          name = "Bar Y Offset",
+          desc = "Bar Y Offset",
           type = "range",
-          min = 0,
-          max = ZxSimpleUI.SCREEN_HEIGHT,
-          step = 1,
+          min = -Utils47:floorToEven(ZxSimpleUI.SCREEN_HEIGHT / 2),
+          max = Utils47:floorToEven(ZxSimpleUI.SCREEN_HEIGHT / 2),
+          step = 2,
           order = self._coreOptions47:incrementOrderIndex()
         },
         positiony_center = {

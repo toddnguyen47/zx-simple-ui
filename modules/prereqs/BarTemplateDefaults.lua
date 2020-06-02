@@ -11,8 +11,8 @@ function BarTemplateDefaults:__init__()
     profile = {
       width = 200,
       height = 26,
-      positionx = 400,
-      positiony = 280,
+      xoffset = 400,
+      yoffset = 280,
       fontsize = 14,
       font = "Friz Quadrata TT",
       fontcolor = {1.0, 1.0, 1.0},

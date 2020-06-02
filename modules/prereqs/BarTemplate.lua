@@ -62,6 +62,7 @@ function BarTemplate:createBar(percentValue)
   self.mainFrame:SetFrameLevel(ZxSimpleUI.DEFAULT_FRAME_LEVEL)
   self.mainFrame:SetBackdrop(self.frameBackdropTable)
   self.mainFrame:SetBackdropColor(1, 0, 0, 1)
+  self.mainFrame:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details
   self.mainFrame:SetPoint("BOTTOMLEFT", self.frameToAnchorTo, "BOTTOMLEFT",
     self._curDbProfile.positionx, self._curDbProfile.positiony)
 
@@ -72,7 +73,7 @@ function BarTemplate:createBar(percentValue)
   self.mainFrame.bgFrame:SetAllPoints()
 
   self.mainFrame.statusBar = CreateFrame("StatusBar", nil, self.mainFrame)
-  self.mainFrame.statusBar:ClearAllPoints()
+  self.mainFrame.statusBar:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details
   self.mainFrame.statusBar:SetPoint("CENTER", self.mainFrame, "CENTER")
   local texture = media:Fetch("statusbar", self._curDbProfile.texture)
   self.mainFrame.statusBar:SetStatusBarTexture(texture, "BORDER")
@@ -87,6 +88,7 @@ function BarTemplate:createBar(percentValue)
   self.mainFrame.mainText:SetFont(media:Fetch("font", self._curDbProfile.font),
     self._curDbProfile.fontsize, "OUTLINE")
   self.mainFrame.mainText:SetTextColor(unpack(self._curDbProfile.fontcolor))
+  self.mainFrame.mainText:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details
   self.mainFrame.mainText:SetPoint("CENTER", self.mainFrame.statusBar, "CENTER", 0, 0)
   self.mainFrame.mainText:SetText(string.format("%.1f%%", percentValue * 100.0))
 
@@ -139,6 +141,7 @@ function BarTemplate:_setFrameWidthHeight()
 end
 
 function BarTemplate:_refreshBarFrame()
+  self.mainFrame:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details
   self.mainFrame:SetPoint("BOTTOMLEFT", self.frameToAnchorTo, "BOTTOMLEFT",
     self._curDbProfile.positionx, self._curDbProfile.positiony)
   self.mainFrame:SetBackdrop(self.frameBackdropTable)

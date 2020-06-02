@@ -120,6 +120,7 @@ end
 function Runes47:_refreshBarFrame()
   self.mainFrame:SetWidth(self._frameToAnchorTo:GetWidth())
   self.mainFrame:SetHeight(self._curDbProfile.height)
+  self.mainFrame:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details
   self.mainFrame:SetPoint("TOPLEFT", self._frameToAnchorTo, "BOTTOMLEFT", 0,
     self._curDbProfile.yoffset)
 end
@@ -147,6 +148,7 @@ function Runes47:_refreshRuneFrames()
       "BORDER")
     runeStatusBar:GetStatusBarTexture():SetHorizTile(false)
     self:_setRuneColor(runeStatusBar)
+    runeStatusBar:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details
 
     if id == 1 then
       runeStatusBar:SetPoint("TOPLEFT", self._frameToAnchorTo, "BOTTOMLEFT", 0,

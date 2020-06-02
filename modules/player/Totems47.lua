@@ -114,6 +114,7 @@ end
 function Totems47:_refreshBarFrame()
   self.mainFrame:SetWidth(self._frameToAnchorTo:GetWidth())
   self.mainFrame:SetHeight(self._curDbProfile.height)
+  self.mainFrame:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details
   self.mainFrame:SetPoint("TOPLEFT", self._frameToAnchorTo, "BOTTOMLEFT", 0,
     self._curDbProfile.yoffset)
 end
@@ -132,6 +133,8 @@ function Totems47:_refreshTotemBars()
     totemFrame.durationText:SetFont(media:Fetch("font", self._curDbProfile.font),
       self._curDbProfile.fontsize, self:_getFontFlags())
     totemFrame.durationText:SetTextColor(unpack(self._curDbProfile.fontcolor))
+
+    totemFrame:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details
     if id == 1 then
       totemFrame:SetPoint("TOPLEFT", self._frameToAnchorTo, "BOTTOMLEFT", 0,
         self._curDbProfile.yoffset)

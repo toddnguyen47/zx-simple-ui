@@ -129,6 +129,7 @@ end
 function Combo47:_refreshBarFrame()
   self.mainFrame:SetWidth(self._frameToAnchorTo:GetWidth())
   self.mainFrame:SetHeight(self._curDbProfile.height)
+  self.mainFrame:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details
   self.mainFrame:SetPoint("TOPLEFT", self._frameToAnchorTo, "BOTTOMLEFT", 0,
     self._curDbProfile.yoffset)
 end
@@ -141,6 +142,8 @@ function Combo47:_refreshComboPointsDisplay()
     comboTexture:SetHeight(self.mainFrame:GetHeight())
     comboTexture:SetTexture(media:Fetch("statusbar", self._curDbProfile.texture), "BORDER")
     self:_setComboPointsColor(i, comboTexture)
+    comboTexture:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details
+
     if i == 1 then
       comboTexture:SetPoint("TOPLEFT", self._frameToAnchorTo, "BOTTOMLEFT", 0,
         self._curDbProfile.yoffset)

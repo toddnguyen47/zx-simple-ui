@@ -120,7 +120,13 @@ function PlayerFactory47:createPlayerHealthOptions47()
 end
 
 ---@return table
-function PlayerFactory47:createPlayerPowerOptions47() end
+function PlayerFactory47:createPlayerPowerOptions47()
+  if self._playerPower47["module"] == nil then self:createPlayerHealth47() end
+  self._playerPower47["options"] = Power47Options:new(self._playerPower47["module"])
+  local options = self._playerPower47["options"]
+  options:registerModuleOptionsTable()
+  return options
+end
 
 -- ####################################
 -- # PRIVATE FUNCTIONS

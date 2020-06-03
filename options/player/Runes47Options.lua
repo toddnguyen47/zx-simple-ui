@@ -47,7 +47,8 @@ function Runes47Options:getOptionTable()
           type = "toggle",
           name = "Enable",
           desc = "Enable / Disable this module",
-          order = ZxSimpleUI.HEADER_ORDER_INDEX + 1
+          order = ZxSimpleUI.HEADER_ORDER_INDEX + 1,
+          width = "full"
         },
         texture = {
           name = "Bar Texture",

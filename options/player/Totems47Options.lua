@@ -49,7 +49,8 @@ function Totems47Options:getOptionTable()
           type = "toggle",
           name = "Enable",
           desc = "Enable / Disable this module",
-          order = ZxSimpleUI.HEADER_ORDER_INDEX + 1
+          order = ZxSimpleUI.HEADER_ORDER_INDEX + 1,
+          width = "full"
         },
         height = {
           name = "Totem Height",

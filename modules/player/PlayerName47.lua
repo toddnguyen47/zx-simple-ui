@@ -99,7 +99,8 @@ function PlayerName47:getExtraOptions()
       type = "toggle",
       name = "Enable",
       desc = "Enable / Disable Module `" .. _DECORATIVE_NAME .. "`",
-      order = 1
+      order = 1,
+      width = "full"
     }
   }
   return optionsTable

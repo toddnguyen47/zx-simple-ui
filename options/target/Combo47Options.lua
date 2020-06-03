@@ -50,7 +50,8 @@ function Combo47Options:getOptionTable()
           name = "Enable",
           desc = "Enable / Disable this module",
           order = ZxSimpleUI.HEADER_ORDER_INDEX + 1,
-          disabled = function(info) return self._curDbProfile.showbar end
+          disabled = function(info) return self._curDbProfile.showbar end,
+          width = "full"
         },
         showbar = {
           type = "toggle",

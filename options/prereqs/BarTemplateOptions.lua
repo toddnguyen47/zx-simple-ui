@@ -112,11 +112,13 @@ function BarTemplateOptions:getOptionTable()
           step = 2,
           order = self._coreOptions47:incrementOrderIndex()
         },
-        positionx_center = {
-          name = "Center Bar X",
-          desc = "Center Bar X Position",
+        zeroXOffset = {
+          name = "Zero X Offset",
           type = "execute",
-          func = function(...) self._currentModule.bars:handlePositionXCenter() end,
+          func = function(...)
+            self._curDbProfile.xoffset = 0
+            self._currentModule:refreshConfig()
+          end,
           order = self._coreOptions47:incrementOrderIndex()
         },
         yoffset = {
@@ -128,11 +130,13 @@ function BarTemplateOptions:getOptionTable()
           step = 2,
           order = self._coreOptions47:incrementOrderIndex()
         },
-        positiony_center = {
-          name = "Center Bar Y",
-          desc = "Center Bar Y Position",
+        zeroYOffset = {
+          name = "Zero Y Offset",
           type = "execute",
-          func = function(...) self._currentModule.bars:handlePositionYCenter() end,
+          func = function(...)
+            self._curDbProfile.yoffset = 0
+            self._currentModule:refreshConfig()
+          end,
           order = self._coreOptions47:incrementOrderIndex()
         },
         fontsize = {

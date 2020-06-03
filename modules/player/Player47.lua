@@ -79,6 +79,7 @@ function Player47:useFactoryMethods()
   PlayerFactory47:createPetPower47()
 
   PlayerFactory47:createPlayerHealthOptions47()
+  PlayerFactory47:createPlayerNameOptions47()
   PlayerFactory47:createPlayerPowerOptions47()
 end
 

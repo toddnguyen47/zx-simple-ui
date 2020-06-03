@@ -119,9 +119,17 @@ function PlayerFactory47:createPlayerHealthOptions47()
   return options
 end
 
+function PlayerFactory47:createPlayerNameOptions47()
+  if self._playerName47["module"] == nil then self:createPlayerName47() end
+  self._playerName47["options"] = BarTemplateEnableOptions:new(self._playerName47["module"])
+  local options = self._playerName47["options"]
+  options:registerModuleOptionsTable()
+  return options
+end
+
 ---@return table
 function PlayerFactory47:createPlayerPowerOptions47()
-  if self._playerPower47["module"] == nil then self:createPlayerHealth47() end
+  if self._playerPower47["module"] == nil then self:createPlayerPower47() end
   self._playerPower47["options"] = Power47Options:new(self._playerPower47["module"])
   local options = self._playerPower47["options"]
   options:registerModuleOptionsTable()

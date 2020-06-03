@@ -70,7 +70,7 @@ end
 
 function Totems47:refreshConfig()
   self:handleEnableToggle()
-  if self:IsEnabled() then self:_refreshAll() end
+  if self:IsEnabled() then self:handleOnEnable() end
 end
 
 function Totems47:handleEnableToggle()
@@ -81,7 +81,7 @@ function Totems47:handleOnEnable()
   if self.mainFrame ~= nil then
     self:_registerAllEvents()
     self:_enableAllScriptHandlers()
-    self:refreshConfig()
+    self:_refreshAll()
     for i = 1, MAX_TOTEMS do self:_handlePlayerTotemUpdate(self._totemBarList[i], i) end
     self.mainFrame:Show()
   end

@@ -66,7 +66,7 @@ function PetHealth47:OnDisable() self:handleOnDisable() end
 
 function PetHealth47:refreshConfig()
   self:handleEnableToggle()
-  if self:IsEnabled() then self.bars:refreshConfig() end
+  if self:IsEnabled() then self:handleOnEnable() end
 end
 
 ---@param frameToAnchorTo table
@@ -94,7 +94,7 @@ end
 
 function PetHealth47:handleOnEnable()
   if self.mainFrame ~= nil then
-    self:refreshConfig()
+    self.bars:refreshConfig()
     self.mainFrame:Show()
   end
 end

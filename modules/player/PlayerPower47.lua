@@ -97,17 +97,7 @@ function PlayerPower47:OnEnable() self:handleOnEnable() end
 
 function PlayerPower47:OnDisable() self:handleOnDisable() end
 
-function PlayerPower47:refreshConfig()
-  if self:IsEnabled() then
-    -- If the show option is currently selected
-    if self._curDbProfile.showbar == true then
-      self.mainFrame.statusBar:SetStatusBarColor(unpack(self.currentPowerColorEdited))
-    else
-      self:_setRefreshColor()
-      self.bars:refreshConfig()
-    end
-  end
-end
+function PlayerPower47:refreshConfig() if self:IsEnabled() then self:handleOnEnable() end end
 
 ---@return table
 function PlayerPower47:createBar()
@@ -132,7 +122,13 @@ function PlayerPower47:handleEnableToggle() end
 
 function PlayerPower47:handleOnEnable()
   if self.mainFrame ~= nil then
-    self:refreshConfig()
+    -- If the show option is currently selected
+    if self._curDbProfile.showbar == true then
+      self.mainFrame.statusBar:SetStatusBarColor(unpack(self.currentPowerColorEdited))
+    else
+      self:_setRefreshColor()
+      self.bars:refreshConfig()
+    end
     self.mainFrame:Show()
   end
 end

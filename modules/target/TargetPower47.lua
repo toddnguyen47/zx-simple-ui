@@ -111,15 +111,7 @@ function TargetPower47:createBar()
 end
 
 function TargetPower47:refreshConfig()
-  if self:IsEnabled() and self.mainFrame:IsVisible() then
-    --- if we are currently in shown mode
-    if self._curDbProfile.showbar == true then
-      self.mainFrame.statusBar:SetStatusBarColor(unpack(self.currentPowerColorEdited))
-    else
-      self.bars:refreshConfig()
-      self:_setRefreshColor()
-    end
-  end
+  if self:IsEnabled() and self.mainFrame:IsVisible() then self:handleOnEnable() end
 end
 
 ---Don't have to do anything here. Maybe in the future I'll add an option to disable this bar.
@@ -127,7 +119,13 @@ function TargetPower47:handleEnableToggle() end
 
 function TargetPower47:handleOnEnable()
   if self.mainFrame ~= nil then
-    self:refreshConfig()
+    --- if we are currently in shown mode
+    if self._curDbProfile.showbar == true then
+      self.mainFrame.statusBar:SetStatusBarColor(unpack(self.currentPowerColorEdited))
+    else
+      self.bars:refreshConfig()
+      self:_setRefreshColor()
+    end
     self.mainFrame:Show()
   end
 end

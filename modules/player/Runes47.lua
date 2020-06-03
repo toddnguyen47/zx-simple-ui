@@ -49,8 +49,6 @@ function Runes47:OnInitialize()
   self:__init__()
   self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, _defaults)
   self._curDbProfile = self.db.profile
-  -- Always set the showbar option to false on initialize
-  self._curDbProfile.showbar = _defaults.profile.showbar
 
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
 end
@@ -76,7 +74,7 @@ end
 
 function Runes47:refreshConfig()
   self:handleEnableToggle()
-  if self:IsEnabled() then self:_refreshAll() end
+  if self:IsEnabled() then self:handleOnEnable() end
 end
 
 function Runes47:handleEnableToggle()
@@ -87,7 +85,7 @@ function Runes47:handleOnEnable()
   if self.mainFrame ~= nil then
     self:_registerAllEvents()
     self:_enableAllScriptHandlers()
-    self:refreshConfig()
+    self:_refreshAll()
     self.mainFrame:Show()
   end
 end
@@ -245,8 +243,3 @@ function Runes47:_handleRuneCooldownComplete(runeFrame)
   runeFrame:SetAlpha(1.0)
   runeFrame:SetScript("OnUpdate", nil)
 end
-
--- ####################################
--- # OPTION TABLE FUNCTIONS
--- ####################################
-

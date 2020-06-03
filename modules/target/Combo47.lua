@@ -81,7 +81,7 @@ end
 
 function Combo47:refreshConfig()
   self:handleEnableToggle()
-  if self:IsEnabled() then self:_refreshAll() end
+  if self:IsEnabled() then self:handleOnEnable() end
 end
 
 function Combo47:handleEnableToggle()
@@ -91,7 +91,7 @@ end
 function Combo47:handleOnEnable()
   if self.mainFrame ~= nil then
     self:_registerAllEvents()
-    self:refreshConfig()
+    self:_refreshAll()
     self:_handleComboPoints()
   end
 end

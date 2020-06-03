@@ -35,7 +35,7 @@ function PlayerFactory47:createPlayerHealth47()
   curModule:createBar()
   self._framePool[curModule.MODULE_NAME] = curModule.mainFrame
   self:_handleModuleEnable(curModule)
-  return curModule
+  return curModule.mainFrame
 end
 
 ---@return table
@@ -45,7 +45,7 @@ function PlayerFactory47:createPlayerName47()
   curModule:createBar()
   self._framePool[curModule.MODULE_NAME] = curModule.mainFrame
   self:_handleModuleEnable(curModule)
-  return curModule
+  return curModule.mainFrame
 end
 
 ---@return table
@@ -55,7 +55,7 @@ function PlayerFactory47:createPlayerPower47()
   curModule:createBar()
   self._framePool[curModule.MODULE_NAME] = curModule.mainFrame
   self:_handleModuleEnable(curModule)
-  return curModule
+  return curModule.mainFrame
 end
 
 ---@return table
@@ -68,7 +68,7 @@ function PlayerFactory47:createRunes47()
   curModule:createBar(self._framePool[moduleToAnchorTo.MODULE_NAME])
   self._framePool[curModule.MODULE_NAME] = curModule.mainFrame
   self:_handleModuleEnable(curModule)
-  return curModule
+  return curModule.mainFrame
 end
 
 ---@return table
@@ -81,7 +81,7 @@ function PlayerFactory47:createTotems47()
   curModule:createBar(self._framePool[moduleToAnchorTo.MODULE_NAME])
   self._framePool[curModule.MODULE_NAME] = curModule.mainFrame
   self:_handleModuleEnable(curModule)
-  return curModule
+  return curModule.mainFrame
 end
 
 ---@return table
@@ -94,7 +94,7 @@ function PlayerFactory47:createPetHealth47()
   curModule:createBar(self._framePool[moduleToAnchorTo.MODULE_NAME])
   self._framePool[curModule.MODULE_NAME] = curModule.mainFrame
   self:_handleModuleEnable(curModule)
-  return curModule
+  return curModule.mainFrame
 end
 
 ---@return table
@@ -107,33 +107,42 @@ function PlayerFactory47:createPetPower47()
   curModule:createBar(self._framePool[moduleToAnchorTo.MODULE_NAME])
   self._framePool[curModule.MODULE_NAME] = curModule.mainFrame
   self:_handleModuleEnable(curModule)
-  return curModule
+  return curModule.mainFrame
 end
 
 ---@return table
 function PlayerFactory47:createPlayerHealthOptions47()
   if self._playerHealth47["module"] == nil then self:createPlayerHealth47() end
   self._playerHealth47["options"] = BarTemplateOptions:new(self._playerHealth47["module"])
-  local options = self._playerHealth47["options"]
-  options:registerModuleOptionsTable()
-  return options
+  local optionsObj = self._playerHealth47["options"]
+  optionsObj:registerModuleOptionsTable()
+  return optionsObj.options
 end
 
 function PlayerFactory47:createPlayerNameOptions47()
   if self._playerName47["module"] == nil then self:createPlayerName47() end
   self._playerName47["options"] = BarTemplateEnableOptions:new(self._playerName47["module"])
-  local options = self._playerName47["options"]
-  options:registerModuleOptionsTable()
-  return options
+  local optionsObj = self._playerName47["options"]
+  optionsObj:registerModuleOptionsTable()
+  return optionsObj.options
 end
 
 ---@return table
 function PlayerFactory47:createPlayerPowerOptions47()
   if self._playerPower47["module"] == nil then self:createPlayerPower47() end
   self._playerPower47["options"] = Power47Options:new(self._playerPower47["module"])
-  local options = self._playerPower47["options"]
-  options:registerModuleOptionsTable()
-  return options
+  local optionsObj = self._playerPower47["options"]
+  optionsObj:registerModuleOptionsTable()
+  return optionsObj.options
+end
+
+---@return table
+function PlayerFactory47:createRunesOptions47()
+  if self._runes47["module"] == nil then self:createRunes47() end
+  self._runes47["options"] = Runes47Options:new(self._runes47["module"])
+  local optionsObj = self._runes47["options"]
+  optionsObj:registerModuleOptionsTable()
+  return optionsObj.options
 end
 
 -- ####################################

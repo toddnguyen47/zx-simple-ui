@@ -81,6 +81,8 @@ function Player47:useFactoryMethods()
   PlayerFactory47:createPlayerHealthOptions47()
   PlayerFactory47:createPlayerNameOptions47()
   PlayerFactory47:createPlayerPowerOptions47()
+  PlayerFactory47:createRunesOptions47()
+
 end
 
 -- ####################################

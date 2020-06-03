@@ -89,8 +89,6 @@ end
 
 function PetPower47:OnEnable() self:handleOnEnable() end
 
-function PetPower47:OnEnable() self:handleOnEnable() end
-
 function PetPower47:OnDisable() self:handleOnDisable() end
 
 ---@param frameToAnchorTo table
@@ -116,14 +114,7 @@ end
 
 function PetPower47:refreshConfig()
   self:handleEnableToggle()
-  if self:IsEnabled() then
-    -- If the show option is currently selected
-    if self._curDbProfile.showbar == true then
-      self.mainFrame.statusBar:SetStatusBarColor(unpack(self.currentPowerColorEdited))
-    else
-      self.bars:refreshConfig()
-    end
-  end
+  if self:IsEnabled() then self:handleOnEnable() end
 end
 
 function PetPower47:handleEnableToggle()
@@ -132,7 +123,12 @@ end
 
 function PetPower47:handleOnEnable()
   if self.mainFrame ~= nil then
-    self:refreshConfig()
+    -- If the show option is currently selected
+    if self._curDbProfile.showbar == true then
+      self.mainFrame.statusBar:SetStatusBarColor(unpack(self.currentPowerColorEdited))
+    else
+      self.bars:refreshConfig()
+    end
     self.mainFrame:Show()
   end
 end

@@ -72,10 +72,7 @@ end
 
 function PlayerName47:refreshConfig()
   self:handleEnableToggle()
-  if self:IsEnabled() then
-    self.bars:refreshConfig()
-    self.mainFrame:Show()
-  end
+  if self:IsEnabled() then self:handleOnEnable() end
 end
 
 function PlayerName47:handleEnableToggle()
@@ -84,7 +81,7 @@ end
 
 function PlayerName47:handleOnEnable()
   if self.mainFrame ~= nil then
-    self:refreshConfig()
+    self.bars:refreshConfig()
     self.mainFrame:Show()
   end
 end

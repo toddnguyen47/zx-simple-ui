@@ -60,7 +60,7 @@ function PlayerHealth47:OnEnable() self:handleOnEnable() end
 
 function PlayerHealth47:OnDisable() self:handleOnDisable() end
 
-function PlayerHealth47:refreshConfig() if self:IsEnabled() then self.bars:refreshConfig() end end
+function PlayerHealth47:refreshConfig() if self:IsEnabled() then self:handleOnEnable() end end
 
 ---@return table
 function PlayerHealth47:createBar()
@@ -84,7 +84,7 @@ function PlayerHealth47:handleEnableToggle() end
 
 function PlayerHealth47:handleOnEnable()
   if self.mainFrame ~= nil then
-    self:refreshConfig()
+    self.bars:refreshConfig()
     self.mainFrame:Show()
   end
 end

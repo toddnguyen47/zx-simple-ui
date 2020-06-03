@@ -2,4 +2,5 @@
   <Script file="Utils47.lua" />
   <Script file="CoreOptionsInterface.lua" />
   <Script file="CoreOptions47.lua" />
+  <Script file="FramePool47.lua" />
 </Ui>

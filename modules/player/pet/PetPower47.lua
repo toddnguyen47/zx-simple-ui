@@ -2,10 +2,11 @@
 local LibStub = LibStub
 local UnitPower, UnitPowerMax = UnitPower, UnitPowerMax
 local UnitClass, UnitPowerType = UnitClass, UnitPowerType
-local CreateFrame = CreateFrame
 
 --- include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
+local FramePool47 = ZxSimpleUI.FramePool47
+
 local BarTemplateDefaults = ZxSimpleUI.prereqTables["BarTemplateDefaults"]
 local BarTemplate = ZxSimpleUI.prereqTables["BarTemplate"]
 local Utils47 = ZxSimpleUI.Utils47
@@ -227,7 +228,7 @@ function PetPower47:_setInitialColor()
 end
 
 function PetPower47:_setInitialOnUpdateColor()
-  local tempFrame = CreateFrame("Frame", nil)
+  local tempFrame = FramePool47:getFrame()
   local tempTimeSinceLastUpdate = 0
   tempFrame:SetScript("OnUpdate", function(curFrame, elapsed)
     tempTimeSinceLastUpdate = tempTimeSinceLastUpdate + elapsed
@@ -237,7 +238,7 @@ function PetPower47:_setInitialOnUpdateColor()
       if self._powerTypeString ~= "" then
         self:_setInitialColor()
         tempFrame:SetScript("OnUpdate", nil)
-        tempFrame = nil
+        FramePool47:releaseFrame(tempFrame)
       end
     end
   end)

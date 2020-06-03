@@ -1,5 +1,5 @@
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
-local BarTemplateOptions = ZxSimpleUI.optionTables["BarTemplateOptions"]
+local PlayerFactory47 = ZxSimpleUI.prereqTables["PlayerFactory47"]
 
 local PlayerHealth47 = ZxSimpleUI:GetModule("PlayerHealth47")
 local PlayerName47 = ZxSimpleUI:GetModule("PlayerName47")
@@ -9,6 +9,7 @@ local Totems47 = ZxSimpleUI:GetModule("Totems47")
 local PetHealth47 = ZxSimpleUI:GetModule("PetHealth47")
 local PetPower47 = ZxSimpleUI:GetModule("PetPower47")
 
+local BarTemplateOptions = ZxSimpleUI.optionTables["BarTemplateOptions"]
 local BarTemplateEnableOptions = ZxSimpleUI.optionTables["BarTemplateEnableOptions"]
 local Power47Options = ZxSimpleUI.optionTables["Power47Options"]
 local Runes47Options = ZxSimpleUI.optionTables["Runes47Options"]
@@ -62,8 +63,20 @@ end
 
 function Player47:OnEnable()
   -- Ref: https://wow.gamepedia.com/AddOn_loading_process
-  self:_createBars()
-  self:_setEnableState()
+  -- self:_createBars()
+  -- self:_setEnableState()
+
+  self:useFactoryMethods()
+end
+
+function Player47:useFactoryMethods()
+  PlayerFactory47:createPlayerHealth47()
+  PlayerFactory47:createPlayerName47()
+  PlayerFactory47:createPlayerPower47()
+  PlayerFactory47:createRunes47()
+  PlayerFactory47:createTotems47()
+  PlayerFactory47:createPetHealth47()
+  PlayerFactory47:createPetPower47()
 end
 
 -- ####################################

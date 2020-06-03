@@ -77,6 +77,8 @@ function Player47:useFactoryMethods()
   PlayerFactory47:createTotems47()
   PlayerFactory47:createPetHealth47()
   PlayerFactory47:createPetPower47()
+
+  PlayerFactory47:createPlayerHealthOptions47()
 end
 
 -- ####################################

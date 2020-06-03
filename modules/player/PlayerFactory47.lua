@@ -28,12 +28,6 @@ PlayerFactory47._totems47 = {}
 PlayerFactory47._petHealth47 = {}
 PlayerFactory47._petPower47 = {}
 
-PlayerFactory47._barTemplateOptions = nil
-PlayerFactory47._barTemplateEnableOptions = nil
-PlayerFactory47._power47Options = nil
-PlayerFactory47._runes47Options = nil
-PlayerFactory47._totems47Options = nil
-
 ---@return table
 function PlayerFactory47:createPlayerHealth47()
   self._playerHealth47["module"] = PlayerHealth47
@@ -117,7 +111,16 @@ function PlayerFactory47:createPetPower47()
 end
 
 ---@return table
-function PlayerFactory47:createPlayerHealthOptions47() end
+function PlayerFactory47:createPlayerHealthOptions47()
+  if self._playerHealth47["module"] == nil then self:createPlayerHealth47() end
+  self._playerHealth47["options"] = BarTemplateOptions:new(self._playerHealth47["module"])
+  local options = self._playerHealth47["options"]
+  options:registerModuleOptionsTable()
+  return options
+end
+
+---@return table
+function PlayerFactory47:createPlayerPowerOptions47() end
 
 -- ####################################
 -- # PRIVATE FUNCTIONS

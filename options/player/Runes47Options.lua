@@ -7,25 +7,25 @@ Runes47Options.__index = Runes47Options
 Runes47Options.OPTION_NAME = "Runes47Options"
 ZxSimpleUI.optionTables[Runes47Options.OPTION_NAME] = Runes47Options
 
----@param runesModule table
-function Runes47Options:__init__(runesModule)
+---@param currentModule table
+function Runes47Options:__init__(currentModule)
   self.options = {}
-  self._runesModule = runesModule
-  self._curDbProfile = self._runesModule.db.profile
-  self._coreOptions47 = CoreOptions47:new(self._runesModule)
+  self._currentModule = currentModule
+  self._curDbProfile = self._currentModule.db.profile
+  self._coreOptions47 = CoreOptions47:new(self._currentModule)
 end
 
----@param runesModule table
-function Runes47Options:new(runesModule)
-  assert(runesModule ~= nil)
+---@param currentModule table
+function Runes47Options:new(currentModule)
+  assert(currentModule ~= nil)
   local newInstance = setmetatable({}, self)
-  newInstance:__init__(runesModule)
+  newInstance:__init__(currentModule)
   return newInstance
 end
 
 function Runes47Options:registerModuleOptionsTable()
-  ZxSimpleUI:registerModuleOptions(self._runesModule.MODULE_NAME, self:getOptionTable(),
-    self._runesModule.DECORATIVE_NAME)
+  ZxSimpleUI:registerModuleOptions(self._currentModule.MODULE_NAME, self:getOptionTable(),
+    self._currentModule.DECORATIVE_NAME)
 end
 
 ---@return table
@@ -33,14 +33,14 @@ function Runes47Options:getOptionTable()
   if next(self.options) == nil then
     self.options = {
       type = "group",
-      name = self._runesModule.DECORATIVE_NAME,
+      name = self._currentModule.DECORATIVE_NAME,
       --- "Parent" get/set
       get = function(info) return self._coreOptions47:getOption(info) end,
       set = function(info, value) self._coreOptions47:setOption(info, value) end,
       args = {
         header = {
           type = "header",
-          name = self._runesModule.DECORATIVE_NAME,
+          name = self._currentModule.DECORATIVE_NAME,
           order = ZxSimpleUI.HEADER_ORDER_INDEX
         },
         enabledToggle = {
@@ -76,14 +76,29 @@ function Runes47Options:getOptionTable()
           step = 1,
           order = self._coreOptions47:incrementOrderIndex()
         },
-        yoffset = {
-          name = "Y Offset",
-          desc = "Y Offset",
-          type = "range",
-          min = -30,
-          max = 30,
-          step = 1,
-          order = self._coreOptions47:incrementOrderIndex()
+        setpoint = {
+          name = "Setpoints",
+          type = "group",
+          inline = true,
+          order = self._coreOptions47:incrementOrderIndex(),
+          args = {
+            frameToAnchorTo = {
+              type = "description",
+              name = string.format("FRAME TO ANCHOR TO:\n%s", self._currentModule.mainFrame
+                .frameToAnchorTo.DECORATIVE_NAME),
+              order = 10,
+              fontSize = "medium"
+            },
+            yoffset = {
+              name = "Y Offset",
+              desc = "Y Offset",
+              type = "range",
+              min = -30,
+              max = 30,
+              step = 1,
+              order = 11
+            }
+          }
         },
         runeCooldownAlpha = {
           name = "Rune Cooldown Alpha",

@@ -69,38 +69,53 @@ function BarTemplateOptions:getOptionTable()
           step = 2,
           order = self._coreOptions47:incrementOrderIndex()
         },
-        selfCurrentPoint = {
-          name = "Point",
-          desc = "Frame's Anchor Point",
-          type = "select",
+        setpoint = {
+          name = "Setpoints",
+          type = "group",
+          inline = true,
           order = self._coreOptions47:incrementOrderIndex(),
-          values = {
-            ["TOP"] = "TOP",
-            ["RIGHT"] = "RIGHT",
-            ["BOTTOM"] = "BOTTOM",
-            ["LEFT"] = "LEFT",
-            ["TOPRIGHT"] = "TOPRIGHT",
-            ["TOPLEFT"] = "TOPLEFT",
-            ["BOTTOMLEFT"] = "BOTTOMLEFT",
-            ["BOTTOMRIGHT"] = "BOTTOMRIGHT",
-            ["CENTER"] = "CENTER"
-          }
-        },
-        relativePoint = {
-          name = "Relative Point",
-          desc = "Relative Point: Frame to anchor to",
-          type = "select",
-          order = self._coreOptions47:incrementOrderIndex(),
-          values = {
-            ["TOP"] = "TOP",
-            ["RIGHT"] = "RIGHT",
-            ["BOTTOM"] = "BOTTOM",
-            ["LEFT"] = "LEFT",
-            ["TOPRIGHT"] = "TOPRIGHT",
-            ["TOPLEFT"] = "TOPLEFT",
-            ["BOTTOMLEFT"] = "BOTTOMLEFT",
-            ["BOTTOMRIGHT"] = "BOTTOMRIGHT",
-            ["CENTER"] = "CENTER"
+          args = {
+            frameToAnchorTo = {
+              type = "description",
+              name = string.format("FRAME TO ANCHOR TO:\n%s", self._currentModule.mainFrame
+                .frameToAnchorTo.DECORATIVE_NAME),
+              order = 10,
+              fontSize = "medium"
+            },
+            selfCurrentPoint = {
+              name = "Point",
+              desc = "Frame's Anchor Point",
+              type = "select",
+              order = 11,
+              values = {
+                ["TOP"] = "TOP",
+                ["RIGHT"] = "RIGHT",
+                ["BOTTOM"] = "BOTTOM",
+                ["LEFT"] = "LEFT",
+                ["TOPRIGHT"] = "TOPRIGHT",
+                ["TOPLEFT"] = "TOPLEFT",
+                ["BOTTOMLEFT"] = "BOTTOMLEFT",
+                ["BOTTOMRIGHT"] = "BOTTOMRIGHT",
+                ["CENTER"] = "CENTER"
+              }
+            },
+            relativePoint = {
+              name = "Relative Point",
+              desc = "Relative Point: Frame to anchor to",
+              type = "select",
+              order = 12,
+              values = {
+                ["TOP"] = "TOP",
+                ["RIGHT"] = "RIGHT",
+                ["BOTTOM"] = "BOTTOM",
+                ["LEFT"] = "LEFT",
+                ["TOPRIGHT"] = "TOPRIGHT",
+                ["TOPLEFT"] = "TOPLEFT",
+                ["BOTTOMLEFT"] = "BOTTOMLEFT",
+                ["BOTTOMRIGHT"] = "BOTTOMRIGHT",
+                ["CENTER"] = "CENTER"
+              }
+            }
           }
         },
         xoffset = {

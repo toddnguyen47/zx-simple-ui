@@ -9,25 +9,25 @@ Totems47Options.__index = Totems47Options
 Totems47Options.OPTION_NAME = "Totems47Options"
 ZxSimpleUI.optionTables[Totems47Options.OPTION_NAME] = Totems47Options
 
----@param totemModule table
-function Totems47Options:__init__(totemModule)
+---@param currentModule table
+function Totems47Options:__init__(currentModule)
   self.options = {}
-  self._totemModule = totemModule
-  self._curDbProfile = totemModule.db.profile
-  self._coreOptions47 = CoreOptions47:new(self._totemModule)
+  self._currentModule = currentModule
+  self._curDbProfile = currentModule.db.profile
+  self._coreOptions47 = CoreOptions47:new(self._currentModule)
 end
 
----@param totemModule table
-function Totems47Options:new(totemModule)
-  assert(totemModule ~= nil)
+---@param currentModule table
+function Totems47Options:new(currentModule)
+  assert(currentModule ~= nil)
   local newInstance = setmetatable({}, self)
-  newInstance:__init__(totemModule)
+  newInstance:__init__(currentModule)
   return newInstance
 end
 
 function Totems47Options:registerModuleOptionsTable()
-  ZxSimpleUI:registerModuleOptions(self._totemModule.MODULE_NAME, self:getOptionTable(),
-    self._totemModule.DECORATIVE_NAME)
+  ZxSimpleUI:registerModuleOptions(self._currentModule.MODULE_NAME, self:getOptionTable(),
+    self._currentModule.DECORATIVE_NAME)
 end
 
 ---@return table
@@ -35,14 +35,14 @@ function Totems47Options:getOptionTable()
   if next(self.options) == nil then
     self.options = {
       type = "group",
-      name = self._totemModule.DECORATIVE_NAME,
+      name = self._currentModule.DECORATIVE_NAME,
       --- "Parent" get/set
       get = function(info) return self._coreOptions47:getOption(info) end,
       set = function(info, value) self._coreOptions47:setOption(info, value) end,
       args = {
         header = {
           type = "header",
-          name = self._totemModule.DECORATIVE_NAME,
+          name = self._currentModule.DECORATIVE_NAME,
           order = ZxSimpleUI.HEADER_ORDER_INDEX
         },
         enabledToggle = {
@@ -61,14 +61,29 @@ function Totems47Options:getOptionTable()
           step = 1,
           order = self._coreOptions47:incrementOrderIndex()
         },
-        yoffset = {
-          name = "Y Offset",
-          desc = "Y Offset",
-          type = "range",
-          min = -30,
-          max = 30,
-          step = 1,
-          order = self._coreOptions47:incrementOrderIndex()
+        setpoint = {
+          name = "Setpoints",
+          type = "group",
+          inline = true,
+          order = self._coreOptions47:incrementOrderIndex(),
+          args = {
+            frameToAnchorTo = {
+              type = "description",
+              name = string.format("FRAME TO ANCHOR TO:\n%s", self._currentModule.mainFrame
+                .frameToAnchorTo.DECORATIVE_NAME),
+              order = 10,
+              fontSize = "medium"
+            },
+            yoffset = {
+              name = "Y Offset",
+              desc = "Y Offset",
+              type = "range",
+              min = -30,
+              max = 30,
+              step = 1,
+              order = 11
+            }
+          }
         },
         -- LSM30_ is LibSharedMedia's custom controls
         font = {

@@ -99,7 +99,10 @@ function PetHealth47:createBar()
   self.mainFrame.frameToAnchorTo = self._frameToAnchorTo
 
   RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
-  ZxSimpleUI.frameList[self.MODULE_NAME] = self.mainFrame
+  ZxSimpleUI.frameList[self.MODULE_NAME] = {
+    frame = self.mainFrame,
+    name = self.DECORATIVE_NAME
+  }
   return self.mainFrame
 end
 

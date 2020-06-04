@@ -88,7 +88,10 @@ function PlayerName47:createBar()
 
   self:_setOnShowOnHideHandlers()
   RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
-  ZxSimpleUI.frameList[self.MODULE_NAME] = self.mainFrame
+  ZxSimpleUI.frameList[self.MODULE_NAME] = {
+    frame = self.mainFrame,
+    name = self.DECORATIVE_NAME
+  }
   return self.mainFrame
 end
 

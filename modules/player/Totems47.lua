@@ -88,7 +88,10 @@ function Totems47:createBar()
   self.mainFrame:SetFrameLevel(ZxSimpleUI.DEFAULT_FRAME_LEVEL + 2)
 
   self:_createTotemFrames()
-  ZxSimpleUI.frameList[self.MODULE_NAME] = self.mainFrame
+  ZxSimpleUI.frameList[self.MODULE_NAME] = {
+    frame = self.mainFrame,
+    name = self.DECORATIVE_NAME
+  }
   return self.mainFrame
 end
 

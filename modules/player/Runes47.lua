@@ -103,7 +103,10 @@ function Runes47:createBar()
   self.mainFrame.bgTexture:SetAllPoints(self.mainFrame)
 
   self:_createRuneFrames()
-  ZxSimpleUI.frameList[self.MODULE_NAME] = self.mainFrame
+  ZxSimpleUI.frameList[self.MODULE_NAME] = {
+    frame = self.mainFrame,
+    name = self.DECORATIVE_NAME
+  }
   return self.mainFrame
 end
 

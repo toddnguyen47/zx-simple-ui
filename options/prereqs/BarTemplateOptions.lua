@@ -75,6 +75,16 @@ function BarTemplateOptions:getOptionTable()
           inline = true,
           order = self._coreOptions47:incrementOrderIndex(),
           args = {
+            framePool = {
+              type = "select",
+              name = "Frame Pool",
+              values = function(info)
+                local t1 = {}
+                for k, v in pairs(ZxSimpleUI.frameList) do t1[k] = v["name"] end
+                return t1
+              end,
+              order = 9
+            },
             frameToAnchorTo = {
               type = "description",
               name = string.format("FRAME TO ANCHOR TO:\n%s", self._currentModule.mainFrame

@@ -26,7 +26,7 @@ ZxSimpleUI.moduleKeySorted = {}
 ZxSimpleUI.blizOptionTable = {}
 ZxSimpleUI.optionTables = {}
 ZxSimpleUI.prereqTables = {}
-ZxSimpleUI.frameList = {}
+ZxSimpleUI.frameList = {["UIParent"] = {frame = UIParent, name = "UIParent"}}
 ZxSimpleUI.db = nil
 ZxSimpleUI.DEFAULT_FRAME_LEVEL = 15 -- maximum number with 4 bits
 ZxSimpleUI.DEFAULT_ORDER_INDEX = 7

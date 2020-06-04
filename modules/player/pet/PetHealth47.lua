@@ -3,103 +3,114 @@ local LibStub = LibStub
 local UnitHealth, UnitHealthMax = UnitHealth, UnitHealthMax
 local UnitName = UnitName
 
+-- #region
 --- include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
+local PlayerPower47 = ZxSimpleUI:GetModule("PlayerPower47")
 local BarTemplateDefaults = ZxSimpleUI.prereqTables["BarTemplateDefaults"]
 local BarTemplate = ZxSimpleUI.prereqTables["BarTemplate"]
 local Utils47 = ZxSimpleUI.Utils47
 local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
 
-local _MODULE_NAME = "PetHealth47"
-local _DECORATIVE_NAME = "Pet Health"
-local PetHealth47 = ZxSimpleUI:NewModule(_MODULE_NAME)
+local MODULE_NAME = "PetHealth47"
+local DECORATIVE_NAME = "Pet Health"
+local PetHealth47 = ZxSimpleUI:NewModule(MODULE_NAME)
 
-PetHealth47.MODULE_NAME = _MODULE_NAME
-PetHealth47.DECORATIVE_NAME = _DECORATIVE_NAME
+PetHealth47.MODULE_NAME = MODULE_NAME
+PetHealth47.DECORATIVE_NAME = DECORATIVE_NAME
 PetHealth47.bars = nil
 PetHealth47.unit = "pet"
-PetHealth47.PLAYER_ENGLISH_CLASS = string.upper(select(2, UnitClass("player")))
-
-local _defaults = {
-  profile = {
-    enabledToggle = PetHealth47.PLAYER_ENGLISH_CLASS == "HUNTER" or
-      PetHealth47.PLAYER_ENGLISH_CLASS == "WARLOCK",
-    width = 150,
-    height = 20,
-    xoffset = 0,
-    yoffset = -2,
-    fontsize = 14,
-    font = "PT Sans Bold",
-    fontcolor = {1.0, 1.0, 1.0},
-    texture = "Skewed",
-    color = {0.0, 1.0, 0.0, 1.0},
-    border = "None",
-    selfCurrentPoint = "TOPRIGHT",
-    relativePoint = "BOTTOMRIGHT"
-  }
-}
+-- #endregion
 
 function PetHealth47:__init__()
+  self.PLAYER_ENGLISH_CLASS = string.upper(select(2, UnitClass("player")))
+  self._defaults = {
+    profile = {
+      enabledToggle = self.PLAYER_ENGLISH_CLASS == "HUNTER" or self.PLAYER_ENGLISH_CLASS ==
+        "WARLOCK",
+      width = 150,
+      height = 20,
+      xoffset = 0,
+      yoffset = -2,
+      fontsize = 14,
+      font = "PT Sans Bold",
+      fontcolor = {1.0, 1.0, 1.0},
+      texture = "Skewed",
+      color = {0.0, 1.0, 0.0, 1.0},
+      border = "None",
+      selfCurrentPoint = "TOPRIGHT",
+      relativePoint = "BOTTOMRIGHT"
+    }
+  }
+
+  self._eventTable = {"UNIT_HEALTH"}
+
+  self.mainFrame = nil
   self._timeSinceLastUpdate = 0
   self._prevHealth = UnitHealthMax(self.unit)
-  self.mainFrame = nil
 
   self._barTemplateDefaults = BarTemplateDefaults:new()
   self._newDefaults = self._barTemplateDefaults.defaults
-  Utils47:replaceTableValue(self._newDefaults.profile, _defaults.profile)
+  Utils47:replaceTableValue(self._newDefaults.profile, self._defaults.profile)
 end
 
+---Do init tasks here, like loading the Saved Variables,
+---Or setting up slash commands.
 function PetHealth47:OnInitialize()
   self:__init__()
-
-  self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, self._newDefaults)
+  self.db = ZxSimpleUI.db:RegisterNamespace(MODULE_NAME, self._newDefaults)
   self._curDbProfile = self.db.profile
-
   self.bars = BarTemplate:new(self.db)
-
-  self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
+  self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(MODULE_NAME))
 end
 
-function PetHealth47:OnEnable() self:handleOnEnable() end
-
-function PetHealth47:OnDisable() self:handleOnDisable() end
-
-function PetHealth47:refreshConfig()
-  self:handleEnableToggle()
-  if self:IsEnabled() then self:handleOnEnable() end
-end
-
----@param frameToAnchorTo table
----@return table
-function PetHealth47:createBar(frameToAnchorTo)
-  assert(frameToAnchorTo ~= nil)
-  local curUnitHealth = UnitHealth(self.unit)
-  local maxUnitHealth = UnitHealthMax(self.unit)
-  local percentage = ZxSimpleUI:calcPercentSafely(curUnitHealth, maxUnitHealth)
-
-  self.bars.frameToAnchorTo = frameToAnchorTo
-  self.mainFrame = self.bars:createBar(percentage)
+---Do more initialization here, that really enables the use of your addon.
+---Register Events, Hook functions, Create Frames, Get information from
+---the game that wasn't available in OnInitialize
+function PetHealth47:OnEnable()
+  if self.mainFrame == nil then self:createBar() end
   self:_registerEvents()
   self:_setOnShowOnHideHandlers()
   self:_enableAllScriptHandlers()
-
-  RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
-
-  return self.mainFrame
+  self.mainFrame:Show()
 end
 
-function PetHealth47:handleEnableToggle()
-  ZxSimpleUI:setModuleEnabledState(_MODULE_NAME, self._curDbProfile.enabledToggle)
-end
-
-function PetHealth47:handleOnEnable()
+---Unhook, Unregister Events, Hide frames that you created.
+---You would probably only use an OnDisable if you want to
+---build a "standby" mode, or be able to toggle modules on/off.
+function PetHealth47:OnDisable()
   if self.mainFrame ~= nil then
-    self.bars:refreshConfig()
-    self.mainFrame:Show()
+    self:_disableAllScriptHandlers()
+    self:_unregisterEvents()
+    self.mainFrame:Hide()
   end
 end
 
-function PetHealth47:handleOnDisable() if self.mainFrame ~= nil then self.mainFrame:Hide() end end
+function PetHealth47:createBar()
+  if PlayerPower47.mainFrame == nil then PlayerPower47:createBar() end
+  self._frameToAnchorTo = PlayerPower47.mainFrame
+
+  local curUnitHealth = UnitHealth(self.unit)
+  local maxUnitHealth = UnitHealthMax(self.unit)
+  local percentage = ZxSimpleUI:calcPercentSafely(curUnitHealth, maxUnitHealth)
+  self.bars.frameToAnchorTo = self._frameToAnchorTo
+  self.mainFrame = self.bars:createBar(percentage)
+  self.mainFrame.DECORATIVE_NAME = self.DECORATIVE_NAME
+  self.mainFrame.frameToAnchorTo = self._frameToAnchorTo
+
+  RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
+  ZxSimpleUI.frameList[self.MODULE_NAME] = self.mainFrame
+  return self.mainFrame
+end
+
+function PetHealth47:refreshConfig()
+  self:handleEnableToggle()
+  if self:IsEnabled() then self.bars:refreshConfig() end
+end
+
+function PetHealth47:handleEnableToggle()
+  ZxSimpleUI:setModuleEnabledState(MODULE_NAME, self._curDbProfile.enabledToggle)
+end
 
 -- ####################################
 -- # PRIVATE FUNCTIONS
@@ -127,7 +138,13 @@ function PetHealth47:_handleUnitHealthEvent(curUnitHealth)
   self.bars:setStatusBarValue(healthPercent)
 end
 
-function PetHealth47:_registerEvents() self.mainFrame:RegisterEvent("UNIT_HEALTH") end
+function PetHealth47:_registerEvents()
+  for _, event in pairs(self._eventTable) do self.mainFrame:RegisterEvent(event) end
+end
+
+function PetHealth47:_unregisterEvents()
+  for _, event in pairs(self._eventTable) do self.mainFrame:UnregisterEvent(event) end
+end
 
 function PetHealth47:_setOnShowOnHideHandlers()
   self.mainFrame:SetScript("OnShow", function(curFrame, ...)

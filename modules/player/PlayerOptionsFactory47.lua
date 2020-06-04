@@ -6,7 +6,7 @@ local PlayerPower47 = ZxSimpleUI:GetModule("PlayerPower47")
 local PlayerName47 = ZxSimpleUI:GetModule("PlayerName47")
 local Runes47 = ZxSimpleUI:GetModule("Runes47")
 local Totems47 = ZxSimpleUI:GetModule("Totems47")
--- local PetHealth47 = ZxSimpleUI:GetModule("PetHealth47")
+local PetHealth47 = ZxSimpleUI:GetModule("PetHealth47")
 -- local PetPower47 = ZxSimpleUI:GetModule("PetPower47")
 
 local BarTemplateOptions = ZxSimpleUI.optionTables["BarTemplateOptions"]
@@ -37,6 +37,7 @@ function PlayerFactory47:OnEnable()
   self:createPlayerNameOptions()
   self:createRuneOptions()
   self:createTotemOptions()
+  self:createPetHealthOptions()
 end
 
 ---Unhook, Unregister Events, Hide frames that you created.
@@ -89,6 +90,15 @@ function PlayerFactory47:createTotemOptions()
   local curModule = Totems47
   if curModule.mainFrame == nil then curModule:createBar() end
   local optionsObj = Totems47Options:new(curModule)
+  optionsObj:registerModuleOptionsTable()
+  return optionsObj.options
+end
+
+---@return table
+function PlayerFactory47:createPetHealthOptions()
+  local curModule = PetHealth47
+  if curModule.mainFrame == nil then curModule:createBar() end
+  local optionsObj = BarTemplateEnableOptions:new(curModule)
   optionsObj:registerModuleOptionsTable()
   return optionsObj.options
 end

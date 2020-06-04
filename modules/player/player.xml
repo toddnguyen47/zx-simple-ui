@@ -5,6 +5,5 @@
   <Script file="PlayerPower47.lua" />
   <Script file="Runes47.lua" />
   <Script file="Totems47.lua" />
-  <Script file="PlayerFactory47.lua" />
-  <Script file="Player47.lua" />
+  <Script file="PlayerOptionsFactory47.lua" />
 </Ui>

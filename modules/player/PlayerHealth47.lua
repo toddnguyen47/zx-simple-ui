@@ -1,3 +1,4 @@
+-- #region
 --- upvalues to prevent warnings
 local LibStub = LibStub
 local UnitHealth, UnitHealthMax = UnitHealth, UnitHealthMax
@@ -10,57 +11,76 @@ local BarTemplateDefaults = ZxSimpleUI.prereqTables["BarTemplateDefaults"]
 local BarTemplate = ZxSimpleUI.prereqTables["BarTemplate"]
 local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
 
-local _MODULE_NAME = "PlayerHealth47"
-local _DECORATIVE_NAME = "Player Health"
-local PlayerHealth47 = ZxSimpleUI:NewModule(_MODULE_NAME)
+local MODULE_NAME = "PlayerHealth47"
+local DECORATIVE_NAME = "Player Health"
+local PlayerHealth47 = ZxSimpleUI:NewModule(MODULE_NAME)
 
-PlayerHealth47.MODULE_NAME = _MODULE_NAME
-PlayerHealth47.DECORATIVE_NAME = _DECORATIVE_NAME
+PlayerHealth47.MODULE_NAME = MODULE_NAME
+PlayerHealth47.DECORATIVE_NAME = DECORATIVE_NAME
 PlayerHealth47.bars = nil
 PlayerHealth47.unit = "player"
-
-local _defaults = {
-  profile = {
-    width = 200,
-    height = 26,
-    xoffset = 400,
-    yoffset = 268,
-    fontsize = 16,
-    font = "PT Sans Bold",
-    fontcolor = {1.0, 1.0, 1.0},
-    texture = "Skewed",
-    color = {0.0, 1.0, 0.0, 1.0},
-    border = "None"
-  }
-}
+-- #endregion
 
 function PlayerHealth47:__init__()
+  self._defaults = {
+    profile = {
+      width = 200,
+      height = 26,
+      xoffset = 400,
+      yoffset = 268,
+      fontsize = 16,
+      font = "PT Sans Bold",
+      fontcolor = {1.0, 1.0, 1.0},
+      texture = "Skewed",
+      color = {0.0, 1.0, 0.0, 1.0},
+      border = "None"
+    }
+  }
   self.mainFrame = nil
+  self.bars = nil
+  self.db = nil
+  self._curDbProfile = nil
 
   self._timeSinceLastUpdate = 0
   self._prevHealth = UnitHealthMax(self.unit)
 
   self._barTemplateDefaults = BarTemplateDefaults:new()
   self._newDefaults = self._barTemplateDefaults.defaults
-  Utils47:replaceTableValue(self._newDefaults.profile, _defaults.profile)
+  Utils47:replaceTableValue(self._newDefaults.profile, self._defaults.profile)
 end
 
+---Do init tasks here, like loading the Saved Variables,
+---Or setting up slash commands.
 function PlayerHealth47:OnInitialize()
   self:__init__()
 
-  self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, self._newDefaults)
+  self.db = ZxSimpleUI.db:RegisterNamespace(MODULE_NAME, self._newDefaults)
   self._curDbProfile = self.db.profile
 
   self.bars = BarTemplate:new(self.db)
 
-  self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
+  self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(MODULE_NAME))
 end
 
-function PlayerHealth47:OnEnable() self:handleOnEnable() end
+---Do more initialization here, that really enables the use of your addon.
+---Register Events, Hook functions, Create Frames, Get information from
+---the game that wasn't available in OnInitialize
+function PlayerHealth47:OnEnable()
+  if self.mainFrame == nil then self:createBar() end
+  self.mainFrame:Show()
+end
 
-function PlayerHealth47:OnDisable() self:handleOnDisable() end
+---Unhook, Unregister Events, Hide frames that you created.
+---You would probably only use an OnDisable if you want to
+---build a "standby" mode, or be able to toggle modules on/off.
+function PlayerHealth47:OnDisable() if self.mainFrame ~= nil then self.mainFrame:Hide() end end
 
-function PlayerHealth47:refreshConfig() if self:IsEnabled() then self:handleOnEnable() end end
+function PlayerHealth47:refreshConfig()
+  self:handleEnableToggle()
+  if self:IsEnabled() then self.bars:refreshConfig() end
+end
+
+function PlayerHealth47:handleEnableToggle() end
 
 ---@return table
 function PlayerHealth47:createBar()
@@ -69,28 +89,16 @@ function PlayerHealth47:createBar()
   local percentage = ZxSimpleUI:calcPercentSafely(curUnitHealth, maxUnitHealth)
 
   self.mainFrame = self.bars:createBar(percentage)
+  self.mainFrame.DECORATIVE_NAME = self.DECORATIVE_NAME
+  self.mainFrame.frameToAnchorTo = self.bars.frameToAnchorTo
+
   self:_registerEvents()
   self:_setOnShowOnHideHandlers()
   self:_enableAllScriptHandlers()
 
   RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
-
-  self.mainFrame:Show()
+  ZxSimpleUI.frameList[self.MODULE_NAME] = self.mainFrame
   return self.mainFrame
-end
-
----Don't have to do anything here. Maybe in the future I'll add an option to disable this bar.
-function PlayerHealth47:handleEnableToggle() end
-
-function PlayerHealth47:handleOnEnable()
-  if self.mainFrame ~= nil then
-    self.bars:refreshConfig()
-    self.mainFrame:Show()
-  end
-end
-
-function PlayerHealth47:handleOnDisable()
-  if self.mainFrame ~= nil then self.mainFrame:Hide() end
 end
 
 -- ####################################

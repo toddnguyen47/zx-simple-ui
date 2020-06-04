@@ -9,12 +9,12 @@ local BarTemplate = ZxSimpleUI.prereqTables["BarTemplate"]
 local Utils47 = ZxSimpleUI.Utils47
 local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
 
-local _MODULE_NAME = "TargetName47"
-local _DECORATIVE_NAME = "Target Name"
-local TargetName47 = ZxSimpleUI:NewModule(_MODULE_NAME)
+local MODULE_NAME = "TargetName47"
+local DECORATIVE_NAME = "Target Name"
+local TargetName47 = ZxSimpleUI:NewModule(MODULE_NAME)
 
-TargetName47.MODULE_NAME = _MODULE_NAME
-TargetName47.DECORATIVE_NAME = _DECORATIVE_NAME
+TargetName47.MODULE_NAME = MODULE_NAME
+TargetName47.DECORATIVE_NAME = DECORATIVE_NAME
 TargetName47.bars = nil
 
 local _defaults = {
@@ -48,12 +48,12 @@ end
 function TargetName47:OnInitialize()
   self:__init__()
 
-  self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, self._newDefaults)
+  self.db = ZxSimpleUI.db:RegisterNamespace(MODULE_NAME, self._newDefaults)
   self._curDbProfile = self.db.profile
 
   self.bars = BarTemplate:new(self.db)
 
-  self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
+  self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(MODULE_NAME))
 end
 
 function TargetName47:OnEnable() self:handleOnEnable() end
@@ -81,7 +81,7 @@ function TargetName47:refreshConfig()
 end
 
 function TargetName47:handleEnableToggle()
-  ZxSimpleUI:setModuleEnabledState(_MODULE_NAME, self._curDbProfile.enabledToggle)
+  ZxSimpleUI:setModuleEnabledState(MODULE_NAME, self._curDbProfile.enabledToggle)
 end
 
 function TargetName47:handleOnEnable()
@@ -100,7 +100,7 @@ function TargetName47:getExtraOptions()
     enabledToggle = {
       type = "toggle",
       name = "Enable",
-      desc = "Enable / Disable Module `" .. _DECORATIVE_NAME .. "`",
+      desc = "Enable / Disable Module `" .. DECORATIVE_NAME .. "`",
       order = 1,
       width = "full"
     }

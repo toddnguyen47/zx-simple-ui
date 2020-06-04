@@ -12,12 +12,12 @@ local BarTemplate = ZxSimpleUI.prereqTables["BarTemplate"]
 local Utils47 = ZxSimpleUI.Utils47
 local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
 
-local _MODULE_NAME = "PetPower47"
-local _DECORATIVE_NAME = "Pet Power"
-local PetPower47 = ZxSimpleUI:NewModule(_MODULE_NAME)
+local MODULE_NAME = "PetPower47"
+local DECORATIVE_NAME = "Pet Power"
+local PetPower47 = ZxSimpleUI:NewModule(MODULE_NAME)
 
-PetPower47.MODULE_NAME = _MODULE_NAME
-PetPower47.DECORATIVE_NAME = _DECORATIVE_NAME
+PetPower47.MODULE_NAME = MODULE_NAME
+PetPower47.DECORATIVE_NAME = DECORATIVE_NAME
 PetPower47.unit = "pet"
 PetPower47.PLAYER_ENGLISH_CLASS = string.upper(select(2, UnitClass("player")))
 
@@ -77,14 +77,14 @@ end
 function PetPower47:OnInitialize()
   self:__init__()
 
-  self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, self._newDefaults)
+  self.db = ZxSimpleUI.db:RegisterNamespace(MODULE_NAME, self._newDefaults)
   self._curDbProfile = self.db.profile
   -- Always set the showbar option to false on initialize
   self._curDbProfile.showbar = _defaults.profile.showbar
 
   self.bars = BarTemplate:new(self.db)
 
-  self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
+  self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(MODULE_NAME))
 end
 
 function PetPower47:OnEnable() self:handleOnEnable() end
@@ -118,7 +118,7 @@ function PetPower47:refreshConfig()
 end
 
 function PetPower47:handleEnableToggle()
-  ZxSimpleUI:setModuleEnabledState(_MODULE_NAME, self._curDbProfile.enabledToggle)
+  ZxSimpleUI:setModuleEnabledState(MODULE_NAME, self._curDbProfile.enabledToggle)
 end
 
 function PetPower47:handleOnEnable()

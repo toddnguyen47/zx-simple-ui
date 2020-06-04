@@ -14,12 +14,12 @@ local BarTemplate = ZxSimpleUI.prereqTables["BarTemplate"]
 local Utils47 = ZxSimpleUI.Utils47
 local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
 
-local _MODULE_NAME = "TargetHealth47"
-local _DECORATIVE_NAME = "Target Health"
-local TargetHealth47 = ZxSimpleUI:NewModule(_MODULE_NAME)
+local MODULE_NAME = "TargetHealth47"
+local DECORATIVE_NAME = "Target Health"
+local TargetHealth47 = ZxSimpleUI:NewModule(MODULE_NAME)
 
-TargetHealth47.MODULE_NAME = _MODULE_NAME
-TargetHealth47.DECORATIVE_NAME = _DECORATIVE_NAME
+TargetHealth47.MODULE_NAME = MODULE_NAME
+TargetHealth47.DECORATIVE_NAME = DECORATIVE_NAME
 TargetHealth47.bars = nil
 TargetHealth47.unit = "target"
 
@@ -52,12 +52,12 @@ end
 function TargetHealth47:OnInitialize()
   self:__init__()
 
-  self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, self._newDefaults)
+  self.db = ZxSimpleUI.db:RegisterNamespace(MODULE_NAME, self._newDefaults)
   self._curDbProfile = self.db.profile
 
   self.bars = BarTemplate:new(self.db)
 
-  self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
+  self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(MODULE_NAME))
 end
 
 function TargetHealth47:OnEnable() self:handleOnEnable() end

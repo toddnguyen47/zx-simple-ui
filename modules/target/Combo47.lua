@@ -9,13 +9,13 @@ local unpack = unpack
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local Utils47 = ZxSimpleUI.Utils47
 
-local _MODULE_NAME = "Combo47"
-local _DECORATIVE_NAME = "Combo Points Display"
-local Combo47 = ZxSimpleUI:NewModule(_MODULE_NAME)
+local MODULE_NAME = "Combo47"
+local DECORATIVE_NAME = "Combo Points Display"
+local Combo47 = ZxSimpleUI:NewModule(MODULE_NAME)
 local media = LibStub("LibSharedMedia-3.0")
 
-Combo47.MODULE_NAME = _MODULE_NAME
-Combo47.DECORATIVE_NAME = _DECORATIVE_NAME
+Combo47.MODULE_NAME = MODULE_NAME
+Combo47.DECORATIVE_NAME = DECORATIVE_NAME
 Combo47.PLAYER_ENGLISH_CLASS = select(2, UnitClass("player"))
 Combo47.EVENT_TABLE = {"PLAYER_TARGET_CHANGED", "UNIT_COMBO_POINTS"}
 Combo47.bars = nil
@@ -39,12 +39,12 @@ local _defaults = {
 
 function Combo47:OnInitialize()
   self:__init__()
-  self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, _defaults)
+  self.db = ZxSimpleUI.db:RegisterNamespace(MODULE_NAME, _defaults)
   self._curDbProfile = self.db.profile
   -- Always set the showbar option to false on initialize
   self._curDbProfile.showbar = _defaults.profile.showbar
 
-  self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
+  self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(MODULE_NAME))
 end
 
 function Combo47:OnEnable() self:handleOnEnable() end
@@ -85,7 +85,7 @@ function Combo47:refreshConfig()
 end
 
 function Combo47:handleEnableToggle()
-  ZxSimpleUI:setModuleEnabledState(_MODULE_NAME, self._curDbProfile.enabledToggle)
+  ZxSimpleUI:setModuleEnabledState(MODULE_NAME, self._curDbProfile.enabledToggle)
 end
 
 function Combo47:handleOnEnable()

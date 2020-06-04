@@ -14,12 +14,12 @@ local BarTemplate = ZxSimpleUI.prereqTables["BarTemplate"]
 local Utils47 = ZxSimpleUI.Utils47
 local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
 
-local _MODULE_NAME = "TargetPower47"
-local _DECORATIVE_NAME = "Target Power"
-local TargetPower47 = ZxSimpleUI:NewModule(_MODULE_NAME)
+local MODULE_NAME = "TargetPower47"
+local DECORATIVE_NAME = "Target Power"
+local TargetPower47 = ZxSimpleUI:NewModule(MODULE_NAME)
 
-TargetPower47.MODULE_NAME = _MODULE_NAME
-TargetPower47.DECORATIVE_NAME = _DECORATIVE_NAME
+TargetPower47.MODULE_NAME = MODULE_NAME
+TargetPower47.DECORATIVE_NAME = DECORATIVE_NAME
 TargetPower47.bars = nil
 TargetPower47.unit = "target"
 
@@ -79,14 +79,14 @@ end
 function TargetPower47:OnInitialize()
   self:__init__()
 
-  self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, self._newDefaults)
+  self.db = ZxSimpleUI.db:RegisterNamespace(MODULE_NAME, self._newDefaults)
   self._curDbProfile = self.db.profile
   -- Always set the showbar option to false on initialize
   self._curDbProfile.showbar = _defaults.profile.showbar
 
   self.bars = BarTemplate:new(self.db)
 
-  self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
+  self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(MODULE_NAME))
 end
 
 function TargetPower47:OnEnable() self:handleOnEnable() end

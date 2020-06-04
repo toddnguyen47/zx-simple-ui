@@ -11,16 +11,16 @@ local Power47Options = ZxSimpleUI.optionTables["Power47Options"]
 
 local NUM_MODULES = 4
 
-local _MODULE_NAME = "Target47"
-local _DECORATIVE_NAME = "Target Factory"
-local Target47 = ZxSimpleUI:NewModule(_MODULE_NAME)
+local MODULE_NAME = "Target47"
+local DECORATIVE_NAME = "Target Factory"
+local Target47 = ZxSimpleUI:NewModule(MODULE_NAME)
 
-Target47.MODULE_NAME = _MODULE_NAME
+Target47.MODULE_NAME = MODULE_NAME
 Target47.unit = "target"
 
 function Target47:OnInitialize()
   self:__init__()
-  self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
+  self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(MODULE_NAME))
 end
 
 function Target47:OnEnable()

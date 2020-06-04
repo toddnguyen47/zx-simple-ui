@@ -1,93 +1,76 @@
 ---upvalues
 local LibStub, CreateFrame = LibStub, CreateFrame
 local GetTime, MAX_TOTEMS, GetTotemInfo = GetTime, MAX_TOTEMS, GetTotemInfo
+local UnitClass = UnitClass
 
 ---include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
+local PlayerPower47 = ZxSimpleUI:GetModule("PlayerPower47")
 local Utils47 = ZxSimpleUI.Utils47
 
-local _MODULE_NAME = "Totems47"
-local _DECORATIVE_NAME = "Totems Display"
-local Totems47 = ZxSimpleUI:NewModule(_MODULE_NAME)
+-- #region
+local MODULE_NAME = "Totems47"
+local DECORATIVE_NAME = "Totems Display"
+local Totems47 = ZxSimpleUI:NewModule(MODULE_NAME)
 local media = LibStub("LibSharedMedia-3.0")
 
-Totems47.MODULE_NAME = _MODULE_NAME
-Totems47.DECORATIVE_NAME = _DECORATIVE_NAME
-Totems47.EVENT_TABLE = {"PLAYER_TOTEM_UPDATE"}
+Totems47.MODULE_NAME = MODULE_NAME
+Totems47.DECORATIVE_NAME = DECORATIVE_NAME
 Totems47.unit = "player"
-Totems47.PLAYER_ENGLISH_CLASS = select(2, UnitClass("player"))
-
----Ref: https://wow.gamepedia.com/API_GetTotemInfo
-local TOTEM_TABLE = {[1] = "Fire", [2] = "Earth", [3] = "Water", [4] = "Air"}
-local TOTEM_MAP = {[1] = 2, [2] = 1, [3] = 3, [4] = 4}
-
-local _defaults = {
-  profile = {
-    enabledToggle = Totems47.PLAYER_ENGLISH_CLASS == "SHAMAN",
-    height = 35,
-    yoffset = 0,
-    font = "PT Sans Bold",
-    fontsize = 12,
-    fontcolor = {1.0, 1.0, 1.0},
-    outline = true,
-    thickoutline = false,
-    monochrome = false
-  }
-}
+-- #endregion
 
 function Totems47:__init__()
-  self.mainFrame = nil
+  self.PLAYER_ENGLISH_CLASS = select(2, UnitClass("player"))
+  self.EVENT_TABLE = {"PLAYER_TOTEM_UPDATE"}
+  self._defaults = {
+    profile = {
+      enabledToggle = Totems47.PLAYER_ENGLISH_CLASS == "SHAMAN",
+      height = 35,
+      yoffset = 0,
+      font = "PT Sans Bold",
+      fontsize = 12,
+      fontcolor = {1.0, 1.0, 1.0},
+      outline = true,
+      thickoutline = false,
+      monochrome = false
+    }
+  }
 
+  ---Ref: https://wow.gamepedia.com/API_GetTotemInfo
+  self.TOTEM_TABLE = {[1] = "Fire", [2] = "Earth", [3] = "Water", [4] = "Air"}
+  self.TOTEM_MAP = {[1] = 2, [2] = 1, [3] = 3, [4] = 4}
+  self.mainFrame = nil
   self._frameToAnchorTo = nil
   self._totemBarList = {}
 end
 
+---Do init tasks here, like loading the Saved Variables,
+---Or setting up slash commands.
 function Totems47:OnInitialize()
   self:__init__()
-  self.db = ZxSimpleUI.db:RegisterNamespace(_MODULE_NAME, _defaults)
+  self.db = ZxSimpleUI.db:RegisterNamespace(MODULE_NAME, self._defaults)
   self._curDbProfile = self.db.profile
   -- Always set the showbar option to false on initialize
-  self._curDbProfile.showbar = _defaults.profile.showbar
+  self._curDbProfile.showbar = self._defaults.profile.showbar
 
-  self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(_MODULE_NAME))
+  self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(MODULE_NAME))
 end
 
-function Totems47:OnEnable() self:handleOnEnable() end
-
-function Totems47:OnDisable() self:handleOnDisable() end
-
-function Totems47:createBar(frameToAnchorTo)
-  assert(frameToAnchorTo ~= nil)
-  self._frameToAnchorTo = frameToAnchorTo
-
-  self.mainFrame = CreateFrame("Frame", nil, self._frameToAnchorTo)
-  self.mainFrame:SetFrameLevel(ZxSimpleUI.DEFAULT_FRAME_LEVEL + 2)
-
-  self:_createTotemFrames()
+---Do more initialization here, that really enables the use of your addon.
+---Register Events, Hook functions, Create Frames, Get information from
+---the game that wasn't available in OnInitialize
+function Totems47:OnEnable()
+  if self.mainFrame == nil then self:createBar() end
+  self:_registerAllEvents()
+  self:_enableAllScriptHandlers()
+  for i = 1, MAX_TOTEMS do self:_handlePlayerTotemUpdate(self._totemBarList[i], i) end
   self.mainFrame:Show()
-  return self.mainFrame
 end
 
-function Totems47:refreshConfig()
-  self:handleEnableToggle()
-  if self:IsEnabled() then self:handleOnEnable() end
-end
-
-function Totems47:handleEnableToggle()
-  ZxSimpleUI:setModuleEnabledState(_MODULE_NAME, self._curDbProfile.enabledToggle)
-end
-
-function Totems47:handleOnEnable()
-  if self.mainFrame ~= nil then
-    self:_registerAllEvents()
-    self:_enableAllScriptHandlers()
-    self:_refreshAll()
-    for i = 1, MAX_TOTEMS do self:_handlePlayerTotemUpdate(self._totemBarList[i], i) end
-    self.mainFrame:Show()
-  end
-end
-
-function Totems47:handleOnDisable()
+---Unhook, Unregister Events, Hide frames that you created.
+---You would probably only use an OnDisable if you want to
+---build a "standby" mode, or be able to toggle modules on/off.
+function Totems47:OnDisable()
   if self.mainFrame ~= nil then
     self:_unregisterAllEvents()
     self:_disableAllScriptHandlers()
@@ -95,12 +78,28 @@ function Totems47:handleOnDisable()
   end
 end
 
-function Totems47:handleShownOption()
-  self:_refreshAll()
-  self.mainFrame:Show()
+function Totems47:createBar()
+  if PlayerPower47.mainFrame == nil then PlayerPower47:createBar() end
+  self._frameToAnchorTo = PlayerPower47.mainFrame
+
+  self.mainFrame = CreateFrame("Frame", nil, self._frameToAnchorTo)
+  self.mainFrame.DECORATIVE_NAME = self.DECORATIVE_NAME
+  self.mainFrame.frameToAnchorTo = self._frameToAnchorTo
+  self.mainFrame:SetFrameLevel(ZxSimpleUI.DEFAULT_FRAME_LEVEL + 2)
+
+  self:_createTotemFrames()
+  ZxSimpleUI.frameList[self.MODULE_NAME] = self.mainFrame
+  return self.mainFrame
 end
 
-function Totems47:handleShownHideOption() self.mainFrame:Hide() end
+function Totems47:refreshConfig()
+  self:handleEnableToggle()
+  if self:IsEnabled() then self:_refreshAll() end
+end
+
+function Totems47:handleEnableToggle()
+  ZxSimpleUI:setModuleEnabledState(MODULE_NAME, self._curDbProfile.enabledToggle)
+end
 
 -- ####################################
 -- # PRIVATE FUNCTIONS
@@ -125,9 +124,9 @@ function Totems47:_refreshTotemBars()
   local totalTotemWidth = mainFrameHeight * MAX_TOTEMS
   local horizGap = math.floor((mainFrameWidth - totalTotemWidth) / (MAX_TOTEMS - 1))
 
-  -- Important! Do a regular for loop so we can use TOTEM_MAP
+  -- Important! Do a regular for loop so we can use self.TOTEM_MAP
   for id = 1, MAX_TOTEMS do
-    local totemFrame = self._totemBarList[TOTEM_MAP[id]]
+    local totemFrame = self._totemBarList[self.TOTEM_MAP[id]]
     totemFrame:SetWidth(mainFrameHeight)
     totemFrame:SetHeight(mainFrameHeight)
     totemFrame.durationText:SetFont(media:Fetch("font", self._curDbProfile.font),
@@ -139,7 +138,7 @@ function Totems47:_refreshTotemBars()
       totemFrame:SetPoint("TOPLEFT", self._frameToAnchorTo, "BOTTOMLEFT", 0,
         self._curDbProfile.yoffset)
     else
-      totemFrame:SetPoint("TOPLEFT", self._totemBarList[TOTEM_MAP[id - 1]], "TOPRIGHT",
+      totemFrame:SetPoint("TOPLEFT", self._totemBarList[self.TOTEM_MAP[id - 1]], "TOPRIGHT",
         horizGap, 0)
     end
   end

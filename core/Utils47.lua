@@ -20,8 +20,13 @@ Utils47.englishClass = {
 ---@param tableInput table
 ---Add a debugPrint() function to the global `table` class
 table.debugPrint = function(tableInput)
-  for k, v in pairs(tableInput) do
-    print(string.format("Key: %s | Value: %s", tostring(k), tostring(v)))
+  local sorted = {}
+  for k, _ in pairs(tableInput) do table.insert(sorted, k) end
+  table.sort(sorted)
+
+  for _, sortedKey in ipairs(sorted) do
+    local value = tableInput[sortedKey]
+    print(string.format("Key: %s | Value: %s", tostring(sortedKey), tostring(value)))
   end
 end
 

@@ -109,7 +109,7 @@ function PlayerPower47:createBar()
   local percentage = ZxSimpleUI:calcPercentSafely(curUnitPower, maxUnitPower)
   self.mainFrame = self.bars:createBar(percentage)
   self.mainFrame.DECORATIVE_NAME = self.DECORATIVE_NAME
-  self.mainFrame.frameToAnchorTo = self.bars.frameToAnchorTo
+  self.mainFrame.frameToAnchorTo = ZxSimpleUI:getFrameListFrame(self._curDbProfile.framePool)
 
   self:_setRefreshColor()
   self:_registerEvents()
@@ -117,10 +117,8 @@ function PlayerPower47:createBar()
   self:_enableAllScriptHandlers()
 
   RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
-  ZxSimpleUI.frameList[self.MODULE_NAME] = {
-    frame = self.mainFrame,
-    name = self.DECORATIVE_NAME
-  }
+  ZxSimpleUI:addToFrameList(self.MODULE_NAME,
+    {frame = self.mainFrame, name = self.DECORATIVE_NAME})
   return self.mainFrame
 end
 

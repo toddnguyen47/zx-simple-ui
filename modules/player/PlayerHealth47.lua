@@ -13,8 +13,8 @@ local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
 
 local MODULE_NAME = "PlayerHealth47"
 local DECORATIVE_NAME = "Player Health"
-local PlayerHealth47 = ZxSimpleUI:NewModule(MODULE_NAME)
 
+local PlayerHealth47 = ZxSimpleUI:NewModule(MODULE_NAME)
 PlayerHealth47.MODULE_NAME = MODULE_NAME
 PlayerHealth47.DECORATIVE_NAME = DECORATIVE_NAME
 PlayerHealth47.bars = nil
@@ -53,12 +53,9 @@ end
 ---Or setting up slash commands.
 function PlayerHealth47:OnInitialize()
   self:__init__()
-
   self.db = ZxSimpleUI.db:RegisterNamespace(MODULE_NAME, self._newDefaults)
   self._curDbProfile = self.db.profile
-
   self.bars = BarTemplate:new(self.db)
-
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(MODULE_NAME))
 end
 
@@ -90,17 +87,15 @@ function PlayerHealth47:createBar()
 
   self.mainFrame = self.bars:createBar(percentage)
   self.mainFrame.DECORATIVE_NAME = self.DECORATIVE_NAME
-  self.mainFrame.frameToAnchorTo = self.bars.frameToAnchorTo
+  self.mainFrame.frameToAnchorTo = ZxSimpleUI:getFrameListFrame(self._curDbProfile.framePool)
 
   self:_registerEvents()
   self:_setOnShowOnHideHandlers()
   self:_enableAllScriptHandlers()
 
   RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
-  ZxSimpleUI.frameList[self.MODULE_NAME] = {
-    frame = self.mainFrame,
-    name = self.DECORATIVE_NAME
-  }
+  ZxSimpleUI:addToFrameList(self.MODULE_NAME,
+    {frame = self.mainFrame, name = self.DECORATIVE_NAME})
   return self.mainFrame
 end
 

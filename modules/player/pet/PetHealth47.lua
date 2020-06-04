@@ -6,7 +6,6 @@ local UnitName = UnitName
 -- #region
 --- include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
-local PlayerPower47 = ZxSimpleUI:GetModule("PlayerPower47")
 local BarTemplateDefaults = ZxSimpleUI.prereqTables["BarTemplateDefaults"]
 local BarTemplate = ZxSimpleUI.prereqTables["BarTemplate"]
 local Utils47 = ZxSimpleUI.Utils47
@@ -39,7 +38,8 @@ function PetHealth47:__init__()
       color = {0.0, 1.0, 0.0, 1.0},
       border = "None",
       selfCurrentPoint = "TOPRIGHT",
-      relativePoint = "BOTTOMRIGHT"
+      relativePoint = "BOTTOMRIGHT",
+      framePool = "PlayerPower47"
     }
   }
 
@@ -87,22 +87,19 @@ function PetHealth47:OnDisable()
 end
 
 function PetHealth47:createBar()
-  if PlayerPower47.mainFrame == nil then PlayerPower47:createBar() end
-  self._frameToAnchorTo = PlayerPower47.mainFrame
-
   local curUnitHealth = UnitHealth(self.unit)
   local maxUnitHealth = UnitHealthMax(self.unit)
   local percentage = ZxSimpleUI:calcPercentSafely(curUnitHealth, maxUnitHealth)
-  self.bars.frameToAnchorTo = self._frameToAnchorTo
+
+  local anchorFrame = ZxSimpleUI:getFrameListFrame("PlayerPower47")
+  self.bars.frameToAnchorTo = anchorFrame
   self.mainFrame = self.bars:createBar(percentage)
   self.mainFrame.DECORATIVE_NAME = self.DECORATIVE_NAME
-  self.mainFrame.frameToAnchorTo = self._frameToAnchorTo
+  self.mainFrame.frameToAnchorTo = anchorFrame
 
   RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
-  ZxSimpleUI.frameList[self.MODULE_NAME] = {
-    frame = self.mainFrame,
-    name = self.DECORATIVE_NAME
-  }
+  ZxSimpleUI:addToFrameList(self.MODULE_NAME,
+    {frame = self.mainFrame, name = self.DECORATIVE_NAME})
   return self.mainFrame
 end
 

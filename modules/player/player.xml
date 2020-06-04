@@ -6,5 +6,5 @@
   <Script file="Totems47.lua" />
   <Include file="pet\pet.xml" />
 
-  <Script file="PlayerOptionsFactory47.lua" />
+  <Script file="PlayerFactory47.lua" />
 </Ui>

@@ -20,7 +20,8 @@ function BarTemplateDefaults:__init__()
       color = {0.0, 1.0, 0.0, 1.0},
       border = "None",
       selfCurrentPoint = "BOTTOMLEFT",
-      relativePoint = "BOTTOMLEFT"
+      relativePoint = "BOTTOMLEFT",
+      framePool = "UIParent"
     }
   }
 end

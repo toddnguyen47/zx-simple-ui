@@ -50,7 +50,10 @@ function BarTemplate:createBar(percentValue)
   self.mainFrame:SetBackdropColor(1, 0, 0, 1)
   self.mainFrame:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details
 
-  self.mainFrame:SetPoint(self._curDbProfile.selfCurrentPoint, self.frameToAnchorTo,
+  -- self.mainFrame:SetPoint(self._curDbProfile.selfCurrentPoint, self.frameToAnchorTo,
+  --   self._curDbProfile.relativePoint, self._curDbProfile.xoffset, self._curDbProfile.yoffset)
+  self.mainFrame:SetPoint(self._curDbProfile.selfCurrentPoint,
+    ZxSimpleUI:getFrameListFrame(self._curDbProfile.framePool),
     self._curDbProfile.relativePoint, self._curDbProfile.xoffset, self._curDbProfile.yoffset)
 
   self:_setMouseClicks()
@@ -129,7 +132,10 @@ end
 
 function BarTemplate:_refreshBarFrame()
   self.mainFrame:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details
-  self.mainFrame:SetPoint(self._curDbProfile.selfCurrentPoint, self.frameToAnchorTo,
+  -- self.mainFrame:SetPoint(self._curDbProfile.selfCurrentPoint, self.frameToAnchorTo,
+  --   self._curDbProfile.relativePoint, self._curDbProfile.xoffset, self._curDbProfile.yoffset)
+  self.mainFrame:SetPoint(self._curDbProfile.selfCurrentPoint,
+    ZxSimpleUI:getFrameListFrame(self._curDbProfile.framePool),
     self._curDbProfile.relativePoint, self._curDbProfile.xoffset, self._curDbProfile.yoffset)
   self.mainFrame:SetBackdrop(self.frameBackdropTable)
 

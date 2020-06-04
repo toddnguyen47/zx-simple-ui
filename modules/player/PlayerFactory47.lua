@@ -1,6 +1,7 @@
 -- #region
 --- include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
+local FramePool47 = ZxSimpleUI.FramePool47
 local PlayerHealth47 = ZxSimpleUI:GetModule("PlayerHealth47")
 local PlayerPower47 = ZxSimpleUI:GetModule("PlayerPower47")
 local PlayerName47 = ZxSimpleUI:GetModule("PlayerName47")
@@ -38,6 +39,23 @@ function PlayerFactory47:OnEnable()
   self:createRuneOptions()
   self:createTotemOptions()
   self:createPetHealthOptions()
+
+  local frame = FramePool47:getFrame()
+  local timeSinceLastUpdate = 0
+  frame:SetScript("OnUpdate", function(curFrame, elapsed)
+    timeSinceLastUpdate = timeSinceLastUpdate + elapsed
+    if (elapsed > 1.0) then
+      frame:SetScript("OnUpdate", nil)
+      FramePool47:releaseFrame(frame)
+
+      PlayerHealth47:refreshConfig()
+      PlayerPower47:refreshConfig()
+      PlayerName47:refreshConfig()
+      Runes47:refreshConfig()
+      Totems47:refreshConfig()
+      PetHealth47:refreshConfig()
+    end
+  end)
 end
 
 ---Unhook, Unregister Events, Hide frames that you created.
@@ -102,3 +120,10 @@ function PlayerFactory47:createPetHealthOptions()
   optionsObj:registerModuleOptionsTable()
   return optionsObj.options
 end
+
+-- ####################################
+-- # PRIVATE FUNCTIONS
+-- ####################################
+---@param t1 table
+---@param t2 table
+function PlayerFactory47:_addAllFromT2ToT1(t1, t2) for k, v in pairs(t2) do t1[k] = v end end

@@ -117,3 +117,21 @@ end
 ---@return boolean
 ---Ref: https://wowwiki.fandom.com/wiki/SecureStateDriver
 function ZxSimpleUI:getUnitWatchState(unit) return string.lower(unit) == "pet" end
+
+---@param moduleName string
+---@param tableValues table
+function ZxSimpleUI:addToFrameList(moduleName, tableValues)
+  for k, v in pairs(tableValues) do
+    if self.frameList[moduleName] == nil then self.frameList[moduleName] = {} end
+    self.frameList[moduleName][k] = v
+  end
+end
+
+---@param moduleName string
+---@return table
+function ZxSimpleUI:getFrameListFrame(moduleName)
+  if self.frameList[moduleName] == nil or self.frameList[moduleName]["frame"] == nil then
+    return self.frameList["UIParent"]["frame"]
+  end
+  return self.frameList[moduleName]["frame"]
+end

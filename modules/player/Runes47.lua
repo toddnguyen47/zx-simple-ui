@@ -38,7 +38,8 @@ function Runes47:__init__()
       unholyChromaticColor = {0.0, 1.0, 0.4, 1.0},
       frostColor = {0.0, 0.4, 1.0, 1.0},
       deathColor = {0.7, 0.5, 1.0, 1.0},
-      runeCooldownAlpha = 0.3
+      runeCooldownAlpha = 0.3,
+      framePool = "PlayerPower47"
     }
   }
 
@@ -103,10 +104,8 @@ function Runes47:createBar()
   self.mainFrame.bgTexture:SetAllPoints(self.mainFrame)
 
   self:_createRuneFrames()
-  ZxSimpleUI.frameList[self.MODULE_NAME] = {
-    frame = self.mainFrame,
-    name = self.DECORATIVE_NAME
-  }
+  ZxSimpleUI:addToFrameList(self.MODULE_NAME,
+    {frame = self.mainFrame, name = self.DECORATIVE_NAME})
   return self.mainFrame
 end
 

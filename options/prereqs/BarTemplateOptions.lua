@@ -80,17 +80,14 @@ function BarTemplateOptions:getOptionTable()
               name = "Frame Pool",
               values = function(info)
                 local t1 = {}
-                for k, v in pairs(ZxSimpleUI.frameList) do t1[k] = v["name"] end
+                for k, v in pairs(ZxSimpleUI.frameList) do
+                  if k ~= self._currentModule.MODULE_NAME then
+                    t1[k] = v["name"]
+                  end
+                end
                 return t1
               end,
               order = 9
-            },
-            frameToAnchorTo = {
-              type = "description",
-              name = string.format("FRAME TO ANCHOR TO:\n%s", self._currentModule.mainFrame
-                .frameToAnchorTo.DECORATIVE_NAME),
-              order = 10,
-              fontSize = "medium"
             },
             selfCurrentPoint = {
               name = "Point",

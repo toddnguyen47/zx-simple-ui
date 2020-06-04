@@ -32,7 +32,8 @@ function Totems47:__init__()
       fontcolor = {1.0, 1.0, 1.0},
       outline = true,
       thickoutline = false,
-      monochrome = false
+      monochrome = false,
+      framePool = "PlayerPower47"
     }
   }
 
@@ -88,10 +89,8 @@ function Totems47:createBar()
   self.mainFrame:SetFrameLevel(ZxSimpleUI.DEFAULT_FRAME_LEVEL + 2)
 
   self:_createTotemFrames()
-  ZxSimpleUI.frameList[self.MODULE_NAME] = {
-    frame = self.mainFrame,
-    name = self.DECORATIVE_NAME
-  }
+  ZxSimpleUI:addToFrameList(self.MODULE_NAME,
+    {frame = self.mainFrame, name = self.DECORATIVE_NAME})
   return self.mainFrame
 end
 

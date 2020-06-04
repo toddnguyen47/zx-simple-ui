@@ -26,7 +26,7 @@ Runes47.unit = "player"
 
 function Runes47:__init__()
   self.PLAYER_ENGLISH_CLASS = select(2, UnitClass("player"))
-  self.EVENT_TABLE = {"RUNE_POWER_UPDATE", "RUNE_TYPE_UPDATE"}
+  self._eventTable = {"RUNE_POWER_UPDATE", "RUNE_TYPE_UPDATE"}
   self._defaults = {
     profile = {
       enabledToggle = Runes47.PLAYER_ENGLISH_CLASS == "DEATHKNIGHT",
@@ -194,11 +194,11 @@ function Runes47:_setRuneColor(runeStatusBar)
 end
 
 function Runes47:_registerAllEvents()
-  for _, event in pairs(self.EVENT_TABLE) do self.mainFrame:RegisterEvent(event) end
+  for _, event in pairs(self._eventTable) do self.mainFrame:RegisterEvent(event) end
 end
 
 function Runes47:_unregisterAllEvents()
-  for _, event in pairs(self.EVENT_TABLE) do self.mainFrame:UnregisterEvent(event) end
+  for _, event in pairs(self._eventTable) do self.mainFrame:UnregisterEvent(event) end
 end
 
 function Runes47:_enableAllScriptHandlers()

@@ -21,7 +21,7 @@ Totems47.unit = "player"
 
 function Totems47:__init__()
   self.PLAYER_ENGLISH_CLASS = select(2, UnitClass("player"))
-  self.EVENT_TABLE = {"PLAYER_TOTEM_UPDATE"}
+  self._eventTable = {"PLAYER_TOTEM_UPDATE"}
   self._defaults = {
     profile = {
       enabledToggle = Totems47.PLAYER_ENGLISH_CLASS == "SHAMAN",
@@ -165,11 +165,11 @@ function Totems47:_createTotemFrames()
 end
 
 function Totems47:_registerAllEvents()
-  for _, event in pairs(self.EVENT_TABLE) do self.mainFrame:RegisterEvent(event) end
+  for _, event in pairs(self._eventTable) do self.mainFrame:RegisterEvent(event) end
 end
 
 function Totems47:_unregisterAllEvents()
-  for _, event in pairs(self.EVENT_TABLE) do self.mainFrame:UnregisterEvent(event) end
+  for _, event in pairs(self._eventTable) do self.mainFrame:UnregisterEvent(event) end
 end
 
 function Totems47:_enableAllScriptHandlers()

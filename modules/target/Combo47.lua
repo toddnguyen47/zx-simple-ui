@@ -17,7 +17,7 @@ local media = LibStub("LibSharedMedia-3.0")
 Combo47.MODULE_NAME = MODULE_NAME
 Combo47.DECORATIVE_NAME = DECORATIVE_NAME
 Combo47.PLAYER_ENGLISH_CLASS = select(2, UnitClass("player"))
-Combo47.EVENT_TABLE = {"PLAYER_TARGET_CHANGED", "UNIT_COMBO_POINTS"}
+Combo47._eventTable = {"PLAYER_TARGET_CHANGED", "UNIT_COMBO_POINTS"}
 Combo47.bars = nil
 Combo47.unit = "target"
 
@@ -155,11 +155,11 @@ function Combo47:_refreshComboPointsDisplay()
 end
 
 function Combo47:_registerAllEvents()
-  for _, event in pairs(self.EVENT_TABLE) do self.mainFrame:RegisterEvent(event) end
+  for _, event in pairs(self._eventTable) do self.mainFrame:RegisterEvent(event) end
 end
 
 function Combo47:_unregisterAllEvents()
-  for _, event in pairs(self.EVENT_TABLE) do self.mainFrame:UnregisterEvent(event) end
+  for _, event in pairs(self._eventTable) do self.mainFrame:UnregisterEvent(event) end
 end
 
 function Combo47:_setOnEventScript()

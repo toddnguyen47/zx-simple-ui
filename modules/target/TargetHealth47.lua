@@ -82,7 +82,7 @@ function TargetHealth47:createBar()
 end
 
 function TargetHealth47:refreshConfig()
-  if self:IsEnabled() and self.mainFrame:IsVisible() then self:handleOnEnable() end
+  -- if self:IsEnabled() and self.mainFrame:IsVisible() then self:handleOnEnable() end
 end
 
 ---Don't have to do anything here. Maybe in the future I'll add an option to disable this bar.

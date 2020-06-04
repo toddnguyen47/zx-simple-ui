@@ -76,8 +76,8 @@ function TargetName47:createBar()
 end
 
 function TargetName47:refreshConfig()
-  self:handleEnableToggle()
-  if self:IsEnabled() then self:handleOnEnable() end
+  -- self:handleEnableToggle()
+  -- if self:IsEnabled() then self:handleOnEnable() end
 end
 
 function TargetName47:handleEnableToggle()

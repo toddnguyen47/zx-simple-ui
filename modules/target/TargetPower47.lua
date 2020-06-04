@@ -99,6 +99,8 @@ function TargetPower47:createBar()
   local targetUnitMaxPower = UnitPowerMax(self.unit)
   local percentage = ZxSimpleUI:calcPercentSafely(targetUnitPower, targetUnitMaxPower)
   self.mainFrame = self.bars:createBar(percentage)
+  self.mainFrame.DECORATIVE_NAME = self.DECORATIVE_NAME
+  self.mainFrame.frameToAnchorTo = self.bars.frameToAnchorTo
 
   self:_registerEvents()
   self:_setOnShowOnHideHandlers()
@@ -111,7 +113,7 @@ function TargetPower47:createBar()
 end
 
 function TargetPower47:refreshConfig()
-  if self:IsEnabled() and self.mainFrame:IsVisible() then self:handleOnEnable() end
+  -- if self:IsEnabled() and self.mainFrame:IsVisible() then self:handleOnEnable() end
 end
 
 ---Don't have to do anything here. Maybe in the future I'll add an option to disable this bar.

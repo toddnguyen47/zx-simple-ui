@@ -24,8 +24,8 @@ function Target47:OnInitialize()
 end
 
 function Target47:OnEnable()
-  self:_createBars()
-  self:_setEnableState()
+  -- self:_createBars()
+  -- self:_setEnableState()
 end
 
 function Target47:__init__()
@@ -45,9 +45,7 @@ function Target47:__init__()
   }
 
   self._extraBarList = {
-    [Combo47.MODULE_NAME] = {
-      parentFrame = nil, module = Combo47, options = Combo47Options
-    }
+    [Combo47.MODULE_NAME] = {parentFrame = nil, module = Combo47, options = Combo47Options}
   }
 end
 

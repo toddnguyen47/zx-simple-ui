@@ -80,8 +80,8 @@ function Combo47:createBar(frameToAnchorTo)
 end
 
 function Combo47:refreshConfig()
-  self:handleEnableToggle()
-  if self:IsEnabled() then self:handleOnEnable() end
+  -- self:handleEnableToggle()
+  -- if self:IsEnabled() then self:handleOnEnable() end
 end
 
 function Combo47:handleEnableToggle()

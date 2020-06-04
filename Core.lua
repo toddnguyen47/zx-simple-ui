@@ -2,6 +2,9 @@
 local LibStub, ChatFrame1 = LibStub, ChatFrame1
 local GetScreenWidth, GetScreenHeight = GetScreenWidth, GetScreenHeight
 local UnitFrame_OnEnter, UnitFrame_OnLeave = UnitFrame_OnEnter, UnitFrame_OnLeave
+local UIParent = UIParent
+
+UIParent.DECORATIVE_NAME = "UIParent"
 
 --- AddOn Declaration
 local ADDON_NAME = "ZxSimpleUI"
@@ -23,6 +26,7 @@ ZxSimpleUI.moduleKeySorted = {}
 ZxSimpleUI.blizOptionTable = {}
 ZxSimpleUI.optionTables = {}
 ZxSimpleUI.prereqTables = {}
+ZxSimpleUI.frameList = {}
 ZxSimpleUI.db = nil
 ZxSimpleUI.DEFAULT_FRAME_LEVEL = 15 -- maximum number with 4 bits
 ZxSimpleUI.DEFAULT_ORDER_INDEX = 7

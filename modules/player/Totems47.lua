@@ -26,9 +26,9 @@ function Totems47:__init__()
     profile = {
       enabledToggle = Totems47.PLAYER_ENGLISH_CLASS == "SHAMAN",
       height = 35,
-      yoffset = 0,
+      yoffset = -2,
       font = "PT Sans Bold",
-      fontsize = 12,
+      fontsize = 14,
       fontcolor = {1.0, 1.0, 1.0},
       outline = true,
       thickoutline = false,
@@ -79,8 +79,7 @@ function Totems47:OnDisable()
 end
 
 function Totems47:createBar()
-  if PlayerPower47.mainFrame == nil then PlayerPower47:createBar() end
-  self._frameToAnchorTo = PlayerPower47.mainFrame
+  self._frameToAnchorTo = ZxSimpleUI:getFrameListFrame(self._curDbProfile.framePool)
 
   self.mainFrame = CreateFrame("Frame", nil, self._frameToAnchorTo)
   self.mainFrame.DECORATIVE_NAME = self.DECORATIVE_NAME
@@ -123,6 +122,8 @@ function Totems47:_refreshAll()
 end
 
 function Totems47:_refreshBarFrame()
+  self._frameToAnchorTo = ZxSimpleUI:getFrameListFrame(self._curDbProfile.framePool)
+
   self.mainFrame:SetWidth(self._frameToAnchorTo:GetWidth())
   self.mainFrame:SetHeight(self._curDbProfile.height)
   self.mainFrame:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details

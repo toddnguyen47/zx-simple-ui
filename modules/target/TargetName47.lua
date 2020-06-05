@@ -101,7 +101,6 @@ function TargetName47:createBar()
   local percentage = 1.0
   self.mainFrame = self.bars:createBar(percentage)
   self.mainFrame.DECORATIVE_NAME = self.DECORATIVE_NAME
-  self.mainFrame.frameToAnchorTo = ZxSimpleUI:getFrameListFrame(self._curDbProfile.framePool)
 
   self:_setFormattedName()
 

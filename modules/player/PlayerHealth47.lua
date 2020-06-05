@@ -90,7 +90,6 @@ function PlayerHealth47:createBar()
 
   self.mainFrame = self.bars:createBar(percentage)
   self.mainFrame.DECORATIVE_NAME = self.DECORATIVE_NAME
-  self.mainFrame.frameToAnchorTo = ZxSimpleUI:getFrameListFrame(self._curDbProfile.framePool)
 
   self:_registerEvents()
   self:_setOnShowOnHideHandlers()

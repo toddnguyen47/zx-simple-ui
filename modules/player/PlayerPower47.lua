@@ -112,7 +112,6 @@ function PlayerPower47:createBar()
   local percentage = ZxSimpleUI:calcPercentSafely(curUnitPower, maxUnitPower)
   self.mainFrame = self.bars:createBar(percentage)
   self.mainFrame.DECORATIVE_NAME = self.DECORATIVE_NAME
-  self.mainFrame.frameToAnchorTo = ZxSimpleUI:getFrameListFrame(self._curDbProfile.framePool)
 
   self:_setRefreshColor()
   self:_registerEvents()

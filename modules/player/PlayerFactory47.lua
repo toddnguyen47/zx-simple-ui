@@ -8,7 +8,7 @@ local PlayerName47 = ZxSimpleUI:GetModule("PlayerName47")
 local Runes47 = ZxSimpleUI:GetModule("Runes47")
 local Totems47 = ZxSimpleUI:GetModule("Totems47")
 local PetHealth47 = ZxSimpleUI:GetModule("PetHealth47")
--- local PetPower47 = ZxSimpleUI:GetModule("PetPower47")
+local PetPower47 = ZxSimpleUI:GetModule("PetPower47")
 
 local BarTemplateOptions = ZxSimpleUI.optionTables["BarTemplateOptions"]
 local BarTemplateEnableOptions = ZxSimpleUI.optionTables["BarTemplateEnableOptions"]
@@ -39,6 +39,7 @@ function PlayerFactory47:OnEnable()
   self:createRuneOptions()
   self:createTotemOptions()
   self:createPetHealthOptions()
+  self:createPetPowerOptions()
 
   PlayerHealth47:initModuleEnableState()
   PlayerPower47:initModuleEnableState()
@@ -46,6 +47,7 @@ function PlayerFactory47:OnEnable()
   Runes47:initModuleEnableState()
   Totems47:initModuleEnableState()
   PetHealth47:initModuleEnableState()
+  PetPower47:initModuleEnableState()
 end
 
 ---Unhook, Unregister Events, Hide frames that you created.
@@ -59,56 +61,36 @@ function PlayerFactory47:OnDisable() end
 
 ---@return table
 function PlayerFactory47:createPlayerHealthOptions()
-  local curModule = PlayerHealth47
-  if curModule.mainFrame == nil then curModule:createBar() end
-  local optionsObj = BarTemplateOptions:new(curModule)
-  optionsObj:registerModuleOptionsTable()
-  return optionsObj.options
+  return self:_createOptionsHelper(PlayerHealth47, BarTemplateOptions)
 end
 
 ---@return table
 function PlayerFactory47:createPlayerPowerOptions()
-  local curModule = PlayerPower47
-  if curModule.mainFrame == nil then curModule:createBar() end
-  local optionsObj = Power47Options:new(curModule)
-  optionsObj:registerModuleOptionsTable()
-  return optionsObj.options
+  return self:_createOptionsHelper(PlayerPower47, Power47Options)
 end
 
 ---@return table
 function PlayerFactory47:createPlayerNameOptions()
-  local curModule = PlayerName47
-  if curModule.mainFrame == nil then curModule:createBar() end
-  local optionsObj = BarTemplateEnableOptions:new(curModule)
-  optionsObj:registerModuleOptionsTable()
-  return optionsObj.options
+  return self:_createOptionsHelper(PlayerName47, BarTemplateEnableOptions)
 end
 
 ---@return table
 function PlayerFactory47:createRuneOptions()
-  local curModule = Runes47
-  if curModule.mainFrame == nil then curModule:createBar() end
-  local optionsObj = Runes47Options:new(curModule)
-  optionsObj:registerModuleOptionsTable()
-  return optionsObj.options
+  return self:_createOptionsHelper(Runes47, Runes47Options)
 end
 
 ---@return table
 function PlayerFactory47:createTotemOptions()
-  local curModule = Totems47
-  if curModule.mainFrame == nil then curModule:createBar() end
-  local optionsObj = Totems47Options:new(curModule)
-  optionsObj:registerModuleOptionsTable()
-  return optionsObj.options
+  return self:_createOptionsHelper(Totems47, Totems47Options)
 end
 
 ---@return table
 function PlayerFactory47:createPetHealthOptions()
-  local curModule = PetHealth47
-  if curModule.mainFrame == nil then curModule:createBar() end
-  local optionsObj = BarTemplateEnableOptions:new(curModule)
-  optionsObj:registerModuleOptionsTable()
-  return optionsObj.options
+  return self:_createOptionsHelper(PetHealth47, BarTemplateEnableOptions)
+end
+
+function PlayerFactory47:createPetPowerOptions()
+  return self:_createOptionsHelper(PetPower47, BarTemplateEnableOptions)
 end
 
 -- ####################################
@@ -117,3 +99,13 @@ end
 ---@param t1 table
 ---@param t2 table
 function PlayerFactory47:_addAllFromT2ToT1(t1, t2) for k, v in pairs(t2) do t1[k] = v end end
+
+---@param curModule table
+---@param optionObject table
+---@return table
+function PlayerFactory47:_createOptionsHelper(curModule, optionObject)
+  if curModule.mainFrame == nil then curModule:createBar() end
+  local optionInstance = optionObject:new(curModule)
+  optionInstance:registerModuleOptionsTable()
+  return optionInstance.options
+end

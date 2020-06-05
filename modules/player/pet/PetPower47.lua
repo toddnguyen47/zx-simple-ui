@@ -7,6 +7,7 @@ local UnitClass, UnitPowerType = UnitClass, UnitPowerType
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local FramePool47 = ZxSimpleUI.FramePool47
 
+-- #region
 local BarTemplateDefaults = ZxSimpleUI.prereqTables["BarTemplateDefaults"]
 local BarTemplate = ZxSimpleUI.prereqTables["BarTemplate"]
 local Utils47 = ZxSimpleUI.Utils47
@@ -19,49 +20,50 @@ local PetPower47 = ZxSimpleUI:NewModule(MODULE_NAME)
 PetPower47.MODULE_NAME = MODULE_NAME
 PetPower47.DECORATIVE_NAME = DECORATIVE_NAME
 PetPower47.unit = "pet"
-PetPower47.PLAYER_ENGLISH_CLASS = string.upper(select(2, UnitClass("player")))
-
-local _powerEventColorTable = {
-  ["UNIT_MANA"] = {0.0, 0.0, 1.0, 1.0},
-  ["UNIT_RAGE"] = {1.0, 0.0, 0.0, 1.0},
-  ["UNIT_FOCUS"] = {1.0, 0.65, 0.0, 1.0},
-  ["UNIT_ENERGY"] = {1.0, 1.0, 0.0, 1.0},
-  ["UNIT_RUNIC_POWER"] = {0.0, 1.0, 1.0, 1.0}
-}
-
-local _unitPowerTypeTable = {
-  ["MANA"] = 0,
-  ["RAGE"] = 1,
-  ["FOCUS"] = 2,
-  ["ENERGY"] = 3,
-  ["COMBOPOINTS"] = 4,
-  ["RUNES"] = 5,
-  ["RUNICPOWER"] = 6
-}
-
-local _defaults = {
-  profile = {
-    enabledToggle = PetPower47.PLAYER_ENGLISH_CLASS == "HUNTER" or
-      PetPower47.PLAYER_ENGLISH_CLASS == "WARLOCK",
-    showbar = false,
-    width = 150,
-    height = 20,
-    xoffset = 0,
-    yoffset = -2,
-    fontsize = 14,
-    font = "PT Sans Bold",
-    fontcolor = {1.0, 1.0, 1.0},
-    texture = "Skewed",
-    color = _powerEventColorTable["UNIT_MANA"],
-    border = "None",
-    selfCurrentPoint = "TOPRIGHT",
-    relativePoint = "BOTTOMRIGHT"
-  }
-}
+-- #endregion
 
 function PetPower47:__init__()
+  self.PLAYER_ENGLISH_CLASS = string.upper(select(2, UnitClass("player")))
+  self._powerEventColorTable = {
+    ["UNIT_MANA"] = {0.0, 0.0, 1.0, 1.0},
+    ["UNIT_RAGE"] = {1.0, 0.0, 0.0, 1.0},
+    ["UNIT_FOCUS"] = {1.0, 0.65, 0.0, 1.0},
+    ["UNIT_ENERGY"] = {1.0, 1.0, 0.0, 1.0},
+    ["UNIT_RUNIC_POWER"] = {0.0, 1.0, 1.0, 1.0}
+  }
+  self._unitPowerTypeTable = {
+    ["MANA"] = 0,
+    ["RAGE"] = 1,
+    ["FOCUS"] = 2,
+    ["ENERGY"] = 3,
+    ["COMBOPOINTS"] = 4,
+    ["RUNES"] = 5,
+    ["RUNICPOWER"] = 6
+  }
+
+  self._defaults = {
+    profile = {
+      enabledToggle = PetPower47.PLAYER_ENGLISH_CLASS == "HUNTER" or
+        PetPower47.PLAYER_ENGLISH_CLASS == "WARLOCK",
+      showbar = false,
+      width = 150,
+      height = 20,
+      xoffset = 0,
+      yoffset = -2,
+      fontsize = 14,
+      font = "PT Sans Bold",
+      fontcolor = {1.0, 1.0, 1.0},
+      texture = "Skewed",
+      color = self._powerEventColorTable["UNIT_MANA"],
+      border = "None",
+      selfCurrentPoint = "TOPRIGHT",
+      relativePoint = "BOTTOMRIGHT",
+      framePool = "PetHealth47"
+    }
+  }
+
   self.mainFrame = nil
-  self.currentPowerColorEdited = _powerEventColorTable["UNIT_MANA"]
+  self.currentPowerColorEdited = self._powerEventColorTable["UNIT_MANA"]
 
   self._timeSinceLastUpdate = 0
   self._prevPowerValue = UnitPowerMax(self.unit)
@@ -71,7 +73,7 @@ function PetPower47:__init__()
 
   self._barTemplateDefaults = BarTemplateDefaults:new()
   self._newDefaults = self._barTemplateDefaults.defaults
-  Utils47:replaceTableValue(self._newDefaults.profile, _defaults.profile)
+  Utils47:replaceTableValue(self._newDefaults.profile, self._defaults.profile)
 end
 
 function PetPower47:OnInitialize()
@@ -80,60 +82,70 @@ function PetPower47:OnInitialize()
   self.db = ZxSimpleUI.db:RegisterNamespace(MODULE_NAME, self._newDefaults)
   self._curDbProfile = self.db.profile
   -- Always set the showbar option to false on initialize
-  self._curDbProfile.showbar = _defaults.profile.showbar
+  self._curDbProfile.showbar = self._defaults.profile.showbar
 
   self.bars = BarTemplate:new(self.db)
-
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(MODULE_NAME))
 end
 
-function PetPower47:OnEnable() self:handleOnEnable() end
+function PetPower47:OnEnable()
+  if self.mainFrame == nil then self:createBar() end
+  self:_setOnShowOnHideHandlers()
+  self:_registerEvents()
+  self:_enableAllScriptHandlers()
+  self.mainFrame:Show()
+end
 
-function PetPower47:OnDisable() self:handleOnDisable() end
+function PetPower47:OnDisable()
+  if self.mainFrame == nil then self:createBar() end
+  self:_unregisterEvents()
+  self:_disableAllScriptHandlers()
+  self.mainFrame:Hide()
+end
 
----@param frameToAnchorTo table
 ---@return table
-function PetPower47:createBar(frameToAnchorTo)
-  assert(frameToAnchorTo ~= nil)
+function PetPower47:createBar()
   local curUnitPower = UnitPower(self.unit)
   local maxUnitPower = UnitPowerMax(self.unit)
   local percentage = ZxSimpleUI:calcPercentSafely(curUnitPower, maxUnitPower)
 
-  self.bars.frameToAnchorTo = frameToAnchorTo
+  local anchorFrame = ZxSimpleUI:getFrameListFrame(self._curDbProfile.framePool)
+  self.bars.frameToAnchorTo = anchorFrame
   self.mainFrame = self.bars:createBar(percentage)
+  self.mainFrame.DECORATIVE_NAME = self.DECORATIVE_NAME
+  self.mainFrame.frameToAnchorTo = anchorFrame
 
   self:_setInitialOnUpdateColor()
-  self:_registerEvents()
-  self:_setOnShowOnHideHandlers()
-  self:_enableAllScriptHandlers()
-
   RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
-
   return self.mainFrame
 end
 
 function PetPower47:refreshConfig()
   self:handleEnableToggle()
-  if self:IsEnabled() then self:handleOnEnable() end
-end
-
-function PetPower47:handleEnableToggle()
-  ZxSimpleUI:setModuleEnabledState(MODULE_NAME, self._curDbProfile.enabledToggle)
-end
-
-function PetPower47:handleOnEnable()
-  if self.mainFrame ~= nil then
+  if self:IsEnabled() then
     -- If the show option is currently selected
     if self._curDbProfile.showbar == true then
       self.mainFrame.statusBar:SetStatusBarColor(unpack(self.currentPowerColorEdited))
     else
       self.bars:refreshConfig()
     end
-    self.mainFrame:Show()
   end
 end
 
-function PetPower47:handleOnDisable() if self.mainFrame ~= nil then self.mainFrame:Hide() end end
+function PetPower47:handleEnableToggle()
+  ZxSimpleUI:setModuleEnabledState(MODULE_NAME, self._curDbProfile.enabledToggle)
+end
+
+---Explicitly call OnEnable() and OnDisable() depending on the module's IsEnabled()
+---This function is exactly like refreshConfig(), except it is called only during initialization.
+function PetPower47:initModuleEnableState()
+  self:refreshConfig()
+  if self:IsEnabled() then
+    self:OnEnable()
+  else
+    self:OnDisable()
+  end
+end
 
 -- ####################################
 -- # PRIVATE FUNCTIONS
@@ -174,11 +186,19 @@ end
 function PetPower47:_handlePowerChanged() self:refreshConfig() end
 
 function PetPower47:_registerEvents()
-  for powerEvent, _ in pairs(_powerEventColorTable) do
+  for powerEvent, _ in pairs(self._powerEventColorTable) do
     self.mainFrame:RegisterEvent(powerEvent)
   end
   -- Register Druid's shapeshift form
   self.mainFrame:RegisterEvent("UNIT_DISPLAYPOWER")
+end
+
+function PetPower47:_unregisterEvents()
+  for powerEvent, _ in pairs(self._powerEventColorTable) do
+    self.mainFrame:UnregisterEvent(powerEvent)
+  end
+  -- Register Druid's shapeshift form
+  self.mainFrame:UnregisterEvent("UNIT_DISPLAYPOWER")
 end
 
 function PetPower47:_setOnShowOnHideHandlers()
@@ -215,8 +235,8 @@ end
 function PetPower47:_setInitialColor()
   self:_setUnitPowerType()
   local upperType = string.upper(self._powerTypeString)
-  local t1 = _powerEventColorTable["UNIT_" .. upperType]
-  t1 = t1 or _powerEventColorTable["UNIT_MANA"]
+  local t1 = self._powerEventColorTable["UNIT_" .. upperType]
+  t1 = t1 or self._powerEventColorTable["UNIT_MANA"]
 
   self._newDefaults.profile.color = t1
   self._curDbProfile.color = t1

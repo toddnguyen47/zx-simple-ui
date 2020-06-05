@@ -8,7 +8,9 @@ local unpack = unpack
 ---include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local Utils47 = ZxSimpleUI.Utils47
+local BarTemplateDefaults = ZxSimpleUI.prereqTables["BarTemplateDefaults"]
 
+-- #region
 local MODULE_NAME = "Combo47"
 local DECORATIVE_NAME = "Combo Points Display"
 local Combo47 = ZxSimpleUI:NewModule(MODULE_NAME)
@@ -16,92 +18,108 @@ local media = LibStub("LibSharedMedia-3.0")
 
 Combo47.MODULE_NAME = MODULE_NAME
 Combo47.DECORATIVE_NAME = DECORATIVE_NAME
-Combo47.PLAYER_ENGLISH_CLASS = select(2, UnitClass("player"))
-Combo47._eventTable = {"PLAYER_TARGET_CHANGED", "UNIT_COMBO_POINTS"}
 Combo47.bars = nil
 Combo47.unit = "target"
-
-local _defaults = {
-  profile = {
-    texture = "Skewed",
-    mediumComboPoints = 3,
-    lowComboColor = {1.0, 1.0, 0.0, 1.0},
-    medComboColor = {1.0, 0.65, 0.0, 1.0},
-    maxComboColor = {1.0, 0.0, 0.0, 1.0},
-    height = 8,
-    showbar = false,
-    enabledToggle = Combo47.PLAYER_ENGLISH_CLASS == "ROGUE" or Combo47.PLAYER_ENGLISH_CLASS ==
-      "DRUID",
-    horizGap = 15,
-    yoffset = 0
-  }
-}
-
-function Combo47:OnInitialize()
-  self:__init__()
-  self.db = ZxSimpleUI.db:RegisterNamespace(MODULE_NAME, _defaults)
-  self._curDbProfile = self.db.profile
-  -- Always set the showbar option to false on initialize
-  self._curDbProfile.showbar = _defaults.profile.showbar
-
-  self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(MODULE_NAME))
-end
-
-function Combo47:OnEnable() self:handleOnEnable() end
-
-function Combo47:OnDisable() self:handleOnDisable() end
+-- #endregion
 
 function Combo47:__init__()
+  self.PLAYER_ENGLISH_CLASS = select(2, UnitClass("player"))
+  self._eventTable = {"PLAYER_TARGET_CHANGED", "UNIT_COMBO_POINTS"}
+  self._defaults = {
+    profile = {
+      texture = "Skewed",
+      mediumComboPoints = 3,
+      lowComboColor = {1.0, 1.0, 0.0, 1.0},
+      medComboColor = {1.0, 0.65, 0.0, 1.0},
+      maxComboColor = {1.0, 0.0, 0.0, 1.0},
+      height = 8,
+      showbar = false,
+      enabledToggle = self.PLAYER_ENGLISH_CLASS == "ROGUE" or self.PLAYER_ENGLISH_CLASS ==
+        "DRUID",
+      horizGap = 15,
+      yoffset = 0,
+      framePool = "TargetPower47",
+      selfCurrentPoint = "TOPLEFT",
+      relativePoint = "BOTTOMLEFT",
+      backgroundColor = {0, 0, 0, 0.4}
+    }
+  }
+
   self.mainFrame = nil
 
   self._comboPointsTable = {}
-  self._allComboPointsHidden = true
   self._playerEnglishClass = UnitClass("player")
   self._frameToAnchorTo = nil
 end
 
----@param frameToAnchorTo table
-function Combo47:createBar(frameToAnchorTo)
-  assert(frameToAnchorTo ~= nil)
-  self._frameToAnchorTo = frameToAnchorTo
+---Do init tasks here, like loading the Saved Variables,
+---Or setting up slash commands.
+function Combo47:OnInitialize()
+  self:__init__()
+
+  self.db = ZxSimpleUI.db:RegisterNamespace(MODULE_NAME, self._defaults)
+  self._curDbProfile = self.db.profile
+  -- Always set the showbar option to false on initialize
+  self._curDbProfile.showbar = self._defaults.profile.showbar
+
+  self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(MODULE_NAME))
+
+  self._barTemplateDefaults = BarTemplateDefaults:new()
+  self._newDefaults = self._barTemplateDefaults.defaults
+  Utils47:replaceTableValue(self._newDefaults.profile, self._defaults.profile)
+end
+
+---Do more initialization here, that really enables the use of your addon.
+---Register Events, Hook functions, Create Frames, Get information from
+---the game that wasn't available in OnInitialize
+function Combo47:OnEnable()
+  if self.mainFrame == nil then self:createBar() end
+  self:_registerAllEvents()
+
+  -- Don't show until combo points appear
+  -- self.mainFrame:Show()
+end
+
+---Unhook, Unregister Events, Hide frames that you created.
+---You would probably only use an OnDisable if you want to
+---build a "standby" mode, or be able to toggle modules on/off.
+function Combo47:OnDisable()
+  if self.mainFrame == nil then self:createBar() end
+  self:_unregisterAllEvents()
+  self.mainFrame:Hide()
+end
+
+function Combo47:createBar()
+  self._frameToAnchorTo = ZxSimpleUI:getFrameListFrame(self._curDbProfile.framePool)
 
   self.mainFrame = CreateFrame("Frame", nil, self._frameToAnchorTo)
   self.mainFrame:SetFrameLevel(ZxSimpleUI.DEFAULT_FRAME_LEVEL + 2)
+  self.mainFrame.DECORATIVE_NAME = self.DECORATIVE_NAME
 
   self.mainFrame.bgTexture = self.mainFrame:CreateTexture(nil, "BACKGROUND")
-  self.mainFrame.bgTexture:SetTexture(0, 0, 0, 0.5)
+  self.mainFrame.bgTexture:SetTexture(unpack(self._curDbProfile.backgroundColor))
   self.mainFrame.bgTexture:SetAllPoints(self.mainFrame)
 
   self:_createIndividualComboPointsDisplay()
   self:_setOnEventScript()
+  ZxSimpleUI:addToFrameList(self.MODULE_NAME,
+    {frame = self.mainFrame, name = self.DECORATIVE_NAME})
 
   self.mainFrame:Hide()
   return self.mainFrame
 end
 
 function Combo47:refreshConfig()
-  -- self:handleEnableToggle()
-  -- if self:IsEnabled() then self:handleOnEnable() end
+  self:handleEnableToggle()
+  if self:IsEnabled() then
+    self:_refreshAll()
+    -- If we are currently seeing the showbar option, do not need to handle combo points
+    if not self._curDbProfile.showbar then self:_handleComboPoints() end
+  end
 end
 
 function Combo47:handleEnableToggle()
   ZxSimpleUI:setModuleEnabledState(MODULE_NAME, self._curDbProfile.enabledToggle)
-end
-
-function Combo47:handleOnEnable()
-  if self.mainFrame ~= nil then
-    self:_registerAllEvents()
-    self:_refreshAll()
-    self:_handleComboPoints()
-  end
-end
-
-function Combo47:handleOnDisable()
-  if self.mainFrame ~= nil then
-    self:_unregisterAllEvents()
-    self.mainFrame:Hide()
-    self:_hideAllComboPoints()
-  end
 end
 
 function Combo47:handleShownOption()
@@ -114,7 +132,18 @@ end
 
 function Combo47:handleShownHideOption()
   self:_hideAllComboPoints()
-  self.mainFrame:Hide()
+  self:_handleComboPoints()
+end
+
+---Explicitly call OnEnable() and OnDisable() depending on the module's IsEnabled()
+---This function is exactly like refreshConfig(), except it is called only during initialization.
+function Combo47:initModuleEnableState()
+  self:refreshConfig()
+  if self:IsEnabled() then
+    self:OnEnable()
+  else
+    self:OnDisable()
+  end
 end
 
 -- ####################################
@@ -127,11 +156,15 @@ function Combo47:_refreshAll()
 end
 
 function Combo47:_refreshBarFrame()
+  self._frameToAnchorTo = ZxSimpleUI:getFrameListFrame(self._curDbProfile.framePool)
+
   self.mainFrame:SetWidth(self._frameToAnchorTo:GetWidth())
   self.mainFrame:SetHeight(self._curDbProfile.height)
   self.mainFrame:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details
-  self.mainFrame:SetPoint("TOPLEFT", self._frameToAnchorTo, "BOTTOMLEFT", 0,
-    self._curDbProfile.yoffset)
+  self.mainFrame:SetPoint(self._curDbProfile.selfCurrentPoint, self._frameToAnchorTo,
+    self._curDbProfile.relativePoint, 0, self._curDbProfile.yoffset)
+
+  self.mainFrame.bgTexture:SetTexture(unpack(self._curDbProfile.backgroundColor))
 end
 
 function Combo47:_refreshComboPointsDisplay()
@@ -145,8 +178,7 @@ function Combo47:_refreshComboPointsDisplay()
     comboTexture:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details
 
     if i == 1 then
-      comboTexture:SetPoint("TOPLEFT", self._frameToAnchorTo, "BOTTOMLEFT", 0,
-        self._curDbProfile.yoffset)
+      comboTexture:SetPoint("TOPLEFT", self.mainFrame, "TOPLEFT", 0, 0)
     else
       comboTexture:SetPoint("TOPLEFT", self._comboPointsTable[i - 1], "TOPRIGHT",
         self._curDbProfile.horizGap, 0)
@@ -178,17 +210,15 @@ end
 
 function Combo47:_handleComboPoints()
   local comboPoints = GetComboPoints("player", self.unit)
-  if not self._allComboPointsHidden and comboPoints == 0 then
+  if comboPoints == 0 and self.mainFrame:IsVisible() then
     self.mainFrame:Hide()
     self:_hideAllComboPoints()
-    self._allComboPointsHidden = true
   else
     for i = 1, comboPoints do
       if i == 1 then self.mainFrame:Show() end
       local currentTexture = self._comboPointsTable[i]
       self:_setComboPointsColor(comboPoints, currentTexture)
       currentTexture:Show()
-      self._allComboPointsHidden = false
     end
   end
 end

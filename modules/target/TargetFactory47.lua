@@ -9,8 +9,7 @@ local Combo47 = ZxSimpleUI:GetModule("Combo47")
 local BarTemplateOptions = ZxSimpleUI.optionTables["BarTemplateOptions"]
 local BarTemplateEnableOptions = ZxSimpleUI.optionTables["BarTemplateEnableOptions"]
 local Power47Options = ZxSimpleUI.optionTables["Power47Options"]
-local Runes47Options = ZxSimpleUI.optionTables["Runes47Options"]
-local Totems47Options = ZxSimpleUI.optionTables["Totems47Options"]
+local Combo47Options = ZxSimpleUI.optionTables["Combo47Options"]
 
 local MODULE_NAME = "TargetFactory47"
 local DECORATIVE_NAME = "Target Factory"
@@ -32,10 +31,12 @@ function TargetFactory47:OnEnable()
   self:createHealthOptions()
   self:createPowerOptions()
   self:createNameOptions()
+  self:createComboOptions()
 
   TargetHealth47:initModuleEnableState()
   TargetPower47:initModuleEnableState()
   TargetName47:initModuleEnableState()
+  Combo47:initModuleEnableState()
 end
 
 ---Unhook, Unregister Events, Hide frames that you created.
@@ -57,6 +58,8 @@ end
 function TargetFactory47:createNameOptions()
   self:_createOptionsHelper(TargetName47, BarTemplateEnableOptions)
 end
+
+function TargetFactory47:createComboOptions() self:_createOptionsHelper(Combo47, Combo47Options) end
 
 -- ####################################
 -- # PRIVATE FUNCTIONS

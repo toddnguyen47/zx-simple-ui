@@ -9,25 +9,25 @@ Combo47Options.__index = Combo47Options
 Combo47Options.OPTION_NAME = "Combo47Options"
 ZxSimpleUI.optionTables[Combo47Options.OPTION_NAME] = Combo47Options
 
----@param comboModule table
-function Combo47Options:__init__(comboModule)
+---@param currentModule table
+function Combo47Options:__init__(currentModule)
   self.options = {}
-  self._comboModule = comboModule
-  self._curDbProfile = comboModule.db.profile
-  self._coreOptions47 = CoreOptions47:new(self._comboModule)
+  self._currentModule = currentModule
+  self._curDbProfile = currentModule.db.profile
+  self._coreOptions47 = CoreOptions47:new(self._currentModule)
 end
 
----@param comboModule table
-function Combo47Options:new(comboModule)
-  assert(comboModule ~= nil)
+---@param currentModule table
+function Combo47Options:new(currentModule)
+  assert(currentModule ~= nil)
   local newInstance = setmetatable({}, self)
-  newInstance:__init__(comboModule)
+  newInstance:__init__(currentModule)
   return newInstance
 end
 
 function Combo47Options:registerModuleOptionsTable()
-  ZxSimpleUI:registerModuleOptions(self._comboModule.MODULE_NAME, self:getOptionTable(),
-    self._comboModule.DECORATIVE_NAME)
+  ZxSimpleUI:registerModuleOptions(self._currentModule.MODULE_NAME, self:getOptionTable(),
+    self._currentModule.DECORATIVE_NAME)
 end
 
 ---@return table
@@ -35,14 +35,14 @@ function Combo47Options:getOptionTable()
   if next(self.options) == nil then
     self.options = {
       type = "group",
-      name = self._comboModule.DECORATIVE_NAME,
+      name = self._currentModule.DECORATIVE_NAME,
       --- "Parent" get/set
       get = function(info) return self._coreOptions47:getOption(info) end,
       set = function(info, value) self._coreOptions47:setOption(info, value) end,
       args = {
         header = {
           type = "header",
-          name = self._comboModule.DECORATIVE_NAME,
+          name = self._currentModule.DECORATIVE_NAME,
           order = ZxSimpleUI.HEADER_ORDER_INDEX
         },
         enabledToggle = {
@@ -61,6 +61,17 @@ function Combo47Options:getOptionTable()
           disabled = function(info) return not self._curDbProfile.enabledToggle end,
           get = function(info) return self._coreOptions47:getShownOption(info) end,
           set = function(info, value) self._coreOptions47:setShownOption(info, value) end
+        },
+        backgroundColor = {
+          name = "Background Color",
+          desc = "Background Color for the Combo Frame",
+          order = self._coreOptions47:incrementOrderIndex(),
+          type = "color",
+          hasAlpha = true,
+          get = function(info) return self._coreOptions47:getOptionColor(info) end,
+          set = function(info, r, g, b, a)
+            self._coreOptions47:setOptionColor(info, r, g, b, a)
+          end
         },
         texture = {
           name = "Bar Texture",
@@ -87,6 +98,62 @@ function Combo47Options:getOptionTable()
           max = 30,
           step = 1,
           order = self._coreOptions47:incrementOrderIndex()
+        },
+        setpoint = {
+          name = "Setpoints",
+          type = "group",
+          inline = true,
+          order = self._coreOptions47:incrementOrderIndex(),
+          args = {
+            framePool = {
+              type = "select",
+              name = "Frame Pool",
+              values = function(info)
+                local t1 = {}
+                for k, v in pairs(ZxSimpleUI.frameList) do
+                  if k ~= self._currentModule.MODULE_NAME then
+                    t1[k] = v["name"]
+                  end
+                end
+                return t1
+              end,
+              order = 10
+            },
+            selfCurrentPoint = {
+              name = "Point",
+              desc = "Frame's Anchor Point",
+              type = "select",
+              order = 11,
+              values = {
+                ["TOP"] = "TOP",
+                ["RIGHT"] = "RIGHT",
+                ["BOTTOM"] = "BOTTOM",
+                ["LEFT"] = "LEFT",
+                ["TOPRIGHT"] = "TOPRIGHT",
+                ["TOPLEFT"] = "TOPLEFT",
+                ["BOTTOMLEFT"] = "BOTTOMLEFT",
+                ["BOTTOMRIGHT"] = "BOTTOMRIGHT",
+                ["CENTER"] = "CENTER"
+              }
+            },
+            relativePoint = {
+              name = "Relative Point",
+              desc = "Relative Point: Frame to anchor to",
+              type = "select",
+              order = 12,
+              values = {
+                ["TOP"] = "TOP",
+                ["RIGHT"] = "RIGHT",
+                ["BOTTOM"] = "BOTTOM",
+                ["LEFT"] = "LEFT",
+                ["TOPRIGHT"] = "TOPRIGHT",
+                ["TOPLEFT"] = "TOPLEFT",
+                ["BOTTOMLEFT"] = "BOTTOMLEFT",
+                ["BOTTOMRIGHT"] = "BOTTOMRIGHT",
+                ["CENTER"] = "CENTER"
+              }
+            }
+          }
         },
         yoffset = {
           name = "Y Offset",

@@ -103,10 +103,13 @@ function Utils47:floorToEven(numberInput)
 end
 
 ---@param frame table
-function Utils47:printIsShown(frame)
-  if frame:IsShown() then
-    print("Shown!")
+---@return string
+function Utils47:getIsShown(frame)
+  local s1 = ""
+  if frame:IsShown() or frame:IsVisible() then
+    s1 = "Shown!"
   else
-    print("Hidden ;(")
+    s1 = "Hidden ;("
   end
+  return s1
 end

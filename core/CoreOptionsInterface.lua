@@ -1,4 +1,5 @@
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
+local Utils47 = ZxSimpleUI.Utils47
 local AceConfigRegistry = LibStub("AceConfigRegistry-3.0")
 local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 local AceGUI = LibStub("AceGUI-3.0")
@@ -53,6 +54,27 @@ function _getOpenOptionTable()
           name = _getSlashCommandsString(),
           type = "description",
           fontSize = "medium"
+        },
+        printFrameVisibility = {
+          name = "Print Frame Visibility",
+          type = "execute",
+          func = function(info, ...)
+            local sortedKeys = {}
+            local t1 = {}
+            for k, v in ZxSimpleUI:IterateModules() do
+              table.insert(sortedKeys, k)
+              t1[k] = v
+            end
+            table.sort(sortedKeys)
+
+            for _, sortedKey in pairs(sortedKeys) do
+              local curModule = t1[sortedKey]
+              if curModule.mainFrame ~= nil then
+                print(string.format("%s | %s", sortedKey,
+                        Utils47:getIsShown(curModule.mainFrame)))
+              end
+            end
+          end
         }
       }
     }

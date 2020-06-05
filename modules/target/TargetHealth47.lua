@@ -14,6 +14,7 @@ local BarTemplate = ZxSimpleUI.prereqTables["BarTemplate"]
 local Utils47 = ZxSimpleUI.Utils47
 local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
 
+-- #region
 local MODULE_NAME = "TargetHealth47"
 local DECORATIVE_NAME = "Target Health"
 local TargetHealth47 = ZxSimpleUI:NewModule(MODULE_NAME)
@@ -22,23 +23,25 @@ TargetHealth47.MODULE_NAME = MODULE_NAME
 TargetHealth47.DECORATIVE_NAME = DECORATIVE_NAME
 TargetHealth47.bars = nil
 TargetHealth47.unit = "target"
-
-local _defaults = {
-  profile = {
-    width = 200,
-    height = 26,
-    xoffset = 700,
-    yoffset = 268,
-    fontsize = 16,
-    font = "PT Sans Bold",
-    fontcolor = {1.0, 1.0, 1.0},
-    texture = "Skewed",
-    color = {0.0, 1.0, 0.0, 1.0},
-    border = "None"
-  }
-}
+-- #endregion
 
 function TargetHealth47:__init__()
+  self._defaults = {
+    profile = {
+      width = 200,
+      height = 26,
+      xoffset = 700,
+      yoffset = 268,
+      fontsize = 16,
+      font = "PT Sans Bold",
+      fontcolor = {1.0, 1.0, 1.0},
+      texture = "Skewed",
+      color = {0.0, 1.0, 0.0, 1.0},
+      border = "None"
+    }
+  }
+  self._eventTable = {"UNIT_HEALTH", "PLAYER_TARGET_CHANGED"}
+
   self._timeSinceLastUpdate = 0
   self._prevTargetHealth47 = UnitHealthMax(self.unit)
   self._unitClassification = ""
@@ -46,9 +49,11 @@ function TargetHealth47:__init__()
 
   self._barTemplateDefaults = BarTemplateDefaults:new()
   self._newDefaults = self._barTemplateDefaults.defaults
-  Utils47:replaceTableValue(self._newDefaults.profile, _defaults.profile)
+  Utils47:replaceTableValue(self._newDefaults.profile, self._defaults.profile)
 end
 
+---Do init tasks here, like loading the Saved Variables,
+---Or setting up slash commands.
 function TargetHealth47:OnInitialize()
   self:__init__()
 
@@ -56,13 +61,39 @@ function TargetHealth47:OnInitialize()
   self._curDbProfile = self.db.profile
 
   self.bars = BarTemplate:new(self.db)
-
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(MODULE_NAME))
 end
 
-function TargetHealth47:OnEnable() self:handleOnEnable() end
+---Do more initialization here, that really enables the use of your addon.
+---Register Events, Hook functions, Create Frames, Get information from
+---the game that wasn't available in OnInitialize
+function TargetHealth47:OnEnable()
+  if self.mainFrame == nil then self:createBar() end
+  self:_registerEvents()
+  self.mainFrame:Show()
+end
 
-function TargetHealth47:OnDisable() self:handleOnDisable() end
+---Unhook, Unregister Events, Hide frames that you created.
+---You would probably only use an OnDisable if you want to
+---build a "standby" mode, or be able to toggle modules on/off.
+function TargetHealth47:OnDisable()
+  if self.mainFrame == nil then self:createBar() end
+  self:_unregisterEvents()
+end
+
+---@param curFrame table
+---Handle Blizzard's OnShow event
+function TargetHealth47:OnShowBlizz(curFrame, ...)
+  if self:IsEnabled() then
+    self:_enableAllScriptHandlers()
+  else
+    self.mainFrame:Hide()
+  end
+end
+
+---@param curFrame table
+---Handle Blizzard's OnHide event
+function TargetHealth47:OnHideBlizz(curFrame, ...) self:_disableAllScriptHandlers() end
 
 function TargetHealth47:createBar()
   local targetUnitHealth = UnitHealth(self.unit)
@@ -71,7 +102,6 @@ function TargetHealth47:createBar()
 
   self.mainFrame = self.bars:createBar(percentage)
 
-  self:_registerEvents()
   self:_setOnShowOnHideHandlers()
   self:_enableAllScriptHandlers()
 
@@ -82,21 +112,22 @@ function TargetHealth47:createBar()
 end
 
 function TargetHealth47:refreshConfig()
-  -- if self:IsEnabled() and self.mainFrame:IsVisible() then self:handleOnEnable() end
+  self:handleEnableToggle()
+  if self:IsEnabled() and self.mainFrame:IsVisible() then self.bars:refreshConfig() end
 end
 
 ---Don't have to do anything here. Maybe in the future I'll add an option to disable this bar.
 function TargetHealth47:handleEnableToggle() end
 
-function TargetHealth47:handleOnEnable()
-  if self.mainFrame ~= nil then
-    self.bars:refreshConfig()
-    self.mainFrame:Show()
+---Explicitly call OnEnable() and OnDisable() depending on the module's IsEnabled()
+---This function is exactly like refreshConfig(), except it is called only during initialization.
+function TargetHealth47:initModuleEnableState()
+  self:refreshConfig()
+  if self:IsEnabled() then
+    self:OnEnable()
+  else
+    self:OnDisable()
   end
-end
-
-function TargetHealth47:handleOnDisable()
-  if self.mainFrame ~= nil then self.mainFrame:Hide() end
 end
 
 -- ####################################
@@ -104,21 +135,19 @@ end
 -- ####################################
 
 function TargetHealth47:_registerEvents()
-  self.mainFrame:RegisterEvent("UNIT_HEALTH")
-  self.mainFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
+  for _, event in pairs(self._eventTable) do self.mainFrame:RegisterEvent(event) end
+end
+
+function TargetHealth47:_unregisterEvents()
+  for _, event in pairs(self._eventTable) do self.mainFrame:UnregisterEvent(event) end
 end
 
 function TargetHealth47:_setOnShowOnHideHandlers()
-  self.mainFrame:SetScript("OnShow", function(curFrame, ...)
-    if self:IsEnabled() then
-      self:_enableAllScriptHandlers()
-    else
-      self.mainFrame:Hide()
-    end
-  end)
+  self.mainFrame:SetScript("OnShow",
+    function(curFrame, ...) self:OnShowBlizz(curFrame, ...) end)
 
   self.mainFrame:SetScript("OnHide",
-    function(curFrame, ...) self:_disableAllScriptHandlers() end)
+    function(curFrame, ...) self:OnHideBlizz(curFrame, ...) end)
 end
 
 function TargetHealth47:_enableAllScriptHandlers()

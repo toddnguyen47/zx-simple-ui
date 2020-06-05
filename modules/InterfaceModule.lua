@@ -18,6 +18,14 @@ function InterfaceModule:OnEnable() end
 ---build a "standby" mode, or be able to toggle modules on/off.
 function InterfaceModule:OnDisable() end
 
+-- For Frames that gets hidden often (e.g. Target frames)
+---@param curFrame table
+---Handle Blizzard's OnShow event
+function InterfaceModule:OnShowBlizz(curFrame, ...) end
+---@param curFrame table
+---Handle Blizzard's OnHide event
+function InterfaceModule:OnHideBlizz(curFrame, ...) end
+
 ---Explicitly call OnEnable() and OnDisable() depending on the module's IsEnabled()
 ---This function is exactly like refreshConfig(), except it is called only during initialization.
 function InterfaceModule:initModuleEnableState() end

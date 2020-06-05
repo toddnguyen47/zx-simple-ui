@@ -14,6 +14,7 @@ local BarTemplate = ZxSimpleUI.prereqTables["BarTemplate"]
 local Utils47 = ZxSimpleUI.Utils47
 local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
 
+-- #region
 local MODULE_NAME = "TargetPower47"
 local DECORATIVE_NAME = "Target Power"
 local TargetPower47 = ZxSimpleUI:NewModule(MODULE_NAME)
@@ -22,50 +23,53 @@ TargetPower47.MODULE_NAME = MODULE_NAME
 TargetPower47.DECORATIVE_NAME = DECORATIVE_NAME
 TargetPower47.bars = nil
 TargetPower47.unit = "target"
-
-local _powerEventColorTable = {
-  ["UNIT_MANA"] = {0.0, 0.0, 1.0, 1.0},
-  ["UNIT_RAGE"] = {1.0, 0.0, 0.0, 1.0},
-  ["UNIT_FOCUS"] = {1.0, 0.65, 0.0, 1.0},
-  ["UNIT_ENERGY"] = {1.0, 1.0, 0.0, 1.0},
-  ["UNIT_RUNIC_POWER"] = {0.0, 1.0, 1.0, 1.0}
-}
-
-local _unitPowerTypeTable = {
-  ["MANA"] = 0,
-  ["RAGE"] = 1,
-  ["FOCUS"] = 2,
-  ["ENERGY"] = 3,
-  ["COMBOPOINTS"] = 4,
-  ["RUNES"] = 5,
-  ["RUNICPOWER"] = 6
-}
-
-local _defaults = {
-  profile = {
-    enabledToggle = true,
-    showbar = false,
-    width = 200,
-    height = 26,
-    xoffset = 700,
-    yoffset = 240,
-    fontsize = 16,
-    font = "PT Sans Bold",
-    fontcolor = {1.0, 1.0, 1.0},
-    texture = "Skewed",
-    color = _powerEventColorTable["UNIT_MANA"], -- need this option for createBar() to work
-    colorMana = _powerEventColorTable["UNIT_MANA"],
-    colorRage = _powerEventColorTable["UNIT_RAGE"],
-    colorFocus = _powerEventColorTable["UNIT_FOCUS"],
-    colorEnergy = _powerEventColorTable["UNIT_ENERGY"],
-    colorRunicPower = _powerEventColorTable["UNIT_RUNIC_POWER"],
-    border = "None"
-  }
-}
+-- #endregion
 
 function TargetPower47:__init__()
+  self._powerEventColorTable = {
+    ["UNIT_MANA"] = {0.0, 0.0, 1.0, 1.0},
+    ["UNIT_RAGE"] = {1.0, 0.0, 0.0, 1.0},
+    ["UNIT_FOCUS"] = {1.0, 0.65, 0.0, 1.0},
+    ["UNIT_ENERGY"] = {1.0, 1.0, 0.0, 1.0},
+    ["UNIT_RUNIC_POWER"] = {0.0, 1.0, 1.0, 1.0}
+  }
+
+  self._eventTable = {"PLAYER_TARGET_CHANGED", "UNIT_DISPLAYPOWER"}
+
+  self._unitPowerTypeTable = {
+    ["MANA"] = 0,
+    ["RAGE"] = 1,
+    ["FOCUS"] = 2,
+    ["ENERGY"] = 3,
+    ["COMBOPOINTS"] = 4,
+    ["RUNES"] = 5,
+    ["RUNICPOWER"] = 6
+  }
+
+  self._defaults = {
+    profile = {
+      enabledToggle = true,
+      showbar = false,
+      width = 200,
+      height = 26,
+      xoffset = 700,
+      yoffset = 240,
+      fontsize = 16,
+      font = "PT Sans Bold",
+      fontcolor = {1.0, 1.0, 1.0},
+      texture = "Skewed",
+      color = self._powerEventColorTable["UNIT_MANA"], -- need this option for createBar() to work
+      colorMana = self._powerEventColorTable["UNIT_MANA"],
+      colorRage = self._powerEventColorTable["UNIT_RAGE"],
+      colorFocus = self._powerEventColorTable["UNIT_FOCUS"],
+      colorEnergy = self._powerEventColorTable["UNIT_ENERGY"],
+      colorRunicPower = self._powerEventColorTable["UNIT_RUNIC_POWER"],
+      border = "None"
+    }
+  }
+
   self.mainFrame = nil
-  self.currentPowerColorEdited = _powerEventColorTable["UNIT_MANA"]
+  self.currentPowerColorEdited = self._powerEventColorTable["UNIT_MANA"]
 
   self._timeSinceLastUpdate = 0
   self._prevTargetPower47 = UnitPowerMax(self.unit)
@@ -73,25 +77,58 @@ function TargetPower47:__init__()
 
   self._barTemplateDefaults = BarTemplateDefaults:new()
   self._newDefaults = self._barTemplateDefaults.defaults
-  Utils47:replaceTableValue(self._newDefaults.profile, _defaults.profile)
+  Utils47:replaceTableValue(self._newDefaults.profile, self._defaults.profile)
 end
 
+---Do init tasks here, like loading the Saved Variables,
+---Or setting up slash commands.
 function TargetPower47:OnInitialize()
   self:__init__()
 
   self.db = ZxSimpleUI.db:RegisterNamespace(MODULE_NAME, self._newDefaults)
   self._curDbProfile = self.db.profile
   -- Always set the showbar option to false on initialize
-  self._curDbProfile.showbar = _defaults.profile.showbar
+  self._curDbProfile.showbar = self._defaults.profile.showbar
 
   self.bars = BarTemplate:new(self.db)
 
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(MODULE_NAME))
 end
 
-function TargetPower47:OnEnable() self:handleOnEnable() end
+---Do more initialization here, that really enables the use of your addon.
+---Register Events, Hook functions, Create Frames, Get information from
+---the game that wasn't available in OnInitialize
+function TargetPower47:OnEnable()
+  if self.mainFrame == nil then self:createBar() end
+  self:_registerEvents()
+  self.mainFrame:Show()
+end
 
-function TargetPower47:OnDisable() self:handleOnDisable() end
+---Unhook, Unregister Events, Hide frames that you created.
+---You would probably only use an OnDisable if you want to
+---build a "standby" mode, or be able to toggle modules on/off.
+function TargetPower47:OnDisable()
+  if self.mainFrame == nil then self:createBar() end
+  self:_unregisterEvents()
+  self.mainFrame:Hide()
+end
+
+-- For Frames that gets hidden often (e.g. Target frames)
+---@param curFrame table
+---Handle Blizzard's OnShow event
+function TargetPower47:OnShowBlizz(curFrame, ...)
+  if self:IsEnabled() then
+    self:_enableAllScriptHandlers()
+    -- Act as if target was just changed
+    self:_handlePlayerTargetChanged()
+  else
+    self.mainFrame:Hide()
+  end
+end
+
+---@param curFrame table
+---Handle Blizzard's OnHide event
+function TargetPower47:OnHideBlizz(curFrame, ...) self:_disableAllScriptHandlers() end
 
 function TargetPower47:createBar()
   self:_setUnitPowerType()
@@ -102,7 +139,6 @@ function TargetPower47:createBar()
   self.mainFrame.DECORATIVE_NAME = self.DECORATIVE_NAME
   self.mainFrame.frameToAnchorTo = self.bars.frameToAnchorTo
 
-  self:_registerEvents()
   self:_setOnShowOnHideHandlers()
   self:_enableAllScriptHandlers()
 
@@ -113,14 +149,8 @@ function TargetPower47:createBar()
 end
 
 function TargetPower47:refreshConfig()
-  -- if self:IsEnabled() and self.mainFrame:IsVisible() then self:handleOnEnable() end
-end
-
----Don't have to do anything here. Maybe in the future I'll add an option to disable this bar.
-function TargetPower47:handleEnableToggle() end
-
-function TargetPower47:handleOnEnable()
-  if self.mainFrame ~= nil then
+  self:handleEnableToggle()
+  if self:IsEnabled() and self.mainFrame:IsVisible() then
     --- if we are currently in shown mode
     if self._curDbProfile.showbar == true then
       self.mainFrame.statusBar:SetStatusBarColor(unpack(self.currentPowerColorEdited))
@@ -128,41 +158,51 @@ function TargetPower47:handleOnEnable()
       self.bars:refreshConfig()
       self:_setRefreshColor()
     end
-    self.mainFrame:Show()
   end
 end
 
-function TargetPower47:handleOnDisable() if self.mainFrame ~= nil then self.mainFrame:Hide() end end
+---Don't have to do anything here. Maybe in the future I'll add an option to disable this bar.
+function TargetPower47:handleEnableToggle() end
 
 function TargetPower47:handleShownOption() self.mainFrame:Show() end
 
 function TargetPower47:handleShownHideOption() self.mainFrame:Hide() end
+
+---Explicitly call OnEnable() and OnDisable() depending on the module's IsEnabled()
+---This function is exactly like refreshConfig(), except it is called only during initialization.
+function TargetPower47:initModuleEnableState()
+  self:refreshConfig()
+  if self:IsEnabled() then
+    self:OnEnable()
+  else
+    self:OnDisable()
+  end
+end
 
 -- ####################################
 -- # PRIVATE FUNCTIONS
 -- ####################################
 
 function TargetPower47:_registerEvents()
-  for powerEvent, _ in pairs(_powerEventColorTable) do
+  for powerEvent, _ in pairs(self._powerEventColorTable) do
     self.mainFrame:RegisterEvent(powerEvent)
   end
-  self.mainFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
-  self.mainFrame:RegisterEvent("UNIT_DISPLAYPOWER")
+  for _, event in pairs(self._eventTable) do self.mainFrame:RegisterEvent(event) end
+end
+
+function TargetPower47:_unregisterEvents()
+  for powerEvent, _ in pairs(self._powerEventColorTable) do
+    self.mainFrame:UnregisterEvent(powerEvent)
+  end
+  for _, event in pairs(self._eventTable) do self.mainFrame:UnregisterEvent(event) end
 end
 
 function TargetPower47:_setOnShowOnHideHandlers()
-  self.mainFrame:SetScript("OnShow", function(curFrame, ...)
-    if self:IsEnabled() then
-      self:_enableAllScriptHandlers()
-      -- Act as if target was just changed
-      self:_handlePlayerTargetChanged()
-    else
-      self.mainFrame:Hide()
-    end
-  end)
+  self.mainFrame:SetScript("OnShow",
+    function(curFrame, ...) self:OnShowBlizz(curFrame, ...) end)
 
   self.mainFrame:SetScript("OnHide",
-    function(curFrame, ...) self:_disableAllScriptHandlers() end)
+    function(curFrame, ...) self:OnHideBlizz(curFrame, ...) end)
 end
 
 function TargetPower47:_enableAllScriptHandlers()
@@ -185,7 +225,7 @@ function TargetPower47:_onEventHandler(curFrame, event, unit)
   elseif Utils47:stringEqualsIgnoreCase(unit, self.unit) then
     if Utils47:stringEqualsIgnoreCase(event, "UNIT_DISPLAYPOWER") then
       self:_handlePowerChanged()
-    elseif _powerEventColorTable[event] ~= nil then
+    elseif self._powerEventColorTable[event] ~= nil then
       self:_handleUnitPowerEvent()
     end
   end

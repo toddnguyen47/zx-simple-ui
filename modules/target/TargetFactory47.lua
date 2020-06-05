@@ -30,7 +30,10 @@ end
 ---the game that wasn't available in OnInitialize
 function TargetFactory47:OnEnable()
   self:createHealthOptions()
+  self:createPowerOptions()
+
   TargetHealth47:initModuleEnableState()
+  TargetPower47:initModuleEnableState()
 end
 
 ---Unhook, Unregister Events, Hide frames that you created.
@@ -43,6 +46,10 @@ function TargetFactory47:OnDisable() end
 -- ####################################
 function TargetFactory47:createHealthOptions()
   self:_createOptionsHelper(TargetHealth47, BarTemplateOptions)
+end
+
+function TargetFactory47:createPowerOptions()
+  self:_createOptionsHelper(TargetPower47, Power47Options)
 end
 
 -- ####################################

@@ -31,9 +31,11 @@ end
 function TargetFactory47:OnEnable()
   self:createHealthOptions()
   self:createPowerOptions()
+  self:createNameOptions()
 
   TargetHealth47:initModuleEnableState()
   TargetPower47:initModuleEnableState()
+  TargetName47:initModuleEnableState()
 end
 
 ---Unhook, Unregister Events, Hide frames that you created.
@@ -50,6 +52,10 @@ end
 
 function TargetFactory47:createPowerOptions()
   self:_createOptionsHelper(TargetPower47, Power47Options)
+end
+
+function TargetFactory47:createNameOptions()
+  self:_createOptionsHelper(TargetName47, BarTemplateEnableOptions)
 end
 
 -- ####################################

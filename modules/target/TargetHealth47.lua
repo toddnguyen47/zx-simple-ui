@@ -101,11 +101,15 @@ function TargetHealth47:createBar()
   local percentage = ZxSimpleUI:calcPercentSafely(targetUnitHealth, targetUnitMaxHealth)
 
   self.mainFrame = self.bars:createBar(percentage)
+  self.mainFrame.DECORATIVE_NAME = self.DECORATIVE_NAME
+  self.mainFrame.frameToAnchorTo = ZxSimpleUI:getFrameListFrame(self._curDbProfile.framePool)
 
   self:_setOnShowOnHideHandlers()
   self:_enableAllScriptHandlers()
 
   RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
+  ZxSimpleUI:addToFrameList(self.MODULE_NAME,
+    {frame = self.mainFrame, name = self.DECORATIVE_NAME})
 
   self.mainFrame:Hide()
   return self.mainFrame

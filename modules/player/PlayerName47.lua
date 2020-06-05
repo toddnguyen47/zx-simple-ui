@@ -1,7 +1,7 @@
 -- #region
 --- upvalues to prevent warnings
 local LibStub = LibStub
-local UnitName = UnitName
+local UnitName, UnitLevel = UnitName, UnitLevel
 
 --- include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
@@ -27,7 +27,7 @@ function PlayerName47:__init__()
       width = 200,
       height = 26,
       xoffset = 0,
-      yoffset = 0,
+      yoffset = 2,
       relativePoint = "TOPLEFT",
       fontsize = 14,
       font = "PT Sans Bold",
@@ -120,7 +120,9 @@ end
 ---@return string formattedName
 function PlayerName47:_getFormattedName()
   local name = UnitName(self.unit)
-  return Utils47:getInitials(name)
+  name = Utils47:getInitials(name)
+  local level = UnitLevel(self.unit)
+  return string.format("%s (%s)", name, level)
 end
 
 function PlayerName47:_setOnShowOnHideHandlers()

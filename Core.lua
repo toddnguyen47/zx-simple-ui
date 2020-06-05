@@ -93,16 +93,17 @@ function ZxSimpleUI:getModuleEnabledState(module)
   return self.db.profile["modules"][module]["enabled"]
 end
 
----@param module string
+---@param moduleName string
 ---@param isEnabled boolean
-function ZxSimpleUI:setModuleEnabledState(module, isEnabled)
-  local oldEnabledValue = self.db.profile["modules"][module]["enabled"]
-  self.db.profile["modules"][module]["enabled"] = isEnabled
+function ZxSimpleUI:setModuleEnabledState(moduleName, isEnabled)
+  local oldEnabledValue = self.db.profile["modules"][moduleName]["enabled"]
+  self.db.profile["modules"][moduleName]["enabled"] = isEnabled
+
   if oldEnabledValue ~= isEnabled then
     if isEnabled then
-      self:EnableModule(module)
+      self:EnableModule(moduleName)
     else
-      self:DisableModule(module)
+      self:DisableModule(moduleName)
     end
   end
 end

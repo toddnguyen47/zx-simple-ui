@@ -70,7 +70,10 @@ end
 ---Unhook, Unregister Events, Hide frames that you created.
 ---You would probably only use an OnDisable if you want to
 ---build a "standby" mode, or be able to toggle modules on/off.
-function PlayerHealth47:OnDisable() if self.mainFrame ~= nil then self.mainFrame:Hide() end end
+function PlayerHealth47:OnDisable()
+  if self.mainFrame == nil then self:createBar() end
+  self.mainFrame:Hide()
+end
 
 function PlayerHealth47:refreshConfig()
   self:handleEnableToggle()
@@ -97,6 +100,17 @@ function PlayerHealth47:createBar()
   ZxSimpleUI:addToFrameList(self.MODULE_NAME,
     {frame = self.mainFrame, name = self.DECORATIVE_NAME})
   return self.mainFrame
+end
+
+---Explicitly call OnEnable() and OnDisable() depending on the module's IsEnabled()
+---This function is exactly like refreshConfig(), except it is called only during initialization.
+function PlayerHealth47:initModuleEnableState()
+  self:refreshConfig()
+  if self:IsEnabled() then
+    self:OnEnable()
+  else
+    self:OnDisable()
+  end
 end
 
 -- ####################################

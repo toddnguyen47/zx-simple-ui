@@ -101,3 +101,12 @@ function Utils47:floorToEven(numberInput)
   if num % 2 == 1 then num = num + 1 end
   return num
 end
+
+---@param frame table
+function Utils47:printIsShown(frame)
+  if frame:IsShown() then
+    print("Shown!")
+  else
+    print("Hidden ;(")
+  end
+end

@@ -18,6 +18,10 @@ function InterfaceModule:OnEnable() end
 ---build a "standby" mode, or be able to toggle modules on/off.
 function InterfaceModule:OnDisable() end
 
+---Explicitly call OnEnable() and OnDisable() depending on the module's IsEnabled()
+---This function is exactly like refreshConfig(), except it is called only during initialization.
+function InterfaceModule:initModuleEnableState() end
+
 function InterfaceModule:createBar() end
 function InterfaceModule:refreshConfig() end
 function InterfaceModule:handleEnableToggle() end

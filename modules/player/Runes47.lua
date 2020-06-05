@@ -5,14 +5,10 @@ local CreateFrame, UnitClass = CreateFrame, UnitClass
 
 --- include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
-local PlayerPower47 = ZxSimpleUI:GetModule("PlayerPower47")
 local media = LibStub("LibSharedMedia-3.0")
 
 -- #region
 local Utils47 = ZxSimpleUI.Utils47
-local BarTemplateDefaults = ZxSimpleUI.prereqTables["BarTemplateDefaults"]
-local BarTemplate = ZxSimpleUI.prereqTables["BarTemplate"]
-local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
 
 local MODULE_NAME = "Runes47"
 local DECORATIVE_NAME = "Runes Display"
@@ -83,16 +79,14 @@ end
 ---You would probably only use an OnDisable if you want to
 ---build a "standby" mode, or be able to toggle modules on/off.
 function Runes47:OnDisable()
-  if self.mainFrame ~= nil then
-    self:_unregisterAllEvents()
-    self:_disableAllScriptHandlers()
-    self.mainFrame:Hide()
-  end
+  if self.mainFrame == nil then self:createBar() end
+  self:_unregisterAllEvents()
+  self:_disableAllScriptHandlers()
+  self.mainFrame:Hide()
 end
 
 function Runes47:createBar()
-  if PlayerPower47.mainFrame == nil then PlayerPower47:createBar() end
-  self._frameToAnchorTo = PlayerPower47.mainFrame
+  self._frameToAnchorTo = ZxSimpleUI:getFrameListFrame(self._curDbProfile.framePool)
 
   self.mainFrame = CreateFrame("Frame", nil, self._frameToAnchorTo)
   self.mainFrame.DECORATIVE_NAME = self.DECORATIVE_NAME
@@ -115,7 +109,7 @@ function Runes47:refreshConfig()
 end
 
 function Runes47:handleEnableToggle()
-  ZxSimpleUI:setModuleEnabledState(MODULE_NAME, self._curDbProfile.enabledToggle)
+  ZxSimpleUI:setModuleEnabledState(self.MODULE_NAME, self._curDbProfile.enabledToggle)
 end
 
 function Runes47:handleShownOption()
@@ -123,7 +117,16 @@ function Runes47:handleShownOption()
   self.mainFrame:Show()
 end
 
-function Runes47:handleShownHideOption() self.mainFrame:Hide() end
+---Explicitly call OnEnable() and OnDisable() depending on the module's IsEnabled()
+---This function is exactly like refreshConfig(), except it is called only during initialization.
+function Runes47:initModuleEnableState()
+  self:refreshConfig()
+  if self:IsEnabled() then
+    self:OnEnable()
+  else
+    self:OnDisable()
+  end
+end
 
 -- ####################################
 -- # PRIVATE FUNCTIONS
@@ -136,6 +139,8 @@ function Runes47:_refreshAll()
 end
 
 function Runes47:_refreshBarFrame()
+  self._frameToAnchorTo = ZxSimpleUI:getFrameListFrame(self._curDbProfile.framePool)
+
   self.mainFrame:SetWidth(self._frameToAnchorTo:GetWidth())
   self.mainFrame:SetHeight(self._curDbProfile.height)
   self.mainFrame:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details

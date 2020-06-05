@@ -72,11 +72,10 @@ end
 ---You would probably only use an OnDisable if you want to
 ---build a "standby" mode, or be able to toggle modules on/off.
 function Totems47:OnDisable()
-  if self.mainFrame ~= nil then
-    self:_unregisterAllEvents()
-    self:_disableAllScriptHandlers()
-    self.mainFrame:Hide()
-  end
+  if self.mainFrame == nil then self:createBar() end
+  self:_unregisterAllEvents()
+  self:_disableAllScriptHandlers()
+  self.mainFrame:Hide()
 end
 
 function Totems47:createBar()
@@ -101,6 +100,17 @@ end
 
 function Totems47:handleEnableToggle()
   ZxSimpleUI:setModuleEnabledState(MODULE_NAME, self._curDbProfile.enabledToggle)
+end
+
+---Explicitly call OnEnable() and OnDisable() depending on the module's IsEnabled()
+---This function is exactly like refreshConfig(), except it is called only during initialization.
+function Totems47:initModuleEnableState()
+  self:refreshConfig()
+  if self:IsEnabled() then
+    self:OnEnable()
+  else
+    self:OnDisable()
+  end
 end
 
 -- ####################################

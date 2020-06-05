@@ -87,7 +87,7 @@ function BarTemplateOptions:getOptionTable()
                 end
                 return t1
               end,
-              order = 9
+              order = 10
             },
             selfCurrentPoint = {
               name = "Point",

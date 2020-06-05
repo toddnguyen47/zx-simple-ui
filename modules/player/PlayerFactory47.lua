@@ -40,22 +40,12 @@ function PlayerFactory47:OnEnable()
   self:createTotemOptions()
   self:createPetHealthOptions()
 
-  local frame = FramePool47:getFrame()
-  local timeSinceLastUpdate = 0
-  frame:SetScript("OnUpdate", function(curFrame, elapsed)
-    timeSinceLastUpdate = timeSinceLastUpdate + elapsed
-    if (elapsed > 1.0) then
-      frame:SetScript("OnUpdate", nil)
-      FramePool47:releaseFrame(frame)
-
-      PlayerHealth47:refreshConfig()
-      PlayerPower47:refreshConfig()
-      PlayerName47:refreshConfig()
-      Runes47:refreshConfig()
-      Totems47:refreshConfig()
-      PetHealth47:refreshConfig()
-    end
-  end)
+  PlayerHealth47:initModuleEnableState()
+  PlayerPower47:initModuleEnableState()
+  PlayerName47:initModuleEnableState()
+  Runes47:initModuleEnableState()
+  Totems47:initModuleEnableState()
+  PetHealth47:initModuleEnableState()
 end
 
 ---Unhook, Unregister Events, Hide frames that you created.

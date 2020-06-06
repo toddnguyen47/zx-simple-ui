@@ -50,7 +50,7 @@ function PlayerPower47:__init__()
       fontsize = 16,
       font = "PT Sans Bold",
       fontcolor = {1.0, 1.0, 1.0},
-      texture = "Skewed",
+      texture = "GrayVertGradient",
       color = self._powerEventColorTable["UNIT_MANA"], -- need this option for createBar() to work
       colorMana = self._powerEventColorTable["UNIT_MANA"],
       colorRage = self._powerEventColorTable["UNIT_RAGE"],

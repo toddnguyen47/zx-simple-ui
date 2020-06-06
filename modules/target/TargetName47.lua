@@ -29,7 +29,7 @@ function TargetName47:__init__()
       fontsize = 14,
       font = "PT Sans Bold",
       fontcolor = {1.0, 1.0, 1.0},
-      texture = "Skewed",
+      texture = "GrayVertGradient",
       color = {0.0, 0.0, 0.0, 1.0},
       border = "None",
       enabledToggle = true,

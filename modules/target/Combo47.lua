@@ -27,7 +27,7 @@ function Combo47:__init__()
   self._eventTable = {"PLAYER_TARGET_CHANGED", "UNIT_COMBO_POINTS"}
   self._defaults = {
     profile = {
-      texture = "Skewed",
+      texture = "GrayVertGradient",
       mediumComboPoints = 3,
       lowComboColor = {1.0, 1.0, 0.0, 1.0},
       medComboColor = {1.0, 0.65, 0.0, 1.0},

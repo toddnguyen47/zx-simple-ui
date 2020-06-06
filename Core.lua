@@ -16,6 +16,10 @@ local basePath = "Interface\\AddOns\\ZxSimpleUI\\media\\"
 media:Register("font", "PT Sans Bold", basePath .. "fonts\\PTSansBold.ttf")
 media:Register("statusbar", "Skewed", basePath .. "textures\\Skewed.tga")
 media:Register("statusbar", "Smooth", basePath .. "textures\\Smooth.tga")
+media:Register("statusbar", "White", basePath .. "textures\\White.tga")
+media:Register("statusbar", "Gray", basePath .. "textures\\Gray.tga")
+media:Register("statusbar", "GrayVertGradient", basePath .. "textures\\GrayVertGradient.tga")
+media:Register("statusbar", "GrayDiagonals", basePath .. "textures\\GrayDiagonals.tga")
 
 --- All this below is needed!
 ZxSimpleUI.ADDON_NAME = ADDON_NAME

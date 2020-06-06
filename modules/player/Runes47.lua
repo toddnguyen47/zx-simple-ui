@@ -26,7 +26,7 @@ function Runes47:__init__()
   self._defaults = {
     profile = {
       enabledToggle = Runes47.PLAYER_ENGLISH_CLASS == "DEATHKNIGHT",
-      texture = "Skewed",
+      texture = "GrayVertGradient",
       height = 6,
       horizGap = 2,
       yoffset = 0,

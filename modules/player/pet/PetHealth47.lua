@@ -32,7 +32,7 @@ function PetHealth47:__init__()
       xoffset = 0,
       yoffset = -2,
       fontsize = 14,
-      font = "PT Sans Bold",
+      font = "Lato Bold",
       fontcolor = {1.0, 1.0, 1.0},
       texture = "GrayVertGradient",
       color = {0.0, 1.0, 0.0, 1.0},

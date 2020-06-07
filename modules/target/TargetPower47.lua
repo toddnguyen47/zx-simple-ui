@@ -55,7 +55,7 @@ function TargetPower47:__init__()
       xoffset = 700,
       yoffset = 240,
       fontsize = 16,
-      font = "PT Sans Bold",
+      font = "Lato Bold",
       fontcolor = {1.0, 1.0, 1.0},
       texture = "GrayVertGradient",
       color = self._powerEventColorTable["UNIT_MANA"], -- need this option for createBar() to work

@@ -27,7 +27,7 @@ function Totems47:__init__()
       enabledToggle = Totems47.PLAYER_ENGLISH_CLASS == "SHAMAN",
       height = 35,
       yoffset = -2,
-      font = "PT Sans Bold",
+      font = "Lato Bold",
       fontsize = 14,
       fontcolor = {1.0, 1.0, 1.0},
       outline = true,

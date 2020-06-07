@@ -30,7 +30,7 @@ function PlayerName47:__init__()
       yoffset = 2,
       relativePoint = "TOPLEFT",
       fontsize = 14,
-      font = "PT Sans Bold",
+      font = "Lato Bold",
       fontcolor = {1.0, 1.0, 1.0},
       texture = "GrayVertGradient",
       color = {0.0, 0.0, 0.0, 1.0},

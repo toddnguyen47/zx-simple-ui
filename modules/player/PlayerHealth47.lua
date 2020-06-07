@@ -29,7 +29,7 @@ function PlayerHealth47:__init__()
       xoffset = 400,
       yoffset = 268,
       fontsize = 16,
-      font = "PT Sans Bold",
+      font = "Lato Bold",
       fontcolor = {1.0, 1.0, 1.0},
       texture = "GrayVertGradient",
       color = {0.0, 1.0, 0.0, 1.0},

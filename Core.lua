@@ -12,14 +12,20 @@ local ZxSimpleUI = LibStub("AceAddon-3.0"):NewAddon(ADDON_NAME, "AceConsole-3.0"
 
 ---LibSharedMedia registers
 local media = LibStub("LibSharedMedia-3.0")
+-- #region
 local basePath = "Interface\\AddOns\\ZxSimpleUI\\media\\"
-media:Register("font", "PT Sans Bold", basePath .. "fonts\\PTSansBold.ttf")
+media:Register("font", "Lato", basePath .. "fonts\\Lato\\Lato-Regular.ttf")
+media:Register("font", "Lato Bold", basePath .. "fonts\\Lato\\Lato-Bold.ttf")
+media:Register("font", "PT Sans", basePath .. "fonts\\PT_Sans\\PTSans-Regular.ttf")
+media:Register("font", "PT Sans Bold", basePath .. "fonts\\PT_Sans\\PTSans-Bold.ttf")
+
 media:Register("statusbar", "Skewed", basePath .. "textures\\Skewed.tga")
 media:Register("statusbar", "Smooth", basePath .. "textures\\Smooth.tga")
 media:Register("statusbar", "White", basePath .. "textures\\White.tga")
 media:Register("statusbar", "Gray", basePath .. "textures\\Gray.tga")
 media:Register("statusbar", "GrayVertGradient", basePath .. "textures\\GrayVertGradient.tga")
 media:Register("statusbar", "GrayDiagonals", basePath .. "textures\\GrayDiagonals.tga")
+-- #endregion
 
 --- All this below is needed!
 ZxSimpleUI.ADDON_NAME = ADDON_NAME

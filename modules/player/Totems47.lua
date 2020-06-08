@@ -139,7 +139,7 @@ function Totems47:_refreshTotemBars()
 
   -- Important! Do a regular for loop so we can use self.TOTEM_MAP
   for id = 1, MAX_TOTEMS do
-    local totemFrame = self._totemBarList[self.TOTEM_MAP[id]]
+    local totemFrame = self:_getActualTotemStatusBar(id)
     totemFrame:SetWidth(mainFrameHeight)
     totemFrame:SetHeight(mainFrameHeight)
     totemFrame.durationText:SetFont(media:Fetch("font", self._curDbProfile.font),
@@ -151,7 +151,7 @@ function Totems47:_refreshTotemBars()
       totemFrame:SetPoint("TOPLEFT", self._frameToAnchorTo, "BOTTOMLEFT", 0,
         self._curDbProfile.yoffset)
     else
-      totemFrame:SetPoint("TOPLEFT", self._totemBarList[self.TOTEM_MAP[id - 1]], "TOPRIGHT",
+      totemFrame:SetPoint("TOPLEFT", self:_getActualTotemStatusBar(id - 1), "TOPRIGHT",
         horizGap, 0)
     end
   end
@@ -268,4 +268,11 @@ function Totems47:_getFontFlags()
   if self._curDbProfile.monochrome then s = s .. "MONOCHROME, " end
   if s ~= "" then s = string.sub(s, 0, (string.len(s) - 2)) end
   return s
+end
+
+---@param id integer
+---@return table
+function Totems47:_getActualTotemStatusBar(id)
+  local mappedId = self.TOTEM_MAP[id]
+  return self._totemBarList[mappedId]
 end

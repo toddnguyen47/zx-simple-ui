@@ -164,7 +164,7 @@ function Runes47:_refreshRuneFrames()
 
   -- Important! Do a regular for loop so we can use self.RUNE_MAP
   for id = 1, self.MAX_RUNE_NUMBER do
-    local runeStatusBar = self._runeBarList[self.RUNE_MAP[id]]
+    local runeStatusBar = self:_getActualRuneStatusBar(id)
     runeStatusBar:SetWidth(runeWidth)
     runeStatusBar:SetHeight(self._curDbProfile.height)
     runeStatusBar:SetStatusBarTexture(media:Fetch("statusbar", self._curDbProfile.texture),
@@ -177,7 +177,7 @@ function Runes47:_refreshRuneFrames()
       runeStatusBar:SetPoint("TOPLEFT", self._frameToAnchorTo, "BOTTOMLEFT", 0,
         self._curDbProfile.yoffset)
     else
-      runeStatusBar:SetPoint("TOPLEFT", self._runeBarList[self.RUNE_MAP[id - 1]], "TOPRIGHT",
+      runeStatusBar:SetPoint("TOPLEFT", self:_getActualRuneStatusBar(id - 1), "TOPRIGHT",
         self._curDbProfile.horizGap, 0)
     end
   end
@@ -267,4 +267,14 @@ function Runes47:_handleRuneCooldownComplete(runeFrame)
   runeFrame:SetValue(10)
   runeFrame:SetAlpha(1.0)
   runeFrame:SetScript("OnUpdate", nil)
+end
+
+---@param id integer
+---@return table
+---Use RUNE_MAP to get the actual rune that's currently being displayed.
+---Blizzard displays runes as
+---`[1 2 5 6 3 4]`
+function Runes47:_getActualRuneStatusBar(id)
+  local mappedId = self.RUNE_MAP[id]
+  return self._runeBarList[mappedId]
 end

@@ -11,17 +11,17 @@ function BarTemplateDefaults:__init__()
     profile = {
       width = 200,
       height = 26,
-      xoffset = 400,
-      yoffset = 280,
+      xoffset = 0,
+      yoffset = 0,
       fontsize = 16,
       font = "Lato Bold",
       fontcolor = {1.0, 1.0, 1.0},
       texture = "GrayVertGradient",
       color = {0.0, 1.0, 0.0, 1.0},
       border = "None",
+      framePool = "UIParent",
       selfCurrentPoint = "BOTTOMLEFT",
-      relativePoint = "BOTTOMLEFT",
-      framePool = "UIParent"
+      relativePoint = "BOTTOMLEFT"
     }
   }
 end

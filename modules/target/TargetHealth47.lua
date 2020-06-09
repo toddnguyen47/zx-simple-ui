@@ -30,14 +30,17 @@ function TargetHealth47:__init__()
     profile = {
       width = 200,
       height = 26,
-      xoffset = 700,
-      yoffset = 268,
+      xoffset = 180,
+      yoffset = -100,
       fontsize = 16,
       font = "Lato Bold",
       fontcolor = {1.0, 1.0, 1.0},
       texture = "GrayVertGradient",
       color = {0.0, 1.0, 0.0, 1.0},
-      border = "None"
+      border = "None",
+      framePool = "UIParent",
+      selfCurrentPoint = "CENTER",
+      relativePoint = "CENTER"
     }
   }
   self._eventTable = {"UNIT_HEALTH", "PLAYER_TARGET_CHANGED"}

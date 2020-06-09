@@ -52,8 +52,8 @@ function TargetPower47:__init__()
       showbar = false,
       width = 200,
       height = 26,
-      xoffset = 700,
-      yoffset = 240,
+      xoffset = 0,
+      yoffset = -2,
       fontsize = 16,
       font = "Lato Bold",
       fontcolor = {1.0, 1.0, 1.0},
@@ -64,7 +64,10 @@ function TargetPower47:__init__()
       colorFocus = self._powerEventColorTable["UNIT_FOCUS"],
       colorEnergy = self._powerEventColorTable["UNIT_ENERGY"],
       colorRunicPower = self._powerEventColorTable["UNIT_RUNIC_POWER"],
-      border = "None"
+      border = "None",
+      framePool = "TargetHealth47",
+      selfCurrentPoint = "TOPLEFT",
+      relativePoint = "BOTTOMLEFT"
     }
   }
 

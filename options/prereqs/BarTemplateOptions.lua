@@ -57,7 +57,7 @@ function BarTemplateOptions:getOptionTable()
           type = "range",
           min = 0,
           max = Utils47:floorToEven(ZxSimpleUI.SCREEN_WIDTH / 2),
-          step = 2,
+          step = 1,
           order = self._coreOptions47:incrementOrderIndex()
         },
         height = {
@@ -66,7 +66,7 @@ function BarTemplateOptions:getOptionTable()
           type = "range",
           min = 0,
           max = Utils47:floorToEven(ZxSimpleUI.SCREEN_WIDTH / 2),
-          step = 2,
+          step = 1,
           order = self._coreOptions47:incrementOrderIndex()
         },
         setpoint = {
@@ -131,7 +131,7 @@ function BarTemplateOptions:getOptionTable()
           type = "range",
           min = -Utils47:floorToEven(ZxSimpleUI.SCREEN_WIDTH / 2),
           max = Utils47:floorToEven(ZxSimpleUI.SCREEN_WIDTH / 2),
-          step = 2,
+          step = 1,
           order = self._coreOptions47:incrementOrderIndex()
         },
         zeroXOffset = {
@@ -149,7 +149,7 @@ function BarTemplateOptions:getOptionTable()
           type = "range",
           min = -Utils47:floorToEven(ZxSimpleUI.SCREEN_HEIGHT / 2),
           max = Utils47:floorToEven(ZxSimpleUI.SCREEN_HEIGHT / 2),
-          step = 2,
+          step = 1,
           order = self._coreOptions47:incrementOrderIndex()
         },
         zeroYOffset = {

@@ -125,17 +125,6 @@ end
 ---Don't have to do anything here. Maybe in the future I'll add an option to disable this bar.
 function TargetHealth47:handleEnableToggle() end
 
----Explicitly call OnEnable() and OnDisable() depending on the module's IsEnabled()
----This function is exactly like refreshConfig(), except it is called only during initialization.
-function TargetHealth47:initModuleEnableState()
-  self:refreshConfig()
-  if self:IsEnabled() then
-    self:OnEnable()
-  else
-    self:OnDisable()
-  end
-end
-
 -- ####################################
 -- # PRIVATE FUNCTIONS
 -- ####################################

@@ -33,10 +33,10 @@ function TargetFactory47:OnEnable()
   self:createNameOptions()
   self:createComboOptions()
 
-  TargetHealth47:initModuleEnableState()
-  TargetPower47:initModuleEnableState()
-  TargetName47:initModuleEnableState()
-  Combo47:initModuleEnableState()
+  self:_initModuleEnableState(TargetHealth47)
+  self:_initModuleEnableState(TargetPower47)
+  self:_initModuleEnableState(TargetName47)
+  self:_initModuleEnableState(Combo47)
 end
 
 ---Unhook, Unregister Events, Hide frames that you created.
@@ -78,3 +78,15 @@ function TargetFactory47:_createOptionsHelper(curModule, optionObject)
   return optionInstance.options
 end
 
+---@param curModule table
+---Explicitly call OnEnable() and OnDisable() depending on the module's IsEnabled()
+---This function is exactly like refreshConfig(), except it is called only during initialization.
+function TargetFactory47:_initModuleEnableState(curModule)
+  if type(curModule.handleEnableToggle) == "function" then curModule:handleEnableToggle() end
+  if curModule:IsEnabled() then
+    curModule:OnEnable()
+  else
+    curModule:OnDisable()
+  end
+  curModule:refreshConfig()
+end

@@ -135,17 +135,6 @@ function Combo47:handleShownHideOption()
   self:_handleComboPoints()
 end
 
----Explicitly call OnEnable() and OnDisable() depending on the module's IsEnabled()
----This function is exactly like refreshConfig(), except it is called only during initialization.
-function Combo47:initModuleEnableState()
-  self:refreshConfig()
-  if self:IsEnabled() then
-    self:OnEnable()
-  else
-    self:OnDisable()
-  end
-end
-
 -- ####################################
 -- # PRIVATE FUNCTIONS
 -- ####################################

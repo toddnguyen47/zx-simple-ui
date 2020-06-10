@@ -193,6 +193,7 @@ end
 function TargetName47:_getFormattedName()
   local name = UnitName(self.unit) or ""
   local level = UnitLevel(self.unit) or ""
+  if tonumber(level) < 0 then level = "??" end
   local formattedName = Utils47:getInitials(name)
   formattedName = string.format("%s (%s)", formattedName, level)
   local unitClassification = UnitClassification(self.unit)

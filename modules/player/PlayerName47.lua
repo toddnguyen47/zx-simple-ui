@@ -122,7 +122,8 @@ function PlayerName47:_getFormattedName()
   local name = UnitName(self.unit)
   name = Utils47:getInitials(name)
   local level = UnitLevel(self.unit)
-  return string.format("%s (%s)", name, level)
+  if tonumber(level) < 0 then level = "??" end
+  return string.format("%s (%s)", name, tostring(level))
 end
 
 function PlayerName47:_setOnShowOnHideHandlers()

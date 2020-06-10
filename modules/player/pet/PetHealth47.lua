@@ -111,17 +111,6 @@ function PetHealth47:handleEnableToggle()
   ZxSimpleUI:setModuleEnabledState(MODULE_NAME, self._curDbProfile.enabledToggle)
 end
 
----Explicitly call OnEnable() and OnDisable() depending on the module's IsEnabled()
----This function is exactly like refreshConfig(), except it is called only during initialization.
-function PetHealth47:initModuleEnableState()
-  self:refreshConfig()
-  if self:IsEnabled() then
-    self:OnEnable()
-  else
-    self:OnDisable()
-  end
-end
-
 -- ####################################
 -- # PRIVATE FUNCTIONS
 -- ####################################

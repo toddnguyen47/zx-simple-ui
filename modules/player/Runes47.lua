@@ -118,17 +118,6 @@ function Runes47:handleShownOption()
   self.mainFrame:Show()
 end
 
----Explicitly call OnEnable() and OnDisable() depending on the module's IsEnabled()
----This function is exactly like refreshConfig(), except it is called only during initialization.
-function Runes47:initModuleEnableState()
-  self:refreshConfig()
-  if self:IsEnabled() then
-    self:OnEnable()
-  else
-    self:OnDisable()
-  end
-end
-
 -- ####################################
 -- # PRIVATE FUNCTIONS
 -- ####################################

@@ -102,17 +102,6 @@ function PlayerName47:handleEnableToggle()
   ZxSimpleUI:setModuleEnabledState(self.MODULE_NAME, self._curDbProfile.enabledToggle)
 end
 
----Explicitly call OnEnable() and OnDisable() depending on the module's IsEnabled()
----This function is exactly like refreshConfig(), except it is called only during initialization.
-function PlayerName47:initModuleEnableState()
-  self:refreshConfig()
-  if self:IsEnabled() then
-    self:OnEnable()
-  else
-    self:OnDisable()
-  end
-end
-
 -- ####################################
 -- # PRIVATE FUNCTIONS
 -- ####################################

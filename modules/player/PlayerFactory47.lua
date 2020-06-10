@@ -1,7 +1,8 @@
 -- #region
 --- include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
-local FramePool47 = ZxSimpleUI.FramePool47
+local CoreFactory47 = ZxSimpleUI.CoreFactory47
+
 local PlayerHealth47 = ZxSimpleUI:GetModule("PlayerHealth47")
 local PlayerPower47 = ZxSimpleUI:GetModule("PlayerPower47")
 local PlayerName47 = ZxSimpleUI:GetModule("PlayerName47")
@@ -41,13 +42,13 @@ function PlayerFactory47:OnEnable()
   self:createPetHealthOptions()
   self:createPetPowerOptions()
 
-  self:_initModuleEnableState(PlayerHealth47)
-  self:_initModuleEnableState(PlayerPower47)
-  self:_initModuleEnableState(PlayerName47)
-  self:_initModuleEnableState(Runes47)
-  self:_initModuleEnableState(Totems47)
-  self:_initModuleEnableState(PetHealth47)
-  self:_initModuleEnableState(PetPower47)
+  CoreFactory47:initModuleEnableState(PlayerHealth47)
+  CoreFactory47:initModuleEnableState(PlayerPower47)
+  CoreFactory47:initModuleEnableState(PlayerName47)
+  CoreFactory47:initModuleEnableState(Runes47)
+  CoreFactory47:initModuleEnableState(Totems47)
+  CoreFactory47:initModuleEnableState(PetHealth47)
+  CoreFactory47:initModuleEnableState(PetPower47)
 end
 
 ---Unhook, Unregister Events, Hide frames that you created.
@@ -108,17 +109,4 @@ function PlayerFactory47:_createOptionsHelper(curModule, optionObject)
   local optionInstance = optionObject:new(curModule)
   optionInstance:registerModuleOptionsTable()
   return optionInstance.options
-end
-
----@param curModule table
----Explicitly call OnEnable() and OnDisable() depending on the module's IsEnabled()
----This function is exactly like refreshConfig(), except it is called only during initialization.
-function PlayerFactory47:_initModuleEnableState(curModule)
-  if type(curModule.handleEnableToggle) == "function" then curModule:handleEnableToggle() end
-  if curModule:IsEnabled() then
-    curModule:OnEnable()
-  else
-    curModule:OnDisable()
-  end
-  curModule:refreshConfig()
 end

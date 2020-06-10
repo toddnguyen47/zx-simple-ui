@@ -1,6 +1,8 @@
 -- #region
 --- include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
+local CoreFactory47 = ZxSimpleUI.CoreFactory47
+
 local TargetHealth47 = ZxSimpleUI:GetModule("TargetHealth47")
 local TargetName47 = ZxSimpleUI:GetModule("TargetName47")
 local TargetPower47 = ZxSimpleUI:GetModule("TargetPower47")
@@ -33,10 +35,10 @@ function TargetFactory47:OnEnable()
   self:createNameOptions()
   self:createComboOptions()
 
-  self:_initModuleEnableState(TargetHealth47)
-  self:_initModuleEnableState(TargetPower47)
-  self:_initModuleEnableState(TargetName47)
-  self:_initModuleEnableState(Combo47)
+  CoreFactory47:initModuleEnableState(TargetHealth47)
+  CoreFactory47:initModuleEnableState(TargetPower47)
+  CoreFactory47:initModuleEnableState(TargetName47)
+  CoreFactory47:initModuleEnableState(Combo47)
 end
 
 ---Unhook, Unregister Events, Hide frames that you created.
@@ -76,17 +78,4 @@ function TargetFactory47:_createOptionsHelper(curModule, optionObject)
   local optionInstance = optionObject:new(curModule)
   optionInstance:registerModuleOptionsTable()
   return optionInstance.options
-end
-
----@param curModule table
----Explicitly call OnEnable() and OnDisable() depending on the module's IsEnabled()
----This function is exactly like refreshConfig(), except it is called only during initialization.
-function TargetFactory47:_initModuleEnableState(curModule)
-  if type(curModule.handleEnableToggle) == "function" then curModule:handleEnableToggle() end
-  if curModule:IsEnabled() then
-    curModule:OnEnable()
-  else
-    curModule:OnDisable()
-  end
-  curModule:refreshConfig()
 end

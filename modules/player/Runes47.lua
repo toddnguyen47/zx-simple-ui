@@ -5,6 +5,7 @@ local CreateFrame, UnitClass = CreateFrame, UnitClass
 
 --- include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
+local Animations47 = ZxSimpleUI.Animations47
 local media = LibStub("LibSharedMedia-3.0")
 
 -- #region
@@ -164,7 +165,9 @@ function Runes47:_refreshRuneFrames()
 
   -- Important! Do a regular for loop so we can use self.RUNE_MAP
   for id = 1, self.MAX_RUNE_NUMBER do
-    local runeStatusBar = self:_getActualRuneStatusBar(id)
+    local mappedId = self:_getMappedId(id)
+    local runeStatusBar = self._runeBarList[mappedId]
+    runeStatusBar.runeType = self.RUNE_TYPE_TABLE[GetRuneType(mappedId)]
     runeStatusBar:SetWidth(runeWidth)
     runeStatusBar:SetHeight(self._curDbProfile.height)
     runeStatusBar:SetStatusBarTexture(media:Fetch("statusbar", self._curDbProfile.texture),
@@ -177,7 +180,8 @@ function Runes47:_refreshRuneFrames()
       runeStatusBar:SetPoint("TOPLEFT", self._frameToAnchorTo, "BOTTOMLEFT", 0,
         self._curDbProfile.yoffset)
     else
-      runeStatusBar:SetPoint("TOPLEFT", self:_getActualRuneStatusBar(id - 1), "TOPRIGHT",
+      local leftId = self:_getMappedId(id - 1)
+      runeStatusBar:SetPoint("TOPLEFT", self._runeBarList[leftId], "TOPRIGHT",
         self._curDbProfile.horizGap, 0)
     end
   end
@@ -189,7 +193,6 @@ function Runes47:_createRuneFrames()
     runeStatusBar.parent = self.mainFrame
     runeStatusBar:SetFrameLevel(self.mainFrame:GetFrameLevel() + 1)
     runeStatusBar:SetMinMaxValues(0, 10)
-    runeStatusBar.runeType = self.RUNE_TYPE_TABLE[GetRuneType(id)]
     self._runeBarList[id] = runeStatusBar
   end
 end
@@ -236,45 +239,51 @@ function Runes47:_handleRunePowerUpdate(curFrame, event, id, usable)
     return
   end
 
-  local runeFrame = self._runeBarList[id]
+  local runeStatusBar = self._runeBarList[id]
   local startTime, duration, isRuneReady = GetRuneCooldown(id)
   if isRuneReady then
-    self:_handleRuneCooldownComplete(runeFrame)
+    self:_handleRuneCooldownComplete(runeStatusBar, id)
   else
-    runeFrame.startTime = startTime
-    runeFrame.duration = duration
+    runeStatusBar.startTime = startTime
+    runeStatusBar.duration = duration
     local currentTime = GetTime()
 
-    runeFrame:SetMinMaxValues(0, runeFrame.duration)
-    runeFrame:SetValue(currentTime - startTime)
-    runeFrame:SetAlpha(self._curDbProfile.runeCooldownAlpha)
-    runeFrame:SetScript("OnUpdate", function(curFrame, elapsedTime)
-      self:_monitorCurrentRune(curFrame, elapsedTime)
+    runeStatusBar:SetMinMaxValues(0, runeStatusBar.duration)
+    runeStatusBar:SetValue(currentTime - startTime)
+    runeStatusBar:SetAlpha(self._curDbProfile.runeCooldownAlpha)
+    runeStatusBar:SetScript("OnUpdate", function(curFrame, elapsedTime)
+      self:_monitorCurrentRune(curFrame, elapsedTime, id)
     end)
   end
-
 end
 
-function Runes47:_monitorCurrentRune(runeFrame, elapsedTime)
-  local curTime = GetTime() - runeFrame.startTime
-  runeFrame:SetValue(curTime)
+---@param runeStatusBar table
+---@param elapsedTime integer
+---@param id integer
+function Runes47:_monitorCurrentRune(runeStatusBar, elapsedTime, id)
+  local curTime = GetTime() - runeStatusBar.startTime
+  runeStatusBar:SetValue(curTime)
 
-  if (curTime >= runeFrame.duration) then self:_handleRuneCooldownComplete(runeFrame) end
+  if (curTime >= runeStatusBar.duration) then
+    self:_handleRuneCooldownComplete(runeStatusBar, id)
+  end
 end
 
-function Runes47:_handleRuneCooldownComplete(runeFrame)
-  runeFrame:SetMinMaxValues(0, 10)
-  runeFrame:SetValue(10)
-  runeFrame:SetAlpha(1.0)
-  runeFrame:SetScript("OnUpdate", nil)
+---@param runeStatusBar table
+---@param id integer
+function Runes47:_handleRuneCooldownComplete(runeStatusBar, id)
+  runeStatusBar:SetMinMaxValues(0, 10)
+  runeStatusBar:SetValue(10)
+  runeStatusBar:SetAlpha(1.0)
+  runeStatusBar:SetScript("OnUpdate", nil)
+
+  local animDurationSec = 0.5
+  Animations47:animateHeight(runeStatusBar, self._curDbProfile.height, animDurationSec)
 end
 
 ---@param id integer
----@return table
+---@return integer
 ---Use RUNE_MAP to get the actual rune that's currently being displayed.
 ---Blizzard displays runes as
 ---`[1 2 5 6 3 4]`
-function Runes47:_getActualRuneStatusBar(id)
-  local mappedId = self.RUNE_MAP[id]
-  return self._runeBarList[mappedId]
-end
+function Runes47:_getMappedId(id) return self.RUNE_MAP[id] end

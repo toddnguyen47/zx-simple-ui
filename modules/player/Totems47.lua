@@ -39,7 +39,7 @@ function Totems47:__init__()
 
   ---Ref: https://wow.gamepedia.com/API_GetTotemInfo
   self.TOTEM_TABLE = {[1] = "Fire", [2] = "Earth", [3] = "Water", [4] = "Air"}
-  self.TOTEM_MAP = {[1] = 2, [2] = 1, [3] = 3, [4] = 4}
+  self._totemTypeDisplayOrder = {2, 1, 3, 4}
   self.mainFrame = nil
   self._frameToAnchorTo = nil
   self._totemBarList = {}
@@ -126,9 +126,9 @@ function Totems47:_refreshTotemBars()
   local totalTotemWidth = mainFrameHeight * MAX_TOTEMS
   local horizGap = math.floor((mainFrameWidth - totalTotemWidth) / (MAX_TOTEMS - 1))
 
-  -- Important! Do a regular for loop so we can use self.TOTEM_MAP
-  for id = 1, MAX_TOTEMS do
-    local totemFrame = self:_getActualTotemStatusBar(id)
+  for i = 1, #self._totemTypeDisplayOrder do
+    local totemPos = self._totemTypeDisplayOrder[i]
+    local totemFrame = self._totemBarList[totemPos]
     totemFrame:SetWidth(mainFrameHeight)
     totemFrame:SetHeight(mainFrameHeight)
     totemFrame.durationText:SetFont(media:Fetch("font", self._curDbProfile.font),
@@ -136,12 +136,12 @@ function Totems47:_refreshTotemBars()
     totemFrame.durationText:SetTextColor(unpack(self._curDbProfile.fontcolor))
 
     totemFrame:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details
-    if id == 1 then
+    if i == 1 then
       totemFrame:SetPoint("TOPLEFT", self._frameToAnchorTo, "BOTTOMLEFT", 0,
         self._curDbProfile.yoffset)
     else
-      totemFrame:SetPoint("TOPLEFT", self:_getActualTotemStatusBar(id - 1), "TOPRIGHT",
-        horizGap, 0)
+      local leftTotemPos = self._totemTypeDisplayOrder[i - 1]
+      totemFrame:SetPoint("TOPLEFT", self._totemBarList[leftTotemPos], "TOPRIGHT", horizGap, 0)
     end
   end
 end
@@ -257,11 +257,4 @@ function Totems47:_getFontFlags()
   if self._curDbProfile.monochrome then s = s .. "MONOCHROME, " end
   if s ~= "" then s = string.sub(s, 0, (string.len(s) - 2)) end
   return s
-end
-
----@param id integer
----@return table
-function Totems47:_getActualTotemStatusBar(id)
-  local mappedId = self.TOTEM_MAP[id]
-  return self._totemBarList[mappedId]
 end

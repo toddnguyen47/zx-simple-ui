@@ -44,13 +44,7 @@ function Runes47:__init__()
   self.mainFrame = nil
   self.MAX_RUNE_NUMBER = 6
   ---On Blizzard's display, Frost (3 & 4) and Unholy (5 & 6) are switched.
-  self.RUNE_MAP = {[1] = 1, [2] = 2, [3] = 5, [4] = 6, [5] = 3, [6] = 4}
-  self.RUNE_TYPE_TABLE = {
-    [1] = "BLOOD",
-    [2] = "UNHOLY_CHROMATIC",
-    [3] = "FROST",
-    [4] = "DEATH"
-  }
+  self._displayRuneTypeOrder = {1, 2, 5, 6, 3, 4}
   self._frameToAnchorTo = nil
   self._runeColors = {}
   self._runeBarList = {}
@@ -140,10 +134,8 @@ end
 
 function Runes47:_refreshRuneColors()
   self._runeColors = {
-    [self.RUNE_TYPE_TABLE[1]] = self._curDbProfile.bloodColor,
-    [self.RUNE_TYPE_TABLE[2]] = self._curDbProfile.unholyChromaticColor,
-    [self.RUNE_TYPE_TABLE[3]] = self._curDbProfile.frostColor,
-    [self.RUNE_TYPE_TABLE[4]] = self._curDbProfile.deathColor
+    self._curDbProfile.bloodColor, self._curDbProfile.unholyChromaticColor,
+    self._curDbProfile.frostColor, self._curDbProfile.deathColor
   }
 end
 
@@ -152,25 +144,23 @@ function Runes47:_refreshRuneFrames()
   local runeWidth = (self._frameToAnchorTo:GetWidth() - totalNumberOfGaps) /
                       self.MAX_RUNE_NUMBER
 
-  -- Important! Do a regular for loop so we can use self.RUNE_MAP
-  for id = 1, self.MAX_RUNE_NUMBER do
-    local mappedId = self:_getMappedId(id)
-    local runeStatusBar = self._runeBarList[mappedId]
-    runeStatusBar.runeType = self.RUNE_TYPE_TABLE[GetRuneType(mappedId)]
+  for i = 1, #self._displayRuneTypeOrder do
+    local runePos = self._displayRuneTypeOrder[i]
+    local runeStatusBar = self._runeBarList[runePos]
     runeStatusBar:SetWidth(runeWidth)
     runeStatusBar:SetHeight(self._curDbProfile.height)
     runeStatusBar:SetStatusBarTexture(media:Fetch("statusbar", self._curDbProfile.texture),
       "BORDER")
     runeStatusBar:GetStatusBarTexture():SetHorizTile(false)
-    self:_setRuneColor(runeStatusBar)
+    self:_setRuneColor(runePos)
     runeStatusBar:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details
 
-    if id == 1 then
+    if i == 1 then
       runeStatusBar:SetPoint("TOPLEFT", self._frameToAnchorTo, "BOTTOMLEFT", 0,
         self._curDbProfile.yoffset)
     else
-      local leftId = self:_getMappedId(id - 1)
-      runeStatusBar:SetPoint("TOPLEFT", self._runeBarList[leftId], "TOPRIGHT",
+      local leftRunePos = self._displayRuneTypeOrder[i - 1]
+      runeStatusBar:SetPoint("TOPLEFT", self._runeBarList[leftRunePos], "TOPRIGHT",
         self._curDbProfile.horizGap, 0)
     end
   end
@@ -186,9 +176,12 @@ function Runes47:_createRuneFrames()
   end
 end
 
----@param runeStatusBar table
-function Runes47:_setRuneColor(runeStatusBar)
-  local curColor = self._runeColors[runeStatusBar.runeType]
+---@param runePos integer
+function Runes47:_setRuneColor(runePos)
+  local runeStatusBar = self._runeBarList[runePos]
+  -- Ref: https://wow.gamepedia.com/API_GetRuneType
+  local runeType = GetRuneType(runePos)
+  local curColor = self._runeColors[runeType]
   runeStatusBar:SetStatusBarColor(unpack(curColor))
 end
 
@@ -216,8 +209,9 @@ function Runes47:_onEventHandler(curFrame, event, id, usable, ...)
   end
 end
 
-function Runes47:_handleRuneTypeUpdate(curFrame, event, unit, usable, ...)
+function Runes47:_handleRuneTypeUpdate(curFrame, event, id, usable, ...)
   -- WIP: Need to level a death knight to high enough levels to test this out
+  self:_setRuneColor(id)
 end
 
 function Runes47:_handleRunePowerUpdate(curFrame, event, id, usable)
@@ -269,10 +263,3 @@ function Runes47:_handleRuneCooldownComplete(runeStatusBar, id)
   local animDurationSec = 0.5
   Animations47:animateHeight(runeStatusBar, self._curDbProfile.height, animDurationSec)
 end
-
----@param id integer
----@return integer
----Use RUNE_MAP to get the actual rune that's currently being displayed.
----Blizzard displays runes as
----`[1 2 5 6 3 4]`
-function Runes47:_getMappedId(id) return self.RUNE_MAP[id] end

@@ -9,19 +9,18 @@ Combo47Options.__index = Combo47Options
 Combo47Options.OPTION_NAME = "Combo47Options"
 ZxSimpleUI.optionTables[Combo47Options.OPTION_NAME] = Combo47Options
 
----@param currentModule table
-function Combo47Options:__init__(currentModule)
+---@param coreOptions47 table
+function Combo47Options:__init__(coreOptions47)
   self.options = {}
-  self._currentModule = currentModule
-  self._curDbProfile = currentModule.db.profile
-  self._coreOptions47 = CoreOptions47:new(self._currentModule)
+  self._coreOptions47 = coreOptions47
+  self._currentModule = self._coreOptions47:getCurrentModule()
+  self._curDbProfile = self._currentModule.db.profile
 end
 
----@param currentModule table
-function Combo47Options:new(currentModule)
-  assert(currentModule ~= nil)
+---@param coreOptions47 table
+function Combo47Options:new(coreOptions47)
   local newInstance = setmetatable({}, self)
-  newInstance:__init__(currentModule)
+  newInstance:__init__(coreOptions47)
   return newInstance
 end
 

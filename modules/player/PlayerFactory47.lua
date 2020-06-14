@@ -63,7 +63,7 @@ function PlayerFactory47:OnDisable() end
 
 ---@return table
 function PlayerFactory47:createPlayerHealthOptions()
-  return self:_createOptionsHelper(PlayerHealth47, BarTemplateOptions)
+  -- return self:_createOptionsHelper(PlayerHealth47, BarTemplateOptions)
 end
 
 ---@return table
@@ -78,7 +78,12 @@ end
 
 ---@return table
 function PlayerFactory47:createPlayerNameOptions()
-  return self:_createOptionsHelper(PlayerName47, BarTemplateEnableOptions)
+  local curModule = PlayerName47
+  if curModule.mainFrame == nil then curModule:createBar() end
+  local optionInstance = BarTemplateEnableOptions:new(curModule,
+                           BarTemplateOptions:new(curModule))
+  optionInstance:registerModuleOptionsTable()
+  return optionInstance.options
 end
 
 ---@return table
@@ -101,11 +106,22 @@ end
 
 ---@return table
 function PlayerFactory47:createPetHealthOptions()
-  return self:_createOptionsHelper(PetHealth47, BarTemplateEnableOptions)
+  -- return self:_createOptionsHelper(PetHealth47, BarTemplateEnableOptions)
+  local curModule = PetHealth47
+  if curModule.mainFrame == nil then curModule:createBar() end
+  local optionInstance = BarTemplateEnableOptions:new(curModule,
+                           BarTemplateOptions:new(curModule))
+  optionInstance:registerModuleOptionsTable()
+  return optionInstance.options
 end
 
 function PlayerFactory47:createPetPowerOptions()
-  return self:_createOptionsHelper(PetPower47, BarTemplateEnableOptions)
+  local curModule = PetPower47
+  if curModule.mainFrame == nil then curModule:createBar() end
+  local optionInstance = BarTemplateEnableOptions:new(curModule,
+                           BarTemplateOptions:new(curModule))
+  optionInstance:registerModuleOptionsTable()
+  return optionInstance.options
 end
 
 -- ####################################
@@ -114,13 +130,3 @@ end
 ---@param t1 table
 ---@param t2 table
 function PlayerFactory47:_addAllFromT2ToT1(t1, t2) for k, v in pairs(t2) do t1[k] = v end end
-
----@param curModule table
----@param optionObject table
----@return table
-function PlayerFactory47:_createOptionsHelper(curModule, optionObject)
-  if curModule.mainFrame == nil then curModule:createBar() end
-  local optionInstance = optionObject:new(curModule)
-  optionInstance:registerModuleOptionsTable()
-  return optionInstance.options
-end

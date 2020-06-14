@@ -65,7 +65,12 @@ function TargetFactory47:createPowerOptions()
 end
 
 function TargetFactory47:createNameOptions()
-  self:_createOptionsHelper(TargetName47, TargetName47Options)
+  local curModule = TargetName47
+  if curModule.mainFrame == nil then curModule:createBar() end
+  local optionInstance = BarTemplateEnableOptions:new(curModule,
+                           BarTemplateOptions:new(curModule))
+  optionInstance:registerModuleOptionsTable()
+  return optionInstance.options
 end
 
 function TargetFactory47:createComboOptions() self:_createOptionsHelper(Combo47, Combo47Options) end

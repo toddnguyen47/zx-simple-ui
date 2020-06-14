@@ -1,29 +1,25 @@
 local MAX_COMBO_POINTS = MAX_COMBO_POINTS
 
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
-local CoreOptions47 = ZxSimpleUI.optionTables["CoreOptions47"]
-local BarTemplateEnableOptions = ZxSimpleUI.optionTables["BarTemplateEnableOptions"]
-local media = LibStub("LibSharedMedia-3.0")
 
 local TargetName47Options = {}
 TargetName47Options.__index = TargetName47Options
 TargetName47Options.OPTION_NAME = "TargetName47Options"
 ZxSimpleUI.optionTables[TargetName47Options.OPTION_NAME] = TargetName47Options
 
----@param currentModule table
-function TargetName47Options:__init__(currentModule)
+---@param barTemplateOptions table
+function TargetName47Options:__init__(barTemplateOptions)
   self.options = {}
-  self._currentModule = currentModule
-  self._curDbProfile = currentModule.db.profile
-  self._coreOptions47 = CoreOptions47:new(self._currentModule)
-  self._barTemplateEnableOptions = BarTemplateEnableOptions:new(self._currentModule)
+  self._barTemplateEnableOptions = barTemplateOptions
+  self._coreOptions47 = self._barTemplateEnableOptions:getCoreOptions47()
+  self._currentModule = self._barTemplateEnableOptions:getCurrentModule()
+  self._curDbProfile = self._currentModule.db.profile
 end
 
----@param currentModule table
-function TargetName47Options:new(currentModule)
-  assert(currentModule ~= nil)
+---@param barTemplateOptions table
+function TargetName47Options:new(barTemplateOptions)
   local newInstance = setmetatable({}, self)
-  newInstance:__init__(currentModule)
+  newInstance:__init__(barTemplateOptions)
   return newInstance
 end
 

@@ -69,16 +69,15 @@ function TargetFactory47:createPowerOptions()
 end
 
 function TargetFactory47:createNameOptions()
-  -- local curModule = TargetName47
-  -- if curModule.mainFrame == nil then curModule:createBar() end
-  -- local optionInstance = BarTemplateEnableOptions:new(
-  --                          BarTemplateOptions:new(CoreOptions47:new(curModule)))
-  -- optionInstance:registerModuleOptionsTable()
-  -- return optionInstance.options
+  local curModule = TargetName47
+  if curModule.mainFrame == nil then curModule:createBar() end
+  local optionInstance = TargetName47Options:new(
+                           BarTemplateOptions:new(CoreOptions47:new(curModule)))
+  optionInstance:registerModuleOptionsTable()
+  return optionInstance.options
 end
 
 function TargetFactory47:createComboOptions()
-  -- self:_createOptionsHelper(Combo47, Combo47Options)
   local curModule = Combo47
   if curModule.mainFrame == nil then curModule:createBar() end
   local optionInstance = Combo47Options:new(CoreOptions47:new(curModule))

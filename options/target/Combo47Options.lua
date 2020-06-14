@@ -1,7 +1,6 @@
 local MAX_COMBO_POINTS = MAX_COMBO_POINTS
 
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
-local CoreOptions47 = ZxSimpleUI.optionTables["CoreOptions47"]
 local media = LibStub("LibSharedMedia-3.0")
 
 local Combo47Options = {}

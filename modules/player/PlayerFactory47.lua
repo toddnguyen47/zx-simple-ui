@@ -83,7 +83,11 @@ end
 
 ---@return table
 function PlayerFactory47:createRuneOptions()
-  return self:_createOptionsHelper(Runes47, Runes47Options)
+  local curModule = Runes47
+  if curModule.mainFrame == nil then curModule:createBar() end
+  local optionInstance = Runes47Options:new(curModule, CoreOptions47:new(curModule))
+  optionInstance:registerModuleOptionsTable()
+  return optionInstance.options
 end
 
 ---@return table

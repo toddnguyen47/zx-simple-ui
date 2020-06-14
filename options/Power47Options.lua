@@ -1,6 +1,4 @@
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
-local CoreOptions47 = ZxSimpleUI.optionTables["CoreOptions47"]
-local BarTemplateOptions = ZxSimpleUI.optionTables["BarTemplateOptions"]
 local media = LibStub("LibSharedMedia-3.0")
 
 local Power47Options = {}
@@ -9,6 +7,8 @@ Power47Options.OPTION_NAME = "Power47Options"
 ZxSimpleUI.optionTables[Power47Options.OPTION_NAME] = Power47Options
 
 ---@param currentModule table
+---@param coreOptions47 table
+---@param barTemplateOptions table
 function Power47Options:__init__(currentModule, coreOptions47, barTemplateOptions)
   self.options = {}
   self._currentModule = currentModule

@@ -11,6 +11,7 @@ local Totems47 = ZxSimpleUI:GetModule("Totems47")
 local PetHealth47 = ZxSimpleUI:GetModule("PetHealth47")
 local PetPower47 = ZxSimpleUI:GetModule("PetPower47")
 
+local CoreOptions47 = ZxSimpleUI.optionTables["CoreOptions47"]
 local BarTemplateOptions = ZxSimpleUI.optionTables["BarTemplateOptions"]
 local BarTemplateEnableOptions = ZxSimpleUI.optionTables["BarTemplateEnableOptions"]
 local Power47Options = ZxSimpleUI.optionTables["Power47Options"]
@@ -67,7 +68,12 @@ end
 
 ---@return table
 function PlayerFactory47:createPlayerPowerOptions()
-  return self:_createOptionsHelper(PlayerPower47, Power47Options)
+  local curModule = PlayerPower47
+  if curModule.mainFrame == nil then curModule:createBar() end
+  local optionInstance = Power47Options:new(curModule, CoreOptions47:new(curModule),
+                           BarTemplateOptions:new(curModule))
+  optionInstance:registerModuleOptionsTable()
+  return optionInstance.options
 end
 
 ---@return table

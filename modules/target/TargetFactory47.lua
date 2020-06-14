@@ -52,14 +52,19 @@ function TargetFactory47:OnDisable() end
 -- # FACTORY METHODS
 -- ####################################
 function TargetFactory47:createHealthOptions()
-  self:_createOptionsHelper(TargetHealth47, BarTemplateOptions)
+  local curModule = TargetHealth47
+  if curModule.mainFrame == nil then curModule:createBar() end
+  local optionInstance = BarTemplateOptions:new(curModule, CoreOptions47:new(curModule))
+  optionInstance:registerModuleOptionsTable()
+  return optionInstance.options
 end
 
 function TargetFactory47:createPowerOptions()
   local curModule = TargetPower47
   if curModule.mainFrame == nil then curModule:createBar() end
-  local optionInstance = Power47Options:new(curModule, CoreOptions47:new(curModule),
-                           BarTemplateOptions:new(curModule))
+  local coreOptions47 = CoreOptions47:new(curModule)
+  local optionInstance = Power47Options:new(curModule, coreOptions47,
+                           BarTemplateOptions:new(curModule, coreOptions47))
   optionInstance:registerModuleOptionsTable()
   return optionInstance.options
 end
@@ -67,13 +72,15 @@ end
 function TargetFactory47:createNameOptions()
   local curModule = TargetName47
   if curModule.mainFrame == nil then curModule:createBar() end
-  local optionInstance = BarTemplateEnableOptions:new(curModule,
-                           BarTemplateOptions:new(curModule))
+  local optionInstance = BarTemplateEnableOptions:new(curModule, BarTemplateOptions:new(
+                           curModule, CoreOptions47:new(curModule)))
   optionInstance:registerModuleOptionsTable()
   return optionInstance.options
 end
 
-function TargetFactory47:createComboOptions() self:_createOptionsHelper(Combo47, Combo47Options) end
+function TargetFactory47:createComboOptions()
+  -- self:_createOptionsHelper(Combo47, Combo47Options)
+end
 
 -- ####################################
 -- # PRIVATE FUNCTIONS
@@ -81,13 +88,3 @@ function TargetFactory47:createComboOptions() self:_createOptionsHelper(Combo47,
 ---@param t1 table
 ---@param t2 table
 function TargetFactory47:_addAllFromT2ToT1(t1, t2) for k, v in pairs(t2) do t1[k] = v end end
-
----@param curModule table
----@param optionObject table
----@return table
-function TargetFactory47:_createOptionsHelper(curModule, optionObject)
-  if curModule.mainFrame == nil then curModule:createBar() end
-  local optionInstance = optionObject:new(curModule)
-  optionInstance:registerModuleOptionsTable()
-  return optionInstance.options
-end

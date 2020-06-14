@@ -1,6 +1,5 @@
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local Utils47 = ZxSimpleUI.Utils47
-local CoreOptions47 = ZxSimpleUI.optionTables["CoreOptions47"]
 local media = LibStub("LibSharedMedia-3.0")
 
 local BarTemplateOptions = {}
@@ -9,19 +8,21 @@ BarTemplateOptions.OPTION_NAME = "BarTemplateOptions"
 ZxSimpleUI.optionTables[BarTemplateOptions.OPTION_NAME] = BarTemplateOptions
 
 ---@param currentModule table
-function BarTemplateOptions:__init__(currentModule)
+---@param coreOptions47 table
+function BarTemplateOptions:__init__(currentModule, coreOptions47)
   self.options = {}
   self._currentModule = currentModule
   self._curDbProfile = currentModule.db.profile
-  self._coreOptions47 = CoreOptions47:new(self._currentModule)
+  self._coreOptions47 = coreOptions47
 end
 
 ---@param currentModule table
-function BarTemplateOptions:new(currentModule)
+---@param coreOptions47 table
+function BarTemplateOptions:new(currentModule, coreOptions47)
   assert(currentModule ~= nil)
   assert(currentModule.bars ~= nil, "Remember to initialize a bar template object first!")
   local newInstance = setmetatable({}, self)
-  newInstance:__init__(currentModule)
+  newInstance:__init__(currentModule, coreOptions47)
   return newInstance
 end
 

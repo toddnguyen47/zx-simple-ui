@@ -70,8 +70,9 @@ end
 function PlayerFactory47:createPlayerPowerOptions()
   local curModule = PlayerPower47
   if curModule.mainFrame == nil then curModule:createBar() end
-  local optionInstance = Power47Options:new(curModule, CoreOptions47:new(curModule),
-                           BarTemplateOptions:new(curModule))
+  local coreOptions47 = CoreOptions47:new(curModule)
+  local optionInstance = Power47Options:new(curModule, coreOptions47,
+                           BarTemplateOptions:new(curModule, coreOptions47))
   optionInstance:registerModuleOptionsTable()
   return optionInstance.options
 end
@@ -80,8 +81,8 @@ end
 function PlayerFactory47:createPlayerNameOptions()
   local curModule = PlayerName47
   if curModule.mainFrame == nil then curModule:createBar() end
-  local optionInstance = BarTemplateEnableOptions:new(curModule,
-                           BarTemplateOptions:new(curModule))
+  local optionInstance = BarTemplateEnableOptions:new(curModule, BarTemplateOptions:new(
+                           curModule, CoreOptions47:new(curModule)))
   optionInstance:registerModuleOptionsTable()
   return optionInstance.options
 end
@@ -109,8 +110,8 @@ function PlayerFactory47:createPetHealthOptions()
   -- return self:_createOptionsHelper(PetHealth47, BarTemplateEnableOptions)
   local curModule = PetHealth47
   if curModule.mainFrame == nil then curModule:createBar() end
-  local optionInstance = BarTemplateEnableOptions:new(curModule,
-                           BarTemplateOptions:new(curModule))
+  local optionInstance = BarTemplateEnableOptions:new(curModule, BarTemplateOptions:new(
+                           curModule, CoreOptions47:new(curModule)))
   optionInstance:registerModuleOptionsTable()
   return optionInstance.options
 end
@@ -118,8 +119,8 @@ end
 function PlayerFactory47:createPetPowerOptions()
   local curModule = PetPower47
   if curModule.mainFrame == nil then curModule:createBar() end
-  local optionInstance = BarTemplateEnableOptions:new(curModule,
-                           BarTemplateOptions:new(curModule))
+  local optionInstance = BarTemplateEnableOptions:new(curModule, BarTemplateOptions:new(
+                           curModule, CoreOptions47:new(curModule)))
   optionInstance:registerModuleOptionsTable()
   return optionInstance.options
 end

@@ -222,3 +222,6 @@ end
 
 ---@return table
 function BarTemplateOptions:getCurrentModule() return self._currentModule end
+
+---@return table
+function BarTemplateOptions:getCoreOptions47() return self._coreOptions47 end

@@ -62,9 +62,8 @@ end
 function TargetFactory47:createPowerOptions()
   local curModule = TargetPower47
   if curModule.mainFrame == nil then curModule:createBar() end
-  local coreOptions47 = CoreOptions47:new(curModule)
-  local optionInstance = Power47Options:new(curModule, coreOptions47,
-                           BarTemplateOptions:new(coreOptions47))
+  local optionInstance = Power47Options:new(
+                           BarTemplateOptions:new(CoreOptions47:new(curModule)))
   optionInstance:registerModuleOptionsTable()
   return optionInstance.options
 end

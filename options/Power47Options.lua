@@ -6,24 +6,19 @@ Power47Options.__index = Power47Options
 Power47Options.OPTION_NAME = "Power47Options"
 ZxSimpleUI.optionTables[Power47Options.OPTION_NAME] = Power47Options
 
----@param currentModule table
----@param coreOptions47 table
 ---@param barTemplateOptions table
-function Power47Options:__init__(currentModule, coreOptions47, barTemplateOptions)
+function Power47Options:__init__(barTemplateOptions)
   self.options = {}
-  self._currentModule = currentModule
-  self._curDbProfile = currentModule.db.profile
-  self._coreOptions47 = coreOptions47
   self._barTemplateOptions = barTemplateOptions
+  self._coreOptions47 = self._barTemplateOptions:getCoreOptions47()
+  self._currentModule = self._barTemplateOptions:getCurrentModule()
+  self._curDbProfile = self._currentModule.db.profile
 end
 
----@param currentModule table
----@param coreOptions47 table
 ---@param barTemplateOptions table
-function Power47Options:new(currentModule, coreOptions47, barTemplateOptions)
-  assert(currentModule ~= nil)
+function Power47Options:new(barTemplateOptions)
   local newInstance = setmetatable({}, self)
-  newInstance:__init__(currentModule, coreOptions47, barTemplateOptions)
+  newInstance:__init__(barTemplateOptions)
   return newInstance
 end
 

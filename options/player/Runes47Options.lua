@@ -6,21 +6,18 @@ Runes47Options.__index = Runes47Options
 Runes47Options.OPTION_NAME = "Runes47Options"
 ZxSimpleUI.optionTables[Runes47Options.OPTION_NAME] = Runes47Options
 
----@param currentModule table
 ---@param coreOptions47 table
-function Runes47Options:__init__(currentModule, coreOptions47)
+function Runes47Options:__init__(coreOptions47)
   self.options = {}
-  self._currentModule = currentModule
-  self._curDbProfile = self._currentModule.db.profile
   self._coreOptions47 = coreOptions47
+  self._currentModule = self._coreOptions47:getCurrentModule()
+  self._curDbProfile = self._currentModule.db.profile
 end
 
----@param currentModule table
 ---@param coreOptions47 table
-function Runes47Options:new(currentModule, coreOptions47)
-  assert(currentModule ~= nil)
+function Runes47Options:new(coreOptions47)
   local newInstance = setmetatable({}, self)
-  newInstance:__init__(currentModule, coreOptions47)
+  newInstance:__init__(coreOptions47)
   return newInstance
 end
 

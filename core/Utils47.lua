@@ -52,12 +52,24 @@ end
 
 ---@param name string
 ---@return string
-function Utils47:getInitials(name)
+function Utils47:getInitialsExceptLastWord(name)
   if name == "" then return name end
   local tableSeparated = self:splitString(name)
   local str1 = ""
   for i = 1, (#tableSeparated - 1) do str1 = str1 .. tableSeparated[i]:sub(1, 1) .. ". " end
   str1 = str1 .. tableSeparated[#tableSeparated]
+  return str1
+end
+
+---@param name string
+---@return string
+function Utils47:getInitialsExceptFirstWord(name)
+  if name == "" then return name end
+  local tableSeparated = self:splitString(name)
+  local str1 = tableSeparated[1] .. " "
+  for i = 2, (#tableSeparated) do str1 = str1 .. tableSeparated[i]:sub(1, 1) .. ". " end
+  -- Delete the last excess space character
+  str1 = str1:sub(1, string.len(str1) - 1)
   return str1
 end
 

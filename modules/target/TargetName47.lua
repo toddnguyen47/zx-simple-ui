@@ -49,7 +49,8 @@ function TargetName47:__init__()
       relativePoint = "TOPLEFT",
       hostileColor = {1.0, 0.2, 0.2, 1.0},
       neutralColor = {1.0, 1.0, 0.0, 1.0},
-      friendlyColor = {1.0, 1.0, 1.0, 1.0}
+      friendlyColor = {1.0, 1.0, 1.0, 1.0},
+      nameInitials = "allButFirst"
     }
   }
   self._eventTable = {"UNIT_HEALTH", "PLAYER_TARGET_CHANGED"}
@@ -198,8 +199,27 @@ function TargetName47:_getFormattedName()
   local name = UnitName(self.unit) or ""
   local level = UnitLevel(self.unit) or ""
   if tonumber(level) < 0 then level = "??" end
-  local formattedName = Utils47:getInitials(name)
+  local formattedName = self:_getFormattedNameInitials(name)
   formattedName = string.format("%s (%s)", formattedName, level)
+  formattedName = self:_appendUnitClassification(formattedName)
+  return formattedName
+end
+
+---@param name string
+---@return string
+function TargetName47:_getFormattedNameInitials(name)
+  local formattedName = ""
+  if self._curDbProfile.nameInitials == "allButFirst" then
+    formattedName = Utils47:getInitialsExceptFirstWord(name)
+  elseif self._curDbProfile.nameInitials == "allButLast" then
+    formattedName = Utils47:getInitialsExceptLastWord(name)
+  end
+  return formattedName
+end
+
+---@param formattedName string
+---@return string
+function TargetName47:_appendUnitClassification(formattedName)
   local unitClassification = UnitClassification(self.unit)
   if not Utils47:isNormalEnemy(unitClassification) then
     local s1 = Utils47.UnitClassificationElitesTable[unitClassification]

@@ -109,7 +109,7 @@ end
 ---@return string formattedName
 function PlayerName47:_getFormattedName()
   local name = UnitName(self.unit)
-  name = Utils47:getInitials(name)
+  name = Utils47:getInitialsExceptFirstWord(name)
   local level = UnitLevel(self.unit)
   if tonumber(level) < 0 then level = "??" end
   return string.format("%s (%s)", name, tostring(level))

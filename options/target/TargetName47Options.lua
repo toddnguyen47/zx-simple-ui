@@ -47,6 +47,11 @@ function TargetName47Options:getOptionTable()
         friendlyColor = {name = "Neutral Color", type = "color", hasAlpha = true, order = 3}
       }
     }
+    self.options.args["nameInitials"] = {
+      type = "select",
+      name = "Name Initials",
+      values = {allButFirst = "All words but the First", allButLast = "All words but the Last"}
+    }
   end
   return self.options
 end

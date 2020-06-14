@@ -5,22 +5,18 @@ BarTemplateEnableOptions.__index = BarTemplateEnableOptions
 BarTemplateEnableOptions.OPTION_NAME = "BarTemplateEnableOptions"
 ZxSimpleUI.optionTables[BarTemplateEnableOptions.OPTION_NAME] = BarTemplateEnableOptions
 
----@param currentModule table
 ---@param barTemplateOptions table
-function BarTemplateEnableOptions:__init__(currentModule, barTemplateOptions)
+function BarTemplateEnableOptions:__init__(barTemplateOptions)
   self.options = {}
-  self._currentModule = currentModule
-  self._curDbProfile = currentModule.db.profile
   self._barTemplateOptions = barTemplateOptions
+  self._currentModule = self._barTemplateOptions:getCurrentModule()
+  self._curDbProfile = self._currentModule.db.profile
 end
 
----@param currentModule table
 ---@param barTemplateOptions table
-function BarTemplateEnableOptions:new(currentModule, barTemplateOptions)
-  assert(currentModule ~= nil)
-  assert(currentModule.bars ~= nil, "Remember to initialize a bar template object first!")
+function BarTemplateEnableOptions:new(barTemplateOptions)
   local newInstance = setmetatable({}, self)
-  newInstance:__init__(currentModule, barTemplateOptions)
+  newInstance:__init__(barTemplateOptions)
   return newInstance
 end
 

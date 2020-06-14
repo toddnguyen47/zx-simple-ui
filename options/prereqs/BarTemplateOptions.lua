@@ -219,3 +219,6 @@ function BarTemplateOptions:getOptionTable()
   end
   return self.options
 end
+
+---@return table
+function BarTemplateOptions:getCurrentModule() return self._currentModule end

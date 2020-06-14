@@ -1,7 +1,6 @@
 local MAX_COMBO_POINTS = MAX_COMBO_POINTS
 
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
-local CoreOptions47 = ZxSimpleUI.optionTables["CoreOptions47"]
 local media = LibStub("LibSharedMedia-3.0")
 
 local Totems47Options = {}
@@ -10,18 +9,20 @@ Totems47Options.OPTION_NAME = "Totems47Options"
 ZxSimpleUI.optionTables[Totems47Options.OPTION_NAME] = Totems47Options
 
 ---@param currentModule table
-function Totems47Options:__init__(currentModule)
+---@param coreOptions47 table
+function Totems47Options:__init__(currentModule, coreOptions47)
   self.options = {}
   self._currentModule = currentModule
   self._curDbProfile = currentModule.db.profile
-  self._coreOptions47 = CoreOptions47:new(self._currentModule)
+  self._coreOptions47 = coreOptions47
 end
 
 ---@param currentModule table
-function Totems47Options:new(currentModule)
+---@param coreOptions47 table
+function Totems47Options:new(currentModule, coreOptions47)
   assert(currentModule ~= nil)
   local newInstance = setmetatable({}, self)
-  newInstance:__init__(currentModule)
+  newInstance:__init__(currentModule, coreOptions47)
   return newInstance
 end
 

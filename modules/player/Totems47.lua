@@ -5,8 +5,6 @@ local UnitClass = UnitClass
 
 ---include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
-local PlayerPower47 = ZxSimpleUI:GetModule("PlayerPower47")
-local Utils47 = ZxSimpleUI.Utils47
 
 -- #region
 local MODULE_NAME = "Totems47"

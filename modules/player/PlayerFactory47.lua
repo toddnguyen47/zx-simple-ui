@@ -92,7 +92,11 @@ end
 
 ---@return table
 function PlayerFactory47:createTotemOptions()
-  return self:_createOptionsHelper(Totems47, Totems47Options)
+  local curModule = Totems47
+  if curModule.mainFrame == nil then curModule:createBar() end
+  local optionInstance = Totems47Options:new(curModule, CoreOptions47:new(curModule))
+  optionInstance:registerModuleOptionsTable()
+  return optionInstance.options
 end
 
 ---@return table

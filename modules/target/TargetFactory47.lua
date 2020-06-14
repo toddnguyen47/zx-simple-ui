@@ -54,7 +54,7 @@ function TargetFactory47:OnDisable() end
 function TargetFactory47:createHealthOptions()
   local curModule = TargetHealth47
   if curModule.mainFrame == nil then curModule:createBar() end
-  local optionInstance = BarTemplateOptions:new(curModule, CoreOptions47:new(curModule))
+  local optionInstance = BarTemplateOptions:new(CoreOptions47:new(curModule))
   optionInstance:registerModuleOptionsTable()
   return optionInstance.options
 end
@@ -64,7 +64,7 @@ function TargetFactory47:createPowerOptions()
   if curModule.mainFrame == nil then curModule:createBar() end
   local coreOptions47 = CoreOptions47:new(curModule)
   local optionInstance = Power47Options:new(curModule, coreOptions47,
-                           BarTemplateOptions:new(curModule, coreOptions47))
+                           BarTemplateOptions:new(coreOptions47))
   optionInstance:registerModuleOptionsTable()
   return optionInstance.options
 end
@@ -73,7 +73,7 @@ function TargetFactory47:createNameOptions()
   local curModule = TargetName47
   if curModule.mainFrame == nil then curModule:createBar() end
   local optionInstance = BarTemplateEnableOptions:new(curModule, BarTemplateOptions:new(
-                           curModule, CoreOptions47:new(curModule)))
+                           CoreOptions47:new(curModule)))
   optionInstance:registerModuleOptionsTable()
   return optionInstance.options
 end

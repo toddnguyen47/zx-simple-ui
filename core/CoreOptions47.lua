@@ -8,18 +8,18 @@ CoreOptions47.__index = CoreOptions47
 CoreOptions47.OPTION_NAME = "CoreOptions47"
 ZxSimpleUI.optionTables[CoreOptions47.OPTION_NAME] = CoreOptions47
 
----@param moduleInput table
-function CoreOptions47:__init__(moduleInput)
-  self._module = moduleInput
-  self._curDbProfile = self._module.db.profile
+---@param curModule table
+function CoreOptions47:__init__(curModule)
+  self._curModule = curModule
+  self._curDbProfile = self._curModule.db.profile
   self._orderIndex = ZxSimpleUI.DEFAULT_ORDER_INDEX
 end
 
----@param moduleInput table
-function CoreOptions47:new(moduleInput)
-  assert(moduleInput ~= nil)
+---@param curModule table
+function CoreOptions47:new(curModule)
+  assert(curModule ~= nil)
   local newInstance = setmetatable({}, self)
-  newInstance:__init__(moduleInput)
+  newInstance:__init__(curModule)
   return newInstance
 end
 
@@ -36,7 +36,7 @@ end
 function CoreOptions47:setOption(info, value)
   local keyLeafNode = info[#info]
   self._curDbProfile[keyLeafNode] = value
-  self._module:refreshConfig()
+  self._curModule:refreshConfig()
 end
 
 function CoreOptions47:getShownOption(info) return self:getOption(info) end
@@ -47,9 +47,9 @@ function CoreOptions47:getShownOption(info) return self:getOption(info) end
 function CoreOptions47:setShownOption(info, value)
   self:setOption(info, value)
   if (value == true) then
-    self._module:handleShownOption()
+    self._curModule:handleShownOption()
   else
-    self._module:handleShownHideOption()
+    self._curModule:handleShownHideOption()
   end
 end
 
@@ -64,3 +64,6 @@ function CoreOptions47:incrementOrderIndex()
   self._orderIndex = self._orderIndex + 1
   return i
 end
+
+---@return table
+function CoreOptions47:getCurrentModule() return self._curModule end

@@ -12,6 +12,7 @@ local BarTemplateOptions = ZxSimpleUI.optionTables["BarTemplateOptions"]
 local BarTemplateEnableOptions = ZxSimpleUI.optionTables["BarTemplateEnableOptions"]
 local Power47Options = ZxSimpleUI.optionTables["Power47Options"]
 local Combo47Options = ZxSimpleUI.optionTables["Combo47Options"]
+local TargetName47Options = ZxSimpleUI.optionTables["TargetName47Options"]
 
 local MODULE_NAME = "TargetFactory47"
 local DECORATIVE_NAME = "Target Factory"
@@ -58,7 +59,7 @@ function TargetFactory47:createPowerOptions()
 end
 
 function TargetFactory47:createNameOptions()
-  self:_createOptionsHelper(TargetName47, BarTemplateEnableOptions)
+  self:_createOptionsHelper(TargetName47, TargetName47Options)
 end
 
 function TargetFactory47:createComboOptions() self:_createOptionsHelper(Combo47, Combo47Options) end

@@ -1,5 +1,5 @@
 ---upvalues to prevent warnings
-local UnitName, UnitHealth = UnitName, UnitHealth
+local UnitName, UnitHealth, UnitReaction = UnitName, UnitHealth, UnitReaction
 local UnitClassification, UnitLevel = UnitClassification, UnitLevel
 
 ---include files
@@ -20,6 +20,17 @@ TargetName47.bars = nil
 -- #endregion
 
 function TargetName47:__init__()
+  self._UNIT_REACTIONS = {
+    HATED = 1,
+    HOSTILE = 2,
+    UNFRIENDLY = 3,
+    NEUTRAL = 4,
+    FRIENDLY = 5,
+    HONORED = 6,
+    REVERED = 7,
+    EXALTED = 8
+  }
+
   self._defaults = {
     profile = {
       width = 200,
@@ -35,7 +46,10 @@ function TargetName47:__init__()
       enabledToggle = true,
       framePool = "TargetHealth47",
       selfCurrentPoint = "BOTTOMLEFT",
-      relativePoint = "TOPLEFT"
+      relativePoint = "TOPLEFT",
+      hostileColor = {1.0, 0.2, 0.2, 1.0},
+      neutralColor = {1.0, 1.0, 0.0, 1.0},
+      friendlyColor = {1.0, 1.0, 1.0, 1.0}
     }
   }
   self._eventTable = {"UNIT_HEALTH", "PLAYER_TARGET_CHANGED"}
@@ -102,7 +116,7 @@ function TargetName47:createBar()
   self.mainFrame = self.bars:createBar(percentage)
   self.mainFrame.DECORATIVE_NAME = self.DECORATIVE_NAME
 
-  self:_setFormattedName()
+  self:_refreshName()
 
   self:_setOnShowOnHideHandlers()
   self:_enableAllScriptHandlers()
@@ -118,7 +132,7 @@ function TargetName47:refreshConfig()
   self:handleEnableToggle()
   if self:IsEnabled() and self.mainFrame:IsVisible() then
     self.bars:refreshConfig()
-    -- self:_handlePlayerTargetChanged()
+    self:_refreshName()
   end
 end
 
@@ -166,16 +180,17 @@ end
 
 function TargetName47:_handleUnitHealthEvent(curUnitHealth)
   curUnitHealth = curUnitHealth or UnitHealth(self.unit)
-  if curUnitHealth > 0 then self:_setFormattedName() end
+  if curUnitHealth > 0 then self:_refreshName() end
 end
 
 function TargetName47:_handlePlayerTargetChanged()
   local curUnitName = UnitName(self.unit)
-  if curUnitName ~= nil and curUnitName ~= "" then self:_setFormattedName() end
+  if curUnitName ~= nil and curUnitName ~= "" then self:_refreshName() end
 end
 
-function TargetName47:_setFormattedName()
+function TargetName47:_refreshName()
   self.mainFrame.mainText:SetText(self:_getFormattedName())
+  self.mainFrame.mainText:SetTextColor(unpack(self:_getReactionColor()))
 end
 
 ---@return string formattedName
@@ -191,4 +206,18 @@ function TargetName47:_getFormattedName()
     formattedName = string.format("(%s) %s", s1, formattedName)
   end
   return formattedName
+end
+
+---@return table
+function TargetName47:_getReactionColor()
+  local reaction = UnitReaction("player", self.unit)
+  local color = {}
+  if reaction == self._UNIT_REACTIONS.HOSTILE then
+    color = self._curDbProfile.hostileColor
+  elseif reaction == self._UNIT_REACTIONS.NEUTRAL then
+    color = self._curDbProfile.neutralColor
+  else
+    color = self._curDbProfile.friendlyColor
+  end
+  return color
 end

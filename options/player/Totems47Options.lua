@@ -16,10 +16,9 @@ function Totems47Options:__init__(coreOptions47)
   self._curDbProfile = self._currentModule.db.profile
 end
 
----@param coreOptions47 table
-function Totems47Options:new(coreOptions47)
+function Totems47Options:new(...)
   local newInstance = setmetatable({}, self)
-  newInstance:__init__(coreOptions47)
+  newInstance:__init__(...)
   return newInstance
 end
 

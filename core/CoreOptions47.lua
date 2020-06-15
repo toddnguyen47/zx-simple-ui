@@ -15,11 +15,9 @@ function CoreOptions47:__init__(currentModule)
   self._orderIndex = ZxSimpleUI.DEFAULT_ORDER_INDEX
 end
 
----@param currentModule table
-function CoreOptions47:new(currentModule)
-  assert(currentModule ~= nil)
+function CoreOptions47:new(...)
   local newInstance = setmetatable({}, self)
-  newInstance:__init__(currentModule)
+  newInstance:__init__(...)
   return newInstance
 end
 

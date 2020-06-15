@@ -16,10 +16,9 @@ function TargetName47Options:__init__(barTemplateOptions)
   self._curDbProfile = self._currentModule.db.profile
 end
 
----@param barTemplateOptions table
-function TargetName47Options:new(barTemplateOptions)
+function TargetName47Options:new(...)
   local newInstance = setmetatable({}, self)
-  newInstance:__init__(barTemplateOptions)
+  newInstance:__init__(...)
   return newInstance
 end
 

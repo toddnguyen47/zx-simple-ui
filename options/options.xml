@@ -3,4 +3,5 @@
   <Include file="prereqs\prereqs.xml" />
   <Include file="target\target.xml" />
   <Script file="Power47Options.lua" />
+  <Script file="OptionsFactory47.lua" />
 </Ui>

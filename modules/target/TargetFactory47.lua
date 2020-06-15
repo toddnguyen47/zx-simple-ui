@@ -2,18 +2,12 @@
 --- include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local CoreFactory47 = ZxSimpleUI.CoreFactory47
+local OptionsFactory47 = ZxSimpleUI.optionTables["OptionsFactory47"]
 
 local TargetHealth47 = ZxSimpleUI:GetModule("TargetHealth47")
 local TargetName47 = ZxSimpleUI:GetModule("TargetName47")
 local TargetPower47 = ZxSimpleUI:GetModule("TargetPower47")
 local Combo47 = ZxSimpleUI:GetModule("Combo47")
-
-local CoreOptions47 = ZxSimpleUI.optionTables["CoreOptions47"]
-local BarTemplateOptions = ZxSimpleUI.optionTables["BarTemplateOptions"]
-local BarTemplateEnableOptions = ZxSimpleUI.optionTables["BarTemplateEnableOptions"]
-local Power47Options = ZxSimpleUI.optionTables["Power47Options"]
-local Combo47Options = ZxSimpleUI.optionTables["Combo47Options"]
-local TargetName47Options = ZxSimpleUI.optionTables["TargetName47Options"]
 
 local MODULE_NAME = "TargetFactory47"
 local DECORATIVE_NAME = "Target Factory"
@@ -54,7 +48,7 @@ function TargetFactory47:OnDisable() end
 function TargetFactory47:createHealthOptions()
   local curModule = TargetHealth47
   if curModule.mainFrame == nil then curModule:createBar() end
-  local optionInstance = BarTemplateOptions:new(CoreOptions47:new(curModule))
+  local optionInstance = OptionsFactory47:createBarTemplateOptions(curModule)
   optionInstance:registerModuleOptionsTable()
   return optionInstance.options
 end
@@ -62,8 +56,7 @@ end
 function TargetFactory47:createPowerOptions()
   local curModule = TargetPower47
   if curModule.mainFrame == nil then curModule:createBar() end
-  local optionInstance = Power47Options:new(
-                           BarTemplateOptions:new(CoreOptions47:new(curModule)))
+  local optionInstance = OptionsFactory47:createPower47Options(curModule)
   optionInstance:registerModuleOptionsTable()
   return optionInstance.options
 end
@@ -71,8 +64,7 @@ end
 function TargetFactory47:createNameOptions()
   local curModule = TargetName47
   if curModule.mainFrame == nil then curModule:createBar() end
-  local optionInstance = TargetName47Options:new(
-                           BarTemplateOptions:new(CoreOptions47:new(curModule)))
+  local optionInstance = OptionsFactory47:createTargetName47Options(curModule)
   optionInstance:registerModuleOptionsTable()
   return optionInstance.options
 end
@@ -80,7 +72,7 @@ end
 function TargetFactory47:createComboOptions()
   local curModule = Combo47
   if curModule.mainFrame == nil then curModule:createBar() end
-  local optionInstance = Combo47Options:new(CoreOptions47:new(curModule))
+  local optionInstance = OptionsFactory47:createCombo47Options(curModule)
   optionInstance:registerModuleOptionsTable()
   return optionInstance.options
 end

@@ -2,6 +2,7 @@
 --- include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local CoreFactory47 = ZxSimpleUI.CoreFactory47
+local OptionsFactory47 = ZxSimpleUI.optionTables["OptionsFactory47"]
 
 local PlayerHealth47 = ZxSimpleUI:GetModule("PlayerHealth47")
 local PlayerPower47 = ZxSimpleUI:GetModule("PlayerPower47")
@@ -10,13 +11,6 @@ local Runes47 = ZxSimpleUI:GetModule("Runes47")
 local Totems47 = ZxSimpleUI:GetModule("Totems47")
 local PetHealth47 = ZxSimpleUI:GetModule("PetHealth47")
 local PetPower47 = ZxSimpleUI:GetModule("PetPower47")
-
-local CoreOptions47 = ZxSimpleUI.optionTables["CoreOptions47"]
-local BarTemplateOptions = ZxSimpleUI.optionTables["BarTemplateOptions"]
-local BarTemplateEnableOptions = ZxSimpleUI.optionTables["BarTemplateEnableOptions"]
-local Power47Options = ZxSimpleUI.optionTables["Power47Options"]
-local Runes47Options = ZxSimpleUI.optionTables["Runes47Options"]
-local Totems47Options = ZxSimpleUI.optionTables["Totems47Options"]
 
 local MODULE_NAME = "PlayerFactory47"
 local DECORATIVE_NAME = "Player Factory"
@@ -65,7 +59,7 @@ function PlayerFactory47:OnDisable() end
 function PlayerFactory47:createPlayerHealthOptions()
   local curModule = PlayerHealth47
   if curModule.mainFrame == nil then curModule:createBar() end
-  local optionInstance = BarTemplateOptions:new(CoreOptions47:new(curModule))
+  local optionInstance = OptionsFactory47:createBarTemplateOptions(curModule)
   optionInstance:registerModuleOptionsTable()
   return optionInstance.options
 end
@@ -74,8 +68,7 @@ end
 function PlayerFactory47:createPlayerPowerOptions()
   local curModule = PlayerPower47
   if curModule.mainFrame == nil then curModule:createBar() end
-  local optionInstance = Power47Options:new(
-                           BarTemplateOptions:new(CoreOptions47:new(curModule)))
+  local optionInstance = OptionsFactory47:createPower47Options(curModule)
   optionInstance:registerModuleOptionsTable()
   return optionInstance.options
 end
@@ -84,8 +77,7 @@ end
 function PlayerFactory47:createPlayerNameOptions()
   local curModule = PlayerName47
   if curModule.mainFrame == nil then curModule:createBar() end
-  local optionInstance = BarTemplateEnableOptions:new(
-                           BarTemplateOptions:new(CoreOptions47:new(curModule)))
+  local optionInstance = OptionsFactory47:createBarTemplateEnableOptions(curModule)
   optionInstance:registerModuleOptionsTable()
   return optionInstance.options
 end
@@ -94,7 +86,7 @@ end
 function PlayerFactory47:createRuneOptions()
   local curModule = Runes47
   if curModule.mainFrame == nil then curModule:createBar() end
-  local optionInstance = Runes47Options:new(CoreOptions47:new(curModule))
+  local optionInstance = OptionsFactory47:createRunes47Options(curModule)
   optionInstance:registerModuleOptionsTable()
   return optionInstance.options
 end
@@ -103,7 +95,7 @@ end
 function PlayerFactory47:createTotemOptions()
   local curModule = Totems47
   if curModule.mainFrame == nil then curModule:createBar() end
-  local optionInstance = Totems47Options:new(CoreOptions47:new(curModule))
+  local optionInstance = OptionsFactory47:createTotems47Options(curModule)
   optionInstance:registerModuleOptionsTable()
   return optionInstance.options
 end
@@ -112,8 +104,7 @@ end
 function PlayerFactory47:createPetHealthOptions()
   local curModule = PetHealth47
   if curModule.mainFrame == nil then curModule:createBar() end
-  local optionInstance = BarTemplateEnableOptions:new(
-                           BarTemplateOptions:new(CoreOptions47:new(curModule)))
+  local optionInstance = OptionsFactory47:createBarTemplateEnableOptions(curModule)
   optionInstance:registerModuleOptionsTable()
   return optionInstance.options
 end
@@ -121,8 +112,7 @@ end
 function PlayerFactory47:createPetPowerOptions()
   local curModule = PetPower47
   if curModule.mainFrame == nil then curModule:createBar() end
-  local optionInstance = BarTemplateEnableOptions:new(
-                           BarTemplateOptions:new(CoreOptions47:new(curModule)))
+  local optionInstance = OptionsFactory47:createBarTemplateEnableOptions(curModule)
   optionInstance:registerModuleOptionsTable()
   return optionInstance.options
 end

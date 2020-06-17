@@ -10,7 +10,6 @@ local Utils47 = ZxSimpleUI.Utils47
 local BarTemplateDefaults = ZxSimpleUI.prereqTables["BarTemplateDefaults"]
 local BarTemplate = ZxSimpleUI.prereqTables["BarTemplate"]
 local RegisterWatchHandler47 = ZxSimpleUI.prereqTables["RegisterWatchHandler47"]
-local SetOnShowOnHide = ZxSimpleUI.prereqTables["SetOnShowOnHide"]
 
 local MODULE_NAME = "PlayerName47"
 local DECORATIVE_NAME = "Player Name"
@@ -81,18 +80,6 @@ function PlayerName47:OnDisable()
   self.mainFrame:Hide()
 end
 
--- For Frames that gets hidden often (e.g. Target frames)
----@param curFrame table
----Handle Blizzard's OnShow event
-function PlayerName47:OnShowBlizz(curFrame, ...)
-  -- Even if shown, if the module is disabled, hide the frame!
-  if not self:IsEnabled() then self.mainFrame:Hide() end
-end
-
----@param curFrame table
----Handle Blizzard's OnHide event
-function PlayerName47:OnHideBlizz(curFrame, ...) self.mainFrame:SetScript("OnUpdate", nil) end
-
 ---@return table
 function PlayerName47:createBar()
   local percentage = 1.0
@@ -101,7 +88,6 @@ function PlayerName47:createBar()
   self.mainFrame.frameToAnchorTo = ZxSimpleUI:getFrameListFrame("PlayerHealth47")
   self.bars:setTextOnly(self:_getFormattedName())
 
-  SetOnShowOnHide:setHandlerScripts(self)
   ZxSimpleUI:addToFrameList(self.MODULE_NAME,
     {frame = self.mainFrame, name = self.DECORATIVE_NAME})
   return self.mainFrame

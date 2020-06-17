@@ -2,6 +2,7 @@
 --- upvalues to prevent warnings
 local LibStub = LibStub
 local UnitPower, UnitPowerMax, UnitPowerType = UnitPower, UnitPowerMax, UnitPowerType
+local UnitClass = UnitClass
 
 --- include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
@@ -9,7 +10,6 @@ local Utils47 = ZxSimpleUI.Utils47
 local BarTemplateDefaults = ZxSimpleUI.prereqTables["BarTemplateDefaults"]
 local BarTemplate = ZxSimpleUI.prereqTables["BarTemplate"]
 local RegisterWatchHandler47 = ZxSimpleUI.prereqTables["RegisterWatchHandler47"]
-local SetOnShowOnHide = ZxSimpleUI.prereqTables["SetOnShowOnHide"]
 
 local MODULE_NAME = "PlayerPower47"
 local DECORATIVE_NAME = "Player Power"
@@ -98,6 +98,7 @@ end
 ---the game that wasn't available in OnInitialize
 function PlayerPower47:OnEnable()
   if self.mainFrame == nil then self:createBar() end
+  self:_enableAllScriptHandlers()
   self.mainFrame:Show()
 end
 
@@ -106,23 +107,9 @@ end
 ---build a "standby" mode, or be able to toggle modules on/off.
 function PlayerPower47:OnDisable()
   if self.mainFrame == nil then self:createBar() end
+  self.mainFrame:SetScript("OnUpdate", nil)
   self.mainFrame:Hide()
 end
-
--- For Frames that gets hidden often (e.g. Target frames)
----@param curFrame table
----Handle Blizzard's OnShow event
-function PlayerPower47:OnShowBlizz(curFrame, ...)
-  if self:IsEnabled() then
-    self:_enableAllScriptHandlers()
-  else
-    self.mainFrame:Hide()
-  end
-end
-
----@param curFrame table
----Handle Blizzard's OnHide event
-function PlayerPower47:OnHideBlizz(curFrame, ...) self.mainFrame:SetScript("OnUpdate", nil) end
 
 ---@return table
 function PlayerPower47:createBar()
@@ -134,7 +121,6 @@ function PlayerPower47:createBar()
 
   self:_setRefreshColor()
   self:_registerEvents()
-  SetOnShowOnHide:setHandlerScripts(self)
 
   RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
   ZxSimpleUI:addToFrameList(self.MODULE_NAME,

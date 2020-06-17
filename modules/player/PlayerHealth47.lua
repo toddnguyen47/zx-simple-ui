@@ -10,7 +10,6 @@ local Utils47 = ZxSimpleUI.Utils47
 local BarTemplateDefaults = ZxSimpleUI.prereqTables["BarTemplateDefaults"]
 local BarTemplate = ZxSimpleUI.prereqTables["BarTemplate"]
 local RegisterWatchHandler47 = ZxSimpleUI.prereqTables["RegisterWatchHandler47"]
-local SetOnShowOnHide = ZxSimpleUI.prereqTables["SetOnShowOnHide"]
 
 local MODULE_NAME = "PlayerHealth47"
 local DECORATIVE_NAME = "Player Health"
@@ -68,6 +67,7 @@ end
 ---the game that wasn't available in OnInitialize
 function PlayerHealth47:OnEnable()
   if self.mainFrame == nil then self:createBar() end
+  self:_enableAllScriptHandlers()
   self.mainFrame:Show()
 end
 
@@ -76,23 +76,9 @@ end
 ---build a "standby" mode, or be able to toggle modules on/off.
 function PlayerHealth47:OnDisable()
   if self.mainFrame == nil then self:createBar() end
+  self.mainFrame:SetScript("OnUpdate", nil)
   self.mainFrame:Hide()
 end
-
--- For Frames that gets hidden often (e.g. Target frames)
----@param curFrame table
----Handle Blizzard's OnShow event
-function PlayerHealth47:OnShowBlizz(curFrame, ...)
-  if self:IsEnabled() then
-    self:_enableAllScriptHandlers()
-  else
-    self.mainFrame:Hide()
-  end
-end
-
----@param curFrame table
----Handle Blizzard's OnHide event
-function PlayerHealth47:OnHideBlizz(curFrame, ...) self.mainFrame:SetScript("OnUpdate", nil) end
 
 function PlayerHealth47:refreshConfig()
   self:handleEnableToggle()
@@ -111,7 +97,6 @@ function PlayerHealth47:createBar()
   self.mainFrame.DECORATIVE_NAME = self.DECORATIVE_NAME
 
   self:_registerEvents()
-  SetOnShowOnHide:setHandlerScripts(self)
 
   RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
   ZxSimpleUI:addToFrameList(self.MODULE_NAME,

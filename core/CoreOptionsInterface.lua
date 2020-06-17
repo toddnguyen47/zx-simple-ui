@@ -11,6 +11,7 @@ local CoreOptionsInterface = ZxSimpleUI:NewModule("Options", nil)
 ---@param key string
 local _curDbProfile, _openOptionFrame, _getSlashCommandsString
 local _getOpenOptionTable, _getOptionTable, _addModuleOptionTables
+local _getPrintFrameOptionTable
 local _OPEN_OPTION_APPNAME = "ZxSimpleGUI_OpenOption"
 
 function CoreOptionsInterface:OnInitialize()
@@ -34,6 +35,8 @@ function CoreOptionsInterface:SetupOptions()
   -- Set profile options
   ZxSimpleUI:registerModuleOptions("Profiles", AceDBOptions:GetOptionsTable(ZxSimpleUI.db),
     "Profiles")
+  -- Set Print Frames option
+  ZxSimpleUI:registerModuleOptions("PrintFrames", _getPrintFrameOptionTable(), "Print Frames")
 end
 
 -- ########################################
@@ -54,13 +57,30 @@ function _getOpenOptionTable()
           name = _getSlashCommandsString(),
           type = "description",
           fontSize = "medium"
-        },
+        }
+      }
+    }
+  end
+
+  return _openOptionTable
+end
+
+---@return table
+local _printFrameOptionTable = {}
+function _getPrintFrameOptionTable()
+  if next(_printFrameOptionTable) == nil then
+    _printFrameOptionTable = {
+      type = "group",
+      name = "Print Frames",
+      args = {
         printFrameVisibility = {
           name = "Print Frame Visibility",
           type = "execute",
+          order = 1,
           func = function(info, ...)
             local sortedKeys = {}
             local t1 = {}
+            local s1 = "FRAMES VISIBILITY\n"
             for k, v in ZxSimpleUI:IterateModules() do
               table.insert(sortedKeys, k)
               t1[k] = v
@@ -70,17 +90,21 @@ function _getOpenOptionTable()
             for _, sortedKey in pairs(sortedKeys) do
               local curModule = t1[sortedKey]
               if curModule.mainFrame ~= nil then
-                print(string.format("%s | %s", sortedKey,
-                        Utils47:getIsShown(curModule.mainFrame)))
+                local s2 = (string.format("%s | %s", sortedKey,
+                             Utils47:getIsShown(curModule.mainFrame)))
+                print(s2)
+                s1 = s1 .. s2 .. "\n"
               end
             end
+
+            _printFrameOptionTable.args.descDisplay.name = s1
           end
-        }
+        },
+        descDisplay = {name = "", type = "description", fontSize = "medium", order = 2}
       }
     }
   end
-
-  return _openOptionTable
+  return _printFrameOptionTable
 end
 
 function _getSlashCommandsString()
@@ -121,6 +145,8 @@ function _addModuleOptionTables()
     -- Make sure "Profiles" is the first option
     if moduleAppName == "Profiles" then
       option.args[moduleAppName]["order"] = 1
+    elseif moduleAppName == "PrintFrames" then
+      option.args[moduleAppName]["order"] = 2
     else
       option.args[moduleAppName]["order"] = defaultOrderIndex
       defaultOrderIndex = defaultOrderIndex + 1

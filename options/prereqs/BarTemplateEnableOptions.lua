@@ -38,3 +38,6 @@ function BarTemplateEnableOptions:getOptionTable()
   end
   return self.options
 end
+
+---@return table
+function BarTemplateEnableOptions:getBarTemplateOptions() return self._barTemplateOptions end

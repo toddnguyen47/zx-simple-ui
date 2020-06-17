@@ -7,18 +7,19 @@ TargetName47Options.__index = TargetName47Options
 TargetName47Options.OPTION_NAME = "TargetName47Options"
 ZxSimpleUI.optionTables[TargetName47Options.OPTION_NAME] = TargetName47Options
 
----@param barTemplateOptions table
-function TargetName47Options:__init__(barTemplateOptions)
+function TargetName47Options:__init__()
   self.options = {}
-  self._barTemplateEnableOptions = barTemplateOptions
-  self._coreOptions47 = self._barTemplateEnableOptions:getCoreOptions47()
-  self._currentModule = self._barTemplateEnableOptions:getCurrentModule()
+  local barTemplateOptions = self._barTemplateEnableOptions:getBarTemplateOptions()
+  self._coreOptions47 = barTemplateOptions:getCoreOptions47()
+  self._currentModule = barTemplateOptions:getCurrentModule()
   self._curDbProfile = self._currentModule.db.profile
 end
 
-function TargetName47Options:new(...)
+---@param barTemplateEnableOptions table
+function TargetName47Options:new(barTemplateEnableOptions)
   local newInstance = setmetatable({}, self)
-  newInstance:__init__(...)
+  newInstance._barTemplateEnableOptions = barTemplateEnableOptions
+  newInstance:__init__()
   return newInstance
 end
 

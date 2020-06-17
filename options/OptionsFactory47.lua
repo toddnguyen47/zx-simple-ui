@@ -64,6 +64,6 @@ end
 ---@param curModule table
 ---@return table TargetName47Options
 function OptionsFactory47:createTargetName47Options(curModule)
-  local barTemplateOptions = self:createBarTemplateOptions(curModule)
+  local barTemplateOptions = self:createBarTemplateEnableOptions(curModule)
   return TargetName47Options:new(barTemplateOptions)
 end

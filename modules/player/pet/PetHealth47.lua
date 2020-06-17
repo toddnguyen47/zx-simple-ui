@@ -1,11 +1,12 @@
 --- upvalues to prevent warnings
 local LibStub = LibStub
 local UnitHealth, UnitHealthMax = UnitHealth, UnitHealthMax
-local UnitName = UnitName
+local UnitExists = UnitExists
 
 -- #region
 --- include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
+local FramePool47 = ZxSimpleUI.FramePool47
 local BarTemplateDefaults = ZxSimpleUI.prereqTables["BarTemplateDefaults"]
 local BarTemplate = ZxSimpleUI.prereqTables["BarTemplate"]
 local Utils47 = ZxSimpleUI.Utils47
@@ -72,7 +73,6 @@ function PetHealth47:OnEnable()
   self:_registerEvents()
   self:_setOnShowOnHideHandlers()
   self:_enableAllScriptHandlers()
-  self.mainFrame:Show()
 end
 
 ---Unhook, Unregister Events, Hide frames that you created.
@@ -96,6 +96,7 @@ function PetHealth47:createBar()
   self.mainFrame.DECORATIVE_NAME = self.DECORATIVE_NAME
   self.mainFrame.frameToAnchorTo = anchorFrame
 
+  self:_setInitialVisibilityAndColor()
   RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
   ZxSimpleUI:addToFrameList(self.MODULE_NAME,
     {frame = self.mainFrame, name = self.DECORATIVE_NAME})
@@ -130,6 +131,15 @@ function PetHealth47:_onUpdateHandler(curFrame, elapsed)
   end
 end
 
+---@param curFrame table
+---@param event string
+---@param unit string
+function PetHealth47:_onEventHandler(curFrame, event, unit, ...)
+  if event == "UNIT_PET" then
+    if Utils47:stringEqualsIgnoreCase(unit, "player") then self:_handlePetExists() end
+  end
+end
+
 function PetHealth47:_handleUnitHealthEvent(curUnitHealth)
   curUnitHealth = curUnitHealth or UnitHealth(self.unit)
   local maxUnitHealth = UnitHealthMax(self.unit)
@@ -139,6 +149,8 @@ end
 
 function PetHealth47:_registerEvents()
   for _, event in pairs(self._eventTable) do self.mainFrame:RegisterEvent(event) end
+  -- Do NOT unregister UNIT_PET!
+  self.mainFrame:RegisterEvent("UNIT_PET")
 end
 
 function PetHealth47:_unregisterEvents()
@@ -162,6 +174,46 @@ function PetHealth47:_enableAllScriptHandlers()
   self.mainFrame:SetScript("OnUpdate", function(curFrame, elapsed)
     self:_onUpdateHandler(curFrame, elapsed)
   end)
+
+  self.mainFrame:SetScript("OnEvent", function(curFrame, event, unit, ...)
+    self:_onEventHandler(curFrame, event, unit, ...)
+  end)
 end
 
 function PetHealth47:_disableAllScriptHandlers() self.mainFrame:SetScript("OnUpdate", nil) end
+
+function PetHealth47:_setInitialVisibilityAndColor()
+  local function cleanUpFrame(frame)
+    frame:SetScript("OnUpdate", nil)
+    FramePool47:releaseFrame(frame)
+  end
+
+  self.mainFrame:Hide()
+
+  local tempFrame = FramePool47:getFrame()
+  local tempTimeSinceLastUpdate = 0
+  local maxTimeSeconds = 0.4
+  local totalElapsedTime = 0
+  tempFrame:SetScript("OnUpdate", function(curFrame, elapsed)
+    totalElapsedTime = totalElapsedTime + elapsed
+    tempTimeSinceLastUpdate = tempTimeSinceLastUpdate + elapsed
+    if (tempTimeSinceLastUpdate > 0.1) then
+      tempTimeSinceLastUpdate = 0
+      if UnitExists(self.unit) then
+        self.mainFrame:Show()
+        cleanUpFrame(tempFrame)
+      end
+
+      -- We ran out of time
+      if totalElapsedTime > maxTimeSeconds then cleanUpFrame(tempFrame) end
+    end
+  end)
+end
+
+function PetHealth47:_handlePetExists()
+  if UnitExists(self.unit) then
+    self.mainFrame:Show()
+  else
+    self.mainFrame:Hide()
+  end
+end

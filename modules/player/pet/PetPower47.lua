@@ -2,6 +2,7 @@
 local LibStub = LibStub
 local UnitPower, UnitPowerMax = UnitPower, UnitPowerMax
 local UnitClass, UnitPowerType = UnitClass, UnitPowerType
+local UnitExists = UnitExists
 
 --- include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
@@ -93,7 +94,6 @@ function PetPower47:OnEnable()
   self:_setOnShowOnHideHandlers()
   self:_registerEvents()
   self:_enableAllScriptHandlers()
-  self.mainFrame:Show()
 end
 
 function PetPower47:OnDisable()
@@ -115,8 +115,10 @@ function PetPower47:createBar()
   self.mainFrame.DECORATIVE_NAME = self.DECORATIVE_NAME
   self.mainFrame.frameToAnchorTo = anchorFrame
 
-  self:_setInitialOnUpdateColor()
+  self:_setInitialVisibilityAndColor()
   RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
+  ZxSimpleUI:addToFrameList(self.MODULE_NAME,
+    {frame = self.mainFrame, name = self.DECORATIVE_NAME})
   return self.mainFrame
 end
 
@@ -158,10 +160,15 @@ end
 ---@param curFrame table
 ---@param event string
 ---@param unit string
-function PetPower47:_onEventHandler(curFrame, event, unit)
-  local isSameEvent = Utils47:stringEqualsIgnoreCase(event, "UNIT_DISPLAYPOWER")
-  local isSameUnit = Utils47:stringEqualsIgnoreCase(unit, self.unit)
-  if isSameEvent and isSameUnit then self:_handlePowerChanged() end
+function PetPower47:_onEventHandler(curFrame, event, unit, ...)
+  if event == "UNIT_DISPLAYPOWER" then
+    local isSameUnit = Utils47:stringEqualsIgnoreCase(unit, self.unit)
+    if isSameUnit then self:_handlePowerChanged() end
+  elseif event == "UNIT_PET" then
+    if Utils47:stringEqualsIgnoreCase(unit, "player") then
+      self:_handlePetExists(curFrame, event, unit, ...)
+    end
+  end
 end
 
 ---@param curUnitPower number
@@ -178,15 +185,15 @@ function PetPower47:_registerEvents()
   for powerEvent, _ in pairs(self._powerEventColorTable) do
     self.mainFrame:RegisterEvent(powerEvent)
   end
-  -- Register Druid's shapeshift form
   self.mainFrame:RegisterEvent("UNIT_DISPLAYPOWER")
+  -- Do NOT unregister UNIT_PET!
+  self.mainFrame:RegisterEvent("UNIT_PET")
 end
 
 function PetPower47:_unregisterEvents()
   for powerEvent, _ in pairs(self._powerEventColorTable) do
     self.mainFrame:UnregisterEvent(powerEvent)
   end
-  -- Register Druid's shapeshift form
   self.mainFrame:UnregisterEvent("UNIT_DISPLAYPOWER")
 end
 
@@ -212,10 +219,7 @@ function PetPower47:_enableAllScriptHandlers()
   end)
 end
 
-function PetPower47:_disableAllScriptHandlers()
-  self.mainFrame:SetScript("OnUpdate", nil)
-  self.mainFrame:SetScript("OnEvent", nil)
-end
+function PetPower47:_disableAllScriptHandlers() self.mainFrame:SetScript("OnUpdate", nil) end
 
 function PetPower47:_setUnitPowerType()
   self._powerType, self._powerTypeString = UnitPowerType(self.unit)
@@ -232,19 +236,45 @@ function PetPower47:_setInitialColor()
   self.mainFrame.statusBar:SetStatusBarColor(unpack(t1))
 end
 
-function PetPower47:_setInitialOnUpdateColor()
+function PetPower47:_setInitialVisibilityAndColor()
+  local function cleanUpFrame(frame)
+    frame:SetScript("OnUpdate", nil)
+    FramePool47:releaseFrame(frame)
+  end
+
+  self.mainFrame:Hide()
+
   local tempFrame = FramePool47:getFrame()
   local tempTimeSinceLastUpdate = 0
+  local maxTimeSeconds = 0.4
+  local totalElapsedTime = 0
   tempFrame:SetScript("OnUpdate", function(curFrame, elapsed)
+    totalElapsedTime = totalElapsedTime + elapsed
     tempTimeSinceLastUpdate = tempTimeSinceLastUpdate + elapsed
     if (tempTimeSinceLastUpdate > 0.1) then
       tempTimeSinceLastUpdate = 0
-      self:_setUnitPowerType()
-      if self._powerTypeString ~= "" then
-        self:_setInitialColor()
-        tempFrame:SetScript("OnUpdate", nil)
-        FramePool47:releaseFrame(tempFrame)
+      -- Only update color if there is a pet
+      if UnitExists(self.unit) then
+        self:_setUnitPowerType()
+        if self._powerTypeString ~= "" then
+          self:_setInitialColor()
+          self.mainFrame:Show()
+          cleanUpFrame(tempFrame)
+        end
       end
+
+      -- We ran out of time
+      if totalElapsedTime > maxTimeSeconds then cleanUpFrame(tempFrame) end
     end
   end)
+end
+
+function PetPower47:_handlePetExists()
+  if UnitExists(self.unit) then
+    self:_setUnitPowerType()
+    self:_setInitialColor()
+    self.mainFrame:Show()
+  else
+    self.mainFrame:Hide()
+  end
 end

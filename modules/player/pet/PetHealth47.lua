@@ -72,6 +72,7 @@ end
 function PetHealth47:OnEnable()
   if self.mainFrame == nil then self:createBar() end
   self:_registerEvents()
+  self:_setOnEventHandler()
   SetOnShowOnHide:setHandlerScripts(self)
   self:_handlePetExists()
 end
@@ -90,7 +91,7 @@ end
 ---Handle Blizzard's OnShow event
 function PetHealth47:OnShowBlizz(curFrame, ...)
   if self:IsEnabled() then
-    self:_enableAllScriptHandlers()
+    self:_setOnUpdateHandler()
   else
     self.mainFrame:Hide()
   end
@@ -146,15 +147,6 @@ function PetHealth47:_onUpdateHandler(curFrame, elapsed)
   end
 end
 
----@param curFrame table
----@param event string
----@param unit string
-function PetHealth47:_onEventHandler(curFrame, event, unit, ...)
-  if event == "UNIT_PET" then
-    if Utils47:stringEqualsIgnoreCase(unit, "player") then self:_handlePetExists() end
-  end
-end
-
 function PetHealth47:_handleUnitHealthEvent(curUnitHealth)
   curUnitHealth = curUnitHealth or UnitHealth(self.unit)
   local maxUnitHealth = UnitHealthMax(self.unit)
@@ -172,14 +164,25 @@ function PetHealth47:_unregisterEvents()
   for _, event in pairs(self._eventTable) do self.mainFrame:UnregisterEvent(event) end
 end
 
-function PetHealth47:_enableAllScriptHandlers()
+function PetHealth47:_setOnUpdateHandler()
   self.mainFrame:SetScript("OnUpdate", function(curFrame, elapsed)
     self:_onUpdateHandler(curFrame, elapsed)
   end)
+end
 
+function PetHealth47:_setOnEventHandler()
   self.mainFrame:SetScript("OnEvent", function(curFrame, event, unit, ...)
     self:_onEventHandler(curFrame, event, unit, ...)
   end)
+end
+
+---@param curFrame table
+---@param event string
+---@param unit string
+function PetHealth47:_onEventHandler(curFrame, event, unit, ...)
+  if event == "UNIT_PET" then
+    if Utils47:stringEqualsIgnoreCase(unit, "player") then self:_handlePetExists() end
+  end
 end
 
 function PetHealth47:_setInitialVisibilityAndColor()

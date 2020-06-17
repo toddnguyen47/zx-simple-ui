@@ -92,8 +92,9 @@ end
 
 function PetPower47:OnEnable()
   if self.mainFrame == nil then self:createBar() end
-  SetOnShowOnHide:setHandlerScripts(self)
   self:_registerEvents()
+  self:_setOnEventHandler()
+  SetOnShowOnHide:setHandlerScripts(self)
   self:_handlePetExists()
 end
 
@@ -108,7 +109,7 @@ end
 ---Handle Blizzard's OnShow event
 function PetPower47:OnShowBlizz(curFrame, ...)
   if self:IsEnabled() then
-    self:_enableAllScriptHandlers()
+    self:_setOnUpdateHandler()
   else
     self.mainFrame:Hide()
   end
@@ -212,12 +213,15 @@ function PetPower47:_unregisterEvents()
   self.mainFrame:UnregisterEvent("UNIT_DISPLAYPOWER")
 end
 
-function PetPower47:_enableAllScriptHandlers()
+function PetPower47:_setOnUpdateHandler()
   self.mainFrame:SetScript("OnUpdate", function(curFrame, elapsed)
     self:_onUpdateHandler(curFrame, elapsed)
   end)
-  self.mainFrame:SetScript("OnEvent", function(curFrame, event, unit)
-    self:_onEventHandler(curFrame, event, unit)
+end
+
+function PetPower47:_setOnEventHandler()
+  self.mainFrame:SetScript("OnEvent", function(curFrame, event, unit, ...)
+    self:_onEventHandler(curFrame, event, unit, ...)
   end)
 end
 

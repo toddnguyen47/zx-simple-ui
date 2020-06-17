@@ -22,6 +22,7 @@ function InterfaceModule:OnDisable() end
 ---@param curFrame table
 ---Handle Blizzard's OnShow event
 function InterfaceModule:OnShowBlizz(curFrame, ...) end
+
 ---@param curFrame table
 ---Handle Blizzard's OnHide event
 function InterfaceModule:OnHideBlizz(curFrame, ...) end

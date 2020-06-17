@@ -94,14 +94,29 @@ function PetPower47:OnEnable()
   self:_setOnShowOnHideHandlers()
   self:_registerEvents()
   self:_enableAllScriptHandlers()
+  self:_handlePetExists()
 end
 
 function PetPower47:OnDisable()
   if self.mainFrame == nil then self:createBar() end
   self:_unregisterEvents()
-  self:_disableAllScriptHandlers()
-  self.mainFrame:Hide()
+  self.mainFrame:Hide() -- Trigger OnHide()
 end
+
+-- For Frames that gets hidden often (e.g. Target frames)
+---@param curFrame table
+---Handle Blizzard's OnShow event
+function PetPower47:OnShowBlizz(curFrame, ...)
+  if self:IsEnabled() then
+    self:_enableAllScriptHandlers()
+  else
+    self.mainFrame:Hide()
+  end
+end
+
+---@param curFrame table
+---Handle Blizzard's OnHide event
+function PetPower47:OnHideBlizz(curFrame, ...) self.mainFrame:SetScript("OnUpdate", nil) end
 
 ---@return table
 function PetPower47:createBar()
@@ -198,16 +213,11 @@ function PetPower47:_unregisterEvents()
 end
 
 function PetPower47:_setOnShowOnHideHandlers()
-  self.mainFrame:SetScript("OnShow", function(curFrame, ...)
-    if self:IsEnabled() then
-      self:_enableAllScriptHandlers()
-    else
-      self.mainFrame:Hide()
-    end
-  end)
+  self.mainFrame:SetScript("OnShow",
+    function(curFrame, ...) self:OnShowBlizz(curFrame, ...) end)
 
   self.mainFrame:SetScript("OnHide",
-    function(curFrame, ...) self:_disableAllScriptHandlers() end)
+    function(curFrame, ...) self:OnHideBlizz(curFrame, ...) end)
 end
 
 function PetPower47:_enableAllScriptHandlers()
@@ -218,8 +228,6 @@ function PetPower47:_enableAllScriptHandlers()
     self:_onEventHandler(curFrame, event, unit)
   end)
 end
-
-function PetPower47:_disableAllScriptHandlers() self.mainFrame:SetScript("OnUpdate", nil) end
 
 function PetPower47:_setUnitPowerType()
   self._powerType, self._powerTypeString = UnitPowerType(self.unit)

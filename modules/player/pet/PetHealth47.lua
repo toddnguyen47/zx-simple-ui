@@ -73,6 +73,7 @@ function PetHealth47:OnEnable()
   self:_registerEvents()
   self:_setOnShowOnHideHandlers()
   self:_enableAllScriptHandlers()
+  self:_handlePetExists()
 end
 
 ---Unhook, Unregister Events, Hide frames that you created.
@@ -80,10 +81,24 @@ end
 ---build a "standby" mode, or be able to toggle modules on/off.
 function PetHealth47:OnDisable()
   if self.mainFrame == nil then self:createBar() end
-  self:_disableAllScriptHandlers()
   self:_unregisterEvents()
-  self.mainFrame:Hide()
+  self.mainFrame:Hide() -- Trigger OnHide() event
 end
+
+-- For Frames that gets hidden often (e.g. Target frames)
+---@param curFrame table
+---Handle Blizzard's OnShow event
+function PetHealth47:OnShowBlizz(curFrame, ...)
+  if self:IsEnabled() then
+    self:_enableAllScriptHandlers()
+  else
+    self.mainFrame:Hide()
+  end
+end
+
+---@param curFrame table
+---Handle Blizzard's OnHide event
+function PetHealth47:OnHideBlizz(curFrame, ...) self.mainFrame:SetScript("OnUpdate", nil) end
 
 function PetHealth47:createBar()
   local curUnitHealth = UnitHealth(self.unit)
@@ -158,16 +173,11 @@ function PetHealth47:_unregisterEvents()
 end
 
 function PetHealth47:_setOnShowOnHideHandlers()
-  self.mainFrame:SetScript("OnShow", function(curFrame, ...)
-    if self:IsEnabled() then
-      self:_enableAllScriptHandlers()
-    else
-      self.mainFrame:Hide()
-    end
-  end)
+  self.mainFrame:SetScript("OnShow",
+    function(curFrame, ...) self:OnShowBlizz(curFrame, ...) end)
 
   self.mainFrame:SetScript("OnHide",
-    function(curFrame, ...) self:_disableAllScriptHandlers() end)
+    function(curFrame, ...) self:OnHideBlizz(curFrame, ...) end)
 end
 
 function PetHealth47:_enableAllScriptHandlers()
@@ -179,8 +189,6 @@ function PetHealth47:_enableAllScriptHandlers()
     self:_onEventHandler(curFrame, event, unit, ...)
   end)
 end
-
-function PetHealth47:_disableAllScriptHandlers() self.mainFrame:SetScript("OnUpdate", nil) end
 
 function PetHealth47:_setInitialVisibilityAndColor()
   local function cleanUpFrame(frame)

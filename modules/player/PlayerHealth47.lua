@@ -78,6 +78,21 @@ function PlayerHealth47:OnDisable()
   self.mainFrame:Hide()
 end
 
+-- For Frames that gets hidden often (e.g. Target frames)
+---@param curFrame table
+---Handle Blizzard's OnShow event
+function PlayerHealth47:OnShowBlizz(curFrame, ...)
+  if self:IsEnabled() then
+    self:_enableAllScriptHandlers()
+  else
+    self.mainFrame:Hide()
+  end
+end
+
+---@param curFrame table
+---Handle Blizzard's OnHide event
+function PlayerHealth47:OnHideBlizz(curFrame, ...) self.mainFrame:SetScript("OnUpdate", nil) end
+
 function PlayerHealth47:refreshConfig()
   self:handleEnableToggle()
   if self:IsEnabled() then self.bars:refreshConfig() end
@@ -133,16 +148,11 @@ end
 function PlayerHealth47:_registerEvents() self.mainFrame:RegisterEvent("UNIT_HEALTH") end
 
 function PlayerHealth47:_setOnShowOnHideHandlers()
-  self.mainFrame:SetScript("OnShow", function(curFrame, ...)
-    if self:IsEnabled() then
-      self:_enableAllScriptHandlers()
-    else
-      self.mainFrame:Hide()
-    end
-  end)
+  self.mainFrame:SetScript("OnShow",
+    function(curFrame, ...) self:OnShowBlizz(curFrame, ...) end)
 
   self.mainFrame:SetScript("OnHide",
-    function(curFrame, ...) self:_disableAllScriptHandlers() end)
+    function(curFrame, ...) self:OnHideBlizz(curFrame, ...) end)
 end
 
 function PlayerHealth47:_enableAllScriptHandlers()
@@ -150,5 +160,3 @@ function PlayerHealth47:_enableAllScriptHandlers()
     self:_onUpdateHandler(curFrame, elapsed)
   end)
 end
-
-function PlayerHealth47:_disableAllScriptHandlers() self.mainFrame:SetScript("OnUpdate", nil) end

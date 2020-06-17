@@ -108,6 +108,21 @@ function PlayerPower47:OnDisable()
   self.mainFrame:Hide()
 end
 
+-- For Frames that gets hidden often (e.g. Target frames)
+---@param curFrame table
+---Handle Blizzard's OnShow event
+function PlayerPower47:OnShowBlizz(curFrame, ...)
+  if self:IsEnabled() then
+    self:_enableAllScriptHandlers()
+  else
+    self.mainFrame:Hide()
+  end
+end
+
+---@param curFrame table
+---Handle Blizzard's OnHide event
+function PlayerPower47:OnHideBlizz(curFrame, ...) self.mainFrame:SetScript("OnUpdate", nil) end
+
 ---@return table
 function PlayerPower47:createBar()
   local curUnitPower = UnitPower(self.unit)
@@ -190,16 +205,11 @@ function PlayerPower47:_registerEvents()
 end
 
 function PlayerPower47:_setOnShowOnHideHandlers()
-  self.mainFrame:SetScript("OnShow", function(curFrame, ...)
-    if self:IsEnabled() then
-      self:_enableAllScriptHandlers()
-    else
-      self.mainFrame:Hide()
-    end
-  end)
+  self.mainFrame:SetScript("OnShow",
+    function(curFrame, ...) self:OnShowBlizz(curFrame, ...) end)
 
   self.mainFrame:SetScript("OnHide",
-    function(curFrame, ...) self:_disableAllScriptHandlers() end)
+    function(curFrame, ...) self:OnHideBlizz(curFrame, ...) end)
 end
 
 function PlayerPower47:_enableAllScriptHandlers()
@@ -209,11 +219,6 @@ function PlayerPower47:_enableAllScriptHandlers()
   self.mainFrame:SetScript("OnEvent", function(curFrame, event, unit)
     self:_onEventHandler(curFrame, event, unit)
   end)
-end
-
-function PlayerPower47:_disableAllScriptHandlers()
-  self.mainFrame:SetScript("OnUpdate", nil)
-  self.mainFrame:SetScript("OnEvent", nil)
 end
 
 function PlayerPower47:_setUnitPowerType()

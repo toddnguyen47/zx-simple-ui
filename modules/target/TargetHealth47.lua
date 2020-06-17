@@ -108,7 +108,6 @@ function TargetHealth47:createBar()
   self.mainFrame.DECORATIVE_NAME = self.DECORATIVE_NAME
 
   SetOnShowOnHide:setHandlerScripts(self)
-  self:_enableAllScriptHandlers()
 
   RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
   ZxSimpleUI:addToFrameList(self.MODULE_NAME,

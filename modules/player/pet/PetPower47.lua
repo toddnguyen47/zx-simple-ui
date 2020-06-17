@@ -94,7 +94,6 @@ function PetPower47:OnEnable()
   if self.mainFrame == nil then self:createBar() end
   SetOnShowOnHide:setHandlerScripts(self)
   self:_registerEvents()
-  self:_enableAllScriptHandlers()
   self:_handlePetExists()
 end
 

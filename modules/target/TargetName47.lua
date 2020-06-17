@@ -121,7 +121,6 @@ function TargetName47:createBar()
   self:_refreshName()
 
   SetOnShowOnHide:setHandlerScripts(self)
-  self:_enableAllScriptHandlers()
   RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
   ZxSimpleUI:addToFrameList(self.MODULE_NAME,
     {frame = self.mainFrame, name = self.DECORATIVE_NAME})

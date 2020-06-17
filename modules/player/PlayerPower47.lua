@@ -135,7 +135,6 @@ function PlayerPower47:createBar()
   self:_setRefreshColor()
   self:_registerEvents()
   SetOnShowOnHide:setHandlerScripts(self)
-  self:_enableAllScriptHandlers()
 
   RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
   ZxSimpleUI:addToFrameList(self.MODULE_NAME,

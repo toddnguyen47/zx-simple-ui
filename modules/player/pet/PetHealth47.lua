@@ -73,7 +73,6 @@ function PetHealth47:OnEnable()
   if self.mainFrame == nil then self:createBar() end
   self:_registerEvents()
   SetOnShowOnHide:setHandlerScripts(self)
-  self:_enableAllScriptHandlers()
   self:_handlePetExists()
 end
 

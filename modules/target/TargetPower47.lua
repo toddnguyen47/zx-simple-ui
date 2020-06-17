@@ -131,7 +131,7 @@ end
 
 ---@param curFrame table
 ---Handle Blizzard's OnHide event
-function TargetPower47:OnHideBlizz(curFrame, ...) self:_disableAllScriptHandlers() end
+function TargetPower47:OnHideBlizz(curFrame, ...) self.mainFrame:SetScript("OnUpdate", nil) end
 
 function TargetPower47:createBar()
   self:_setUnitPowerType()
@@ -205,11 +205,6 @@ function TargetPower47:_enableAllScriptHandlers()
   self.mainFrame:SetScript("OnEvent", function(curFrame, event, unit)
     self:_onEventHandler(curFrame, event, unit)
   end)
-end
-
-function TargetPower47:_disableAllScriptHandlers()
-  self.mainFrame:SetScript("OnUpdate", nil)
-  self.mainFrame:SetScript("OnEvent", nil)
 end
 
 function TargetPower47:_onEventHandler(curFrame, event, unit)

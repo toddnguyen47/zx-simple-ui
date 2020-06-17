@@ -110,7 +110,7 @@ end
 
 ---@param curFrame table
 ---Handle Blizzard's OnHide event
-function TargetName47:OnHideBlizz(curFrame, ...) self:_disableAllScriptHandlers() end
+function TargetName47:OnHideBlizz(curFrame, ...) self.mainFrame:SetScript("OnUpdate", nil) end
 
 function TargetName47:createBar()
   local percentage = 1.0
@@ -166,8 +166,6 @@ function TargetName47:_enableAllScriptHandlers()
     self:_onEventHandler(curFrame, event, unit)
   end)
 end
-
-function TargetName47:_disableAllScriptHandlers() self.mainFrame:SetScript("OnEvent", nil) end
 
 function TargetName47:_onEventHandler(curFrame, event, unit, ...)
   local isUnitHealthEvent = Utils47:stringEqualsIgnoreCase(event, "UNIT_HEALTH")

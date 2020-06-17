@@ -2,4 +2,5 @@
   <Script file="BarTemplateDefaults.lua" />
   <Script file="BarTemplate.lua" />
   <Script file="RegisterWatchHandler47.lua" />
+  <Script file="SetOnShowOnHide.lua" />
 </Ui>

@@ -12,7 +12,8 @@ local FramePool47 = ZxSimpleUI.FramePool47
 local BarTemplateDefaults = ZxSimpleUI.prereqTables["BarTemplateDefaults"]
 local BarTemplate = ZxSimpleUI.prereqTables["BarTemplate"]
 local Utils47 = ZxSimpleUI.Utils47
-local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
+local RegisterWatchHandler47 = ZxSimpleUI.prereqTables["RegisterWatchHandler47"]
+local SetOnShowOnHide = ZxSimpleUI.prereqTables["SetOnShowOnHide"]
 
 local MODULE_NAME = "PetPower47"
 local DECORATIVE_NAME = "Pet Power"
@@ -91,7 +92,7 @@ end
 
 function PetPower47:OnEnable()
   if self.mainFrame == nil then self:createBar() end
-  self:_setOnShowOnHideHandlers()
+  SetOnShowOnHide:setHandlerScripts(self)
   self:_registerEvents()
   self:_enableAllScriptHandlers()
   self:_handlePetExists()
@@ -210,14 +211,6 @@ function PetPower47:_unregisterEvents()
     self.mainFrame:UnregisterEvent(powerEvent)
   end
   self.mainFrame:UnregisterEvent("UNIT_DISPLAYPOWER")
-end
-
-function PetPower47:_setOnShowOnHideHandlers()
-  self.mainFrame:SetScript("OnShow",
-    function(curFrame, ...) self:OnShowBlizz(curFrame, ...) end)
-
-  self.mainFrame:SetScript("OnHide",
-    function(curFrame, ...) self:OnHideBlizz(curFrame, ...) end)
 end
 
 function PetPower47:_enableAllScriptHandlers()

@@ -8,7 +8,8 @@ local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local Utils47 = ZxSimpleUI.Utils47
 local BarTemplateDefaults = ZxSimpleUI.prereqTables["BarTemplateDefaults"]
 local BarTemplate = ZxSimpleUI.prereqTables["BarTemplate"]
-local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
+local RegisterWatchHandler47 = ZxSimpleUI.prereqTables["RegisterWatchHandler47"]
+local SetOnShowOnHide = ZxSimpleUI.prereqTables["SetOnShowOnHide"]
 
 local MODULE_NAME = "PlayerPower47"
 local DECORATIVE_NAME = "Player Power"
@@ -133,7 +134,7 @@ function PlayerPower47:createBar()
 
   self:_setRefreshColor()
   self:_registerEvents()
-  self:_setOnShowOnHideHandlers()
+  SetOnShowOnHide:setHandlerScripts(self)
   self:_enableAllScriptHandlers()
 
   RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
@@ -202,14 +203,6 @@ function PlayerPower47:_registerEvents()
   end
   -- Register Druid's shapeshift form
   self.mainFrame:RegisterEvent("UNIT_DISPLAYPOWER")
-end
-
-function PlayerPower47:_setOnShowOnHideHandlers()
-  self.mainFrame:SetScript("OnShow",
-    function(curFrame, ...) self:OnShowBlizz(curFrame, ...) end)
-
-  self.mainFrame:SetScript("OnHide",
-    function(curFrame, ...) self:OnHideBlizz(curFrame, ...) end)
 end
 
 function PlayerPower47:_enableAllScriptHandlers()

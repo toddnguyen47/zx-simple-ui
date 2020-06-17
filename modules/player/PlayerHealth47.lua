@@ -9,7 +9,8 @@ local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local Utils47 = ZxSimpleUI.Utils47
 local BarTemplateDefaults = ZxSimpleUI.prereqTables["BarTemplateDefaults"]
 local BarTemplate = ZxSimpleUI.prereqTables["BarTemplate"]
-local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
+local RegisterWatchHandler47 = ZxSimpleUI.prereqTables["RegisterWatchHandler47"]
+local SetOnShowOnHide = ZxSimpleUI.prereqTables["SetOnShowOnHide"]
 
 local MODULE_NAME = "PlayerHealth47"
 local DECORATIVE_NAME = "Player Health"
@@ -110,7 +111,7 @@ function PlayerHealth47:createBar()
   self.mainFrame.DECORATIVE_NAME = self.DECORATIVE_NAME
 
   self:_registerEvents()
-  self:_setOnShowOnHideHandlers()
+  SetOnShowOnHide:setHandlerScripts(self)
   self:_enableAllScriptHandlers()
 
   RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
@@ -146,14 +147,6 @@ function PlayerHealth47:_handleUnitHealthEvent(curUnitHealth)
 end
 
 function PlayerHealth47:_registerEvents() self.mainFrame:RegisterEvent("UNIT_HEALTH") end
-
-function PlayerHealth47:_setOnShowOnHideHandlers()
-  self.mainFrame:SetScript("OnShow",
-    function(curFrame, ...) self:OnShowBlizz(curFrame, ...) end)
-
-  self.mainFrame:SetScript("OnHide",
-    function(curFrame, ...) self:OnHideBlizz(curFrame, ...) end)
-end
 
 function PlayerHealth47:_enableAllScriptHandlers()
   self.mainFrame:SetScript("OnUpdate", function(curFrame, elapsed)

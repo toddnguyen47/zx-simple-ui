@@ -12,7 +12,8 @@ local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local BarTemplateDefaults = ZxSimpleUI.prereqTables["BarTemplateDefaults"]
 local BarTemplate = ZxSimpleUI.prereqTables["BarTemplate"]
 local Utils47 = ZxSimpleUI.Utils47
-local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
+local RegisterWatchHandler47 = ZxSimpleUI.prereqTables["RegisterWatchHandler47"]
+local SetOnShowOnHide = ZxSimpleUI.prereqTables["SetOnShowOnHide"]
 
 -- #region
 local MODULE_NAME = "TargetHealth47"
@@ -106,7 +107,7 @@ function TargetHealth47:createBar()
   self.mainFrame = self.bars:createBar(percentage)
   self.mainFrame.DECORATIVE_NAME = self.DECORATIVE_NAME
 
-  self:_setOnShowOnHideHandlers()
+  SetOnShowOnHide:setHandlerScripts(self)
   self:_enableAllScriptHandlers()
 
   RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
@@ -135,14 +136,6 @@ end
 
 function TargetHealth47:_unregisterEvents()
   for _, event in pairs(self._eventTable) do self.mainFrame:UnregisterEvent(event) end
-end
-
-function TargetHealth47:_setOnShowOnHideHandlers()
-  self.mainFrame:SetScript("OnShow",
-    function(curFrame, ...) self:OnShowBlizz(curFrame, ...) end)
-
-  self.mainFrame:SetScript("OnHide",
-    function(curFrame, ...) self:OnHideBlizz(curFrame, ...) end)
 end
 
 function TargetHealth47:_enableAllScriptHandlers()

@@ -7,7 +7,8 @@ local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local BarTemplateDefaults = ZxSimpleUI.prereqTables["BarTemplateDefaults"]
 local BarTemplate = ZxSimpleUI.prereqTables["BarTemplate"]
 local Utils47 = ZxSimpleUI.Utils47
-local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
+local RegisterWatchHandler47 = ZxSimpleUI.prereqTables["RegisterWatchHandler47"]
+local SetOnShowOnHide = ZxSimpleUI.prereqTables["SetOnShowOnHide"]
 
 -- #region
 local MODULE_NAME = "TargetName47"
@@ -119,7 +120,7 @@ function TargetName47:createBar()
 
   self:_refreshName()
 
-  self:_setOnShowOnHideHandlers()
+  SetOnShowOnHide:setHandlerScripts(self)
   self:_enableAllScriptHandlers()
   RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
   ZxSimpleUI:addToFrameList(self.MODULE_NAME,
@@ -151,14 +152,6 @@ end
 
 function TargetName47:_unregisterEvents()
   for _, event in pairs(self._eventTable) do self.mainFrame:UnregisterEvent(event) end
-end
-
-function TargetName47:_setOnShowOnHideHandlers()
-  self.mainFrame:SetScript("OnShow",
-    function(curFrame, ...) self:OnShowBlizz(curFrame, ...) end)
-
-  self.mainFrame:SetScript("OnHide",
-    function(curFrame, ...) self:OnHideBlizz(curFrame, ...) end)
 end
 
 function TargetName47:_enableAllScriptHandlers()

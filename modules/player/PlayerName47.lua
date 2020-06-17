@@ -9,7 +9,8 @@ local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local Utils47 = ZxSimpleUI.Utils47
 local BarTemplateDefaults = ZxSimpleUI.prereqTables["BarTemplateDefaults"]
 local BarTemplate = ZxSimpleUI.prereqTables["BarTemplate"]
-local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
+local RegisterWatchHandler47 = ZxSimpleUI.prereqTables["RegisterWatchHandler47"]
+local SetOnShowOnHide = ZxSimpleUI.prereqTables["SetOnShowOnHide"]
 
 local MODULE_NAME = "PlayerName47"
 local DECORATIVE_NAME = "Player Name"
@@ -67,6 +68,7 @@ end
 ---the game that wasn't available in OnInitialize
 function PlayerName47:OnEnable()
   if self.mainFrame == nil then self:createBar() end
+  RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
   self.mainFrame:Show()
 end
 
@@ -75,8 +77,21 @@ end
 ---build a "standby" mode, or be able to toggle modules on/off.
 function PlayerName47:OnDisable()
   if self.mainFrame == nil then self:createBar() end
+  RegisterWatchHandler47:setUnregisterForWatch(self.mainFrame, self.unit)
   self.mainFrame:Hide()
 end
+
+-- For Frames that gets hidden often (e.g. Target frames)
+---@param curFrame table
+---Handle Blizzard's OnShow event
+function PlayerName47:OnShowBlizz(curFrame, ...)
+  -- Even if shown, if the module is disabled, hide the frame!
+  if not self:IsEnabled() then self.mainFrame:Hide() end
+end
+
+---@param curFrame table
+---Handle Blizzard's OnHide event
+function PlayerName47:OnHideBlizz(curFrame, ...) self.mainFrame:SetScript("OnUpdate", nil) end
 
 ---@return table
 function PlayerName47:createBar()
@@ -86,8 +101,7 @@ function PlayerName47:createBar()
   self.mainFrame.frameToAnchorTo = ZxSimpleUI:getFrameListFrame("PlayerHealth47")
   self.bars:setTextOnly(self:_getFormattedName())
 
-  self:_setOnShowOnHideHandlers()
-  RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
+  SetOnShowOnHide:setHandlerScripts(self)
   ZxSimpleUI:addToFrameList(self.MODULE_NAME,
     {frame = self.mainFrame, name = self.DECORATIVE_NAME})
   return self.mainFrame
@@ -113,11 +127,4 @@ function PlayerName47:_getFormattedName()
   local level = UnitLevel(self.unit)
   if tonumber(level) < 0 then level = "??" end
   return string.format("%s (%s)", name, tostring(level))
-end
-
-function PlayerName47:_setOnShowOnHideHandlers()
-  self.mainFrame:SetScript("OnShow", function(curFrame, ...)
-    -- Even if shown, if the module is disabled, hide the frame!
-    if not self:IsEnabled() then self.mainFrame:Hide() end
-  end)
 end

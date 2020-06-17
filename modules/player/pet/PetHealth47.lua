@@ -7,10 +7,11 @@ local UnitExists = UnitExists
 --- include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local FramePool47 = ZxSimpleUI.FramePool47
+local Utils47 = ZxSimpleUI.Utils47
 local BarTemplateDefaults = ZxSimpleUI.prereqTables["BarTemplateDefaults"]
 local BarTemplate = ZxSimpleUI.prereqTables["BarTemplate"]
-local Utils47 = ZxSimpleUI.Utils47
-local RegisterWatchHandler47 = ZxSimpleUI.RegisterWatchHandler47
+local RegisterWatchHandler47 = ZxSimpleUI.prereqTables["RegisterWatchHandler47"]
+local SetOnShowOnHide = ZxSimpleUI.prereqTables["SetOnShowOnHide"]
 
 local MODULE_NAME = "PetHealth47"
 local DECORATIVE_NAME = "Pet Health"
@@ -71,7 +72,7 @@ end
 function PetHealth47:OnEnable()
   if self.mainFrame == nil then self:createBar() end
   self:_registerEvents()
-  self:_setOnShowOnHideHandlers()
+  SetOnShowOnHide:setHandlerScripts(self)
   self:_enableAllScriptHandlers()
   self:_handlePetExists()
 end
@@ -170,14 +171,6 @@ end
 
 function PetHealth47:_unregisterEvents()
   for _, event in pairs(self._eventTable) do self.mainFrame:UnregisterEvent(event) end
-end
-
-function PetHealth47:_setOnShowOnHideHandlers()
-  self.mainFrame:SetScript("OnShow",
-    function(curFrame, ...) self:OnShowBlizz(curFrame, ...) end)
-
-  self.mainFrame:SetScript("OnHide",
-    function(curFrame, ...) self:OnHideBlizz(curFrame, ...) end)
 end
 
 function PetHealth47:_enableAllScriptHandlers()

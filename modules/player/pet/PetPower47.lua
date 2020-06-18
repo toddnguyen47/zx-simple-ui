@@ -56,7 +56,7 @@ function PetPower47:__init__()
       font = "Lato Bold",
       fontcolor = {1.0, 1.0, 1.0},
       texture = "GrayVertGradient",
-      color = self._powerEventColorTable["UNIT_MANA"],
+      color = self:_getDefaultClassPowerColor(),
       border = "None",
       selfCurrentPoint = "TOPRIGHT",
       relativePoint = "BOTTOMRIGHT",
@@ -283,4 +283,15 @@ function PetPower47:_handlePetExists()
   elseif not exists and shown then
     self.mainFrame:Hide()
   end
+end
+
+---@return table
+function PetPower47:_getDefaultClassPowerColor()
+  local t1 = self._powerEventColorTable["UNIT_MANA"]
+  if self.PLAYER_ENGLISH_CLASS == "HUNTER" then
+    t1 = self._powerEventColorTable["UNIT_FOCUS"]
+  elseif self.PLAYER_ENGLISH_CLASS == "WARLOCK" then
+    t1 = self._powerEventColorTable["UNIT_MANA"]
+  end
+  return t1
 end

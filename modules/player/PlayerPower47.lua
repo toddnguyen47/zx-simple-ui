@@ -22,6 +22,8 @@ PlayerPower47.unit = "player"
 -- #endregion
 
 function PlayerPower47:__init__()
+  self.PLAYER_ENGLISH_CLASS = select(2, UnitClass("player"))
+
   self._powerEventColorTable = {
     ["UNIT_MANA"] = {0.0, 0.0, 1.0, 1.0},
     ["UNIT_RAGE"] = {1.0, 0.0, 0.0, 1.0},
@@ -52,7 +54,7 @@ function PlayerPower47:__init__()
       font = "Lato Bold",
       fontcolor = {1.0, 1.0, 1.0},
       texture = "GrayVertGradient",
-      color = self._powerEventColorTable["UNIT_MANA"], -- need this option for createBar() to work
+      color = self:_getDefaultClassPowerColor(),
       colorMana = self._powerEventColorTable["UNIT_MANA"],
       colorRage = self._powerEventColorTable["UNIT_RAGE"],
       colorFocus = self._powerEventColorTable["UNIT_FOCUS"],
@@ -70,7 +72,6 @@ function PlayerPower47:__init__()
 
   self._timeSinceLastUpdate = 0
   self._prevPowerValue = UnitPowerMax(self.unit)
-  self._playerClass = UnitClass(self.unit)
   self._powerType = 0
   self._powerTypeString = ""
 
@@ -223,5 +224,18 @@ function PlayerPower47:_getColorsInOptions()
     ["UNIT_ENERGY"] = self._curDbProfile.colorEnergy,
     ["UNIT_RUNIC_POWER"] = self._curDbProfile.colorRunicPower
   }
+  return t1
+end
+
+---@return table
+function PlayerPower47:_getDefaultClassPowerColor()
+  local t1 = self._powerEventColorTable["UNIT_MANA"]
+  if self.PLAYER_ENGLISH_CLASS == "WARRIOR" then
+    t1 = self._powerEventColorTable["UNIT_RAGE"]
+  elseif self.PLAYER_ENGLISH_CLASS == "ROGUE" then
+    t1 = self._powerEventColorTable["UNIT_ENERGY"]
+  elseif self.PLAYER_ENGLISH_CLASS == "DEATHKNIGHT" then
+    t1 = self._powerEventColorTable["UNIT_RUNIC_POWER"]
+  end
   return t1
 end

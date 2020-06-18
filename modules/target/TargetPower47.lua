@@ -59,7 +59,7 @@ function TargetPower47:__init__()
       font = "Lato Bold",
       fontcolor = {1.0, 1.0, 1.0},
       texture = "GrayVertGradient",
-      color = self._powerEventColorTable["UNIT_MANA"], -- need this option for createBar() to work
+      color = self:_getDefaultClassPowerColor(), -- need this option for createBar() to work
       colorMana = self._powerEventColorTable["UNIT_MANA"],
       colorRage = self._powerEventColorTable["UNIT_RAGE"],
       colorFocus = self._powerEventColorTable["UNIT_FOCUS"],
@@ -265,5 +265,18 @@ function TargetPower47:_getColorsInOptions()
     ["UNIT_ENERGY"] = self._curDbProfile.colorEnergy,
     ["UNIT_RUNIC_POWER"] = self._curDbProfile.colorRunicPower
   }
+  return t1
+end
+
+---@return table
+function TargetPower47:_getDefaultClassPowerColor()
+  local t1 = self._powerEventColorTable["UNIT_MANA"]
+  if self.PLAYER_ENGLISH_CLASS == "WARRIOR" then
+    t1 = self._powerEventColorTable["UNIT_RAGE"]
+  elseif self.PLAYER_ENGLISH_CLASS == "ROGUE" then
+    t1 = self._powerEventColorTable["UNIT_ENERGY"]
+  elseif self.PLAYER_ENGLISH_CLASS == "DEATHKNIGHT" then
+    t1 = self._powerEventColorTable["UNIT_RUNIC_POWER"]
+  end
   return t1
 end

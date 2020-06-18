@@ -274,11 +274,13 @@ function PetPower47:_setInitialVisibilityAndColor()
 end
 
 function PetPower47:_handlePetExists()
-  if UnitExists(self.unit) then
+  local exists = UnitExists(self.unit)
+  local shown = self.mainFrame:IsShown()
+  if exists and not shown then
     self:_setUnitPowerType()
     self:_setInitialColor()
     self.mainFrame:Show()
-  else
+  elseif not exists and shown then
     self.mainFrame:Hide()
   end
 end

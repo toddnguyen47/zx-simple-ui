@@ -31,11 +31,12 @@ function RegisterWatchHandler47:setUnregisterForWatch(curFrame, unit)
   UnregisterUnitWatch(curFrame, ZxSimpleUI:getUnitWatchState(curFrame.unit))
 end
 
-function RegisterWatchHandler47:printFrames()
+---@return table
+function RegisterWatchHandler47:getListOfFrameDropDowns()
   local sortedList = {}
   for k, _ in pairs(_G) do if k:find("FrameDropDown$") then table.insert(sortedList, k) end end
   table.sort(sortedList)
-  for _, key in ipairs(sortedList) do print(key) end
+  return sortedList
 end
 
 -- ####################################

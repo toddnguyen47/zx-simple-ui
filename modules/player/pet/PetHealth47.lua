@@ -214,9 +214,11 @@ function PetHealth47:_setInitialVisibilityAndColor()
 end
 
 function PetHealth47:_handlePetExists()
-  if UnitExists(self.unit) then
+  local exists = UnitExists(self.unit)
+  local shown = self.mainFrame:IsShown()
+  if exists and not shown then
     self.mainFrame:Show()
-  else
+  elseif not exists and shown then
     self.mainFrame:Hide()
   end
 end

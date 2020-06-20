@@ -281,8 +281,8 @@ function Aura47:_setPointAuraFrame(index, frameList)
   if index == 1 then
     auraFrame:SetPoint("TOPLEFT", self.mainFrame, "TOPLEFT", 0, 0)
   else
-    local tempMod = index % self._curDbProfile.buffsPerRow
-    if tempMod == 1 then
+    local tempMod = (index - 1) % self._curDbProfile.buffsPerRow
+    if tempMod == 0 then
       -- Put it above the current left-most aura
       local indexBelow = index - self._curDbProfile.buffsPerRow
       auraFrame:SetPoint("BOTTOMLEFT", frameList[indexBelow], "TOPLEFT", 0,

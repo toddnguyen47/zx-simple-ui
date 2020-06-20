@@ -91,7 +91,7 @@ function Aura47Options:getOptionTable()
         buffsPerRow = {
           name = "Buffs Per Row",
           type = "range",
-          min = 2,
+          min = 1,
           max = 10,
           step = 1,
           order = self._coreOptions47:incrementOrderIndex()

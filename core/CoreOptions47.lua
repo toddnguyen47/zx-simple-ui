@@ -3,6 +3,7 @@ local MAX_COMBO_POINTS = MAX_COMBO_POINTS
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local media = LibStub("LibSharedMedia-3.0")
 
+---@class CoreOptions47
 local CoreOptions47 = {}
 CoreOptions47.__index = CoreOptions47
 CoreOptions47.OPTION_NAME = "CoreOptions47"

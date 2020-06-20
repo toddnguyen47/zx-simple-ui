@@ -5,6 +5,7 @@ local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 ---@type FramePool47
 local FramePool47 = ZxSimpleUI.FramePool47
 local CoreFactory47 = ZxSimpleUI.CoreFactory47
+---@type OptionsFactory47
 local OptionsFactory47 = ZxSimpleUI.optionTables["OptionsFactory47"]
 
 local PlayerHealth47 = ZxSimpleUI:GetModule("PlayerHealth47")
@@ -41,6 +42,7 @@ function PlayerFactory47:OnEnable()
   self:createTotemOptions()
   self:createPetHealthOptions()
   self:createPetPowerOptions()
+  self:createPlayerDebuffOptions()
 
   CoreFactory47:initModuleEnableState(PlayerHealth47)
   CoreFactory47:initModuleEnableState(PlayerPower47)
@@ -115,10 +117,20 @@ function PlayerFactory47:createPetHealthOptions()
   return optionInstance.options
 end
 
+---@return table
 function PlayerFactory47:createPetPowerOptions()
   local curModule = PetPower47
   if curModule.mainFrame == nil then curModule:createBar() end
   local optionInstance = OptionsFactory47:createBarTemplateEnableOptions(curModule)
+  optionInstance:registerModuleOptionsTable()
+  return optionInstance.options
+end
+
+---@return table
+function PlayerFactory47:createPlayerDebuffOptions()
+  local curModule = PlayerDebuffs47
+  if curModule.mainFrame == nil then curModule:createBar() end
+  local optionInstance = OptionsFactory47:createAura47Options(curModule)
   optionInstance:registerModuleOptionsTable()
   return optionInstance.options
 end

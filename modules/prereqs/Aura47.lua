@@ -39,15 +39,8 @@ function Aura47:__init__()
   self._defaults = {
     profile = {
       enabledToggle = true,
-      texture = "GrayVertGradient",
       height = 30,
       yoffset = 2,
-      font = "Lato Bold",
-      fontsize = 14,
-      fontcolor = {1.0, 1.0, 1.0},
-      outline = true,
-      thickoutline = false,
-      monochrome = false,
       framePool = "PlayerName47", -- Can be changed with setUnit()
       buffsPerRow = 8
     }
@@ -116,7 +109,11 @@ end
 
 function Aura47:refreshConfig()
   self:handleEnableToggle()
-  if self:IsEnabled() then self:_refreshBarFrame() end
+  if self:IsEnabled() then
+    self:_refreshBarFrame()
+    self:_refreshAuraFrames()
+    self:_showFrameDisplayList()
+  end
 end
 
 function Aura47:handleEnableToggle()
@@ -158,7 +155,6 @@ end
 ---Ref: https://wow.gamepedia.com/API_UnitDebuff
 function Aura47:handleUnitAura(unitTarget)
   if string.lower(unitTarget) == self.unit then
-    local mainFrameHeight = self.mainFrame:GetHeight()
     self._frameDisplayList = {}
 
     for i = 1, self._MAX_BUFF_INDEX do
@@ -170,7 +166,7 @@ function Aura47:handleUnitAura(unitTarget)
       local isSameCaster = self._casterSource == "" or self._casterSource == casterSource
 
       if not isNameNil and isSameCaster then
-        self:_handleAuraFound(auraFrame, icon, mainFrameHeight)
+        self:_handleAuraFound(auraFrame, icon)
         self:_handleAuraFrameOnUpdate(auraFrame, duration, expireTime)
         table.insert(self._frameDisplayList, auraFrame)
       else
@@ -195,6 +191,14 @@ function Aura47:_refreshBarFrame()
     self._curDbProfile.yoffset)
 end
 
+function Aura47:_refreshAuraFrames()
+  for i = 1, self._MAX_BUFF_INDEX do
+    local auraFrame = self._auraFrameList[i]
+    auraFrame:SetWidth(self._curDbProfile.height)
+    auraFrame:SetHeight(self._curDbProfile.height)
+  end
+end
+
 function Aura47:_registerEvents()
   for _, event in ipairs(self._eventTable) do self.mainFrame:RegisterEvent(event) end
 end
@@ -214,10 +218,7 @@ end
 
 ---@param auraFrame table
 ---@param icon string
----@param mainFrameHeight integer
-function Aura47:_handleAuraFound(auraFrame, icon, mainFrameHeight)
-  auraFrame:SetWidth(mainFrameHeight)
-  auraFrame:SetHeight(mainFrameHeight)
+function Aura47:_handleAuraFound(auraFrame, icon)
   auraFrame.texture:SetTexture(icon)
   auraFrame:SetAlpha(1.0)
   auraFrame:ClearAllPoints()
@@ -267,6 +268,7 @@ end
 ---@param index integer
 function Aura47:_setPointAuraFrame(index)
   local auraFrame = self._frameDisplayList[index]
+  auraFrame:ClearAllPoints()
   if index == 1 then
     auraFrame:SetPoint("TOPLEFT", self.mainFrame, "TOPLEFT", 0, 0)
   else
@@ -303,14 +305,4 @@ function Aura47:_createAuraFrames()
     auraFrame:Hide()
     self._auraFrameList[i] = auraFrame
   end
-end
-
----@return string
-function Aura47:_getFontFlags()
-  local s = ""
-  if self._curDbProfile.outline then s = s .. "OUTLINE, " end
-  if self._curDbProfile.thickoutline then s = s .. "THICKOUTLINE, " end
-  if self._curDbProfile.monochrome then s = s .. "MONOCHROME, " end
-  if s ~= "" then s = string.sub(s, 0, (string.len(s) - 2)) end
-  return s
 end

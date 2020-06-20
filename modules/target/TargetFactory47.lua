@@ -31,6 +31,7 @@ function TargetFactory47:OnEnable()
   self:createPowerOptions()
   self:createNameOptions()
   self:createComboOptions()
+  self:createTargetDebuffOptions()
 
   CoreFactory47:initModuleEnableState(TargetHealth47)
   CoreFactory47:initModuleEnableState(TargetPower47)
@@ -75,6 +76,15 @@ function TargetFactory47:createComboOptions()
   local curModule = Combo47
   if curModule.mainFrame == nil then curModule:createBar() end
   local optionInstance = OptionsFactory47:createCombo47Options(curModule)
+  optionInstance:registerModuleOptionsTable()
+  return optionInstance.options
+end
+
+---@return table
+function TargetFactory47:createTargetDebuffOptions()
+  local curModule = TargetDebuffs47
+  if curModule.mainFrame == nil then curModule:createBar() end
+  local optionInstance = OptionsFactory47:createAura47Options(curModule)
   optionInstance:registerModuleOptionsTable()
   return optionInstance.options
 end

@@ -1,4 +1,5 @@
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
+---@class OptionsFactory47
 local OptionsFactory47 = {}
 OptionsFactory47.__index = OptionsFactory47
 ZxSimpleUI.optionTables["OptionsFactory47"] = OptionsFactory47
@@ -11,9 +12,11 @@ local Runes47Options = ZxSimpleUI.optionTables["Runes47Options"]
 local Totems47Options = ZxSimpleUI.optionTables["Totems47Options"]
 local Combo47Options = ZxSimpleUI.optionTables["Combo47Options"]
 local TargetName47Options = ZxSimpleUI.optionTables["TargetName47Options"]
+---@type Aura47Options
+local Aura47Options = ZxSimpleUI.optionTables["Aura47Options"]
 
 ---@param curModule table
----@return table CoreOptions47
+---@return CoreOptions47
 function OptionsFactory47:createCoreOptions(curModule)
   local coreOptions47 = CoreOptions47:new(curModule)
   return coreOptions47
@@ -66,4 +69,10 @@ end
 function OptionsFactory47:createTargetName47Options(curModule)
   local barTemplateOptions = self:createBarTemplateEnableOptions(curModule)
   return TargetName47Options:new(barTemplateOptions)
+end
+
+---@return Aura47Options
+function OptionsFactory47:createAura47Options(curModule)
+  local core47Options = self:createCoreOptions(curModule)
+  return Aura47Options:new(core47Options)
 end

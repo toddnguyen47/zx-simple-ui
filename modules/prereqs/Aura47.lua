@@ -6,9 +6,8 @@ local unpack = unpack
 -- Include files
 ---@type ZxSimpleUI
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
-local BarTemplateDefaults = ZxSimpleUI.prereqTables["BarTemplateDefaults"]
-local Utils47 = ZxSimpleUI.Utils47
-local media = LibStub("LibSharedMedia-3.0")
+---@type FramePool47
+local FramePool47 = ZxSimpleUI.FramePool47
 
 -- #region
 local MODULE_NAME = ""
@@ -39,6 +38,7 @@ function Aura47:__init__()
   self._defaults = {
     profile = {
       enabledToggle = true,
+      showbar = false,
       height = 30,
       yoffset = 2,
       framePool = "PlayerName47", -- Can be changed with setUnit()
@@ -51,6 +51,7 @@ function Aura47:__init__()
   self._auraFrameList = {}
   self._casterSource = ""
   self._frameDisplayList = {}
+  self._showbarList = {}
 end
 
 ---@return Aura47
@@ -113,6 +114,7 @@ function Aura47:refreshConfig()
     self:_refreshBarFrame()
     self:_refreshAuraFrames()
     self:_showFrameDisplayList()
+    self:_refreshShowbar()
   end
 end
 
@@ -260,14 +262,15 @@ end
 
 function Aura47:_showFrameDisplayList()
   for index, auraFrame in ipairs(self._frameDisplayList) do
-    self:_setPointAuraFrame(index)
+    self:_setPointAuraFrame(index, self._frameDisplayList)
     auraFrame:Show()
   end
 end
 
 ---@param index integer
-function Aura47:_setPointAuraFrame(index)
-  local auraFrame = self._frameDisplayList[index]
+---@param frameList table
+function Aura47:_setPointAuraFrame(index, frameList)
+  local auraFrame = frameList[index]
   auraFrame:ClearAllPoints()
   if index == 1 then
     auraFrame:SetPoint("TOPLEFT", self.mainFrame, "TOPLEFT", 0, 0)
@@ -276,9 +279,10 @@ function Aura47:_setPointAuraFrame(index)
     if tempMod == 1 then
       -- Put it above the current left-most aura
       local indexBelow = index - self._curDbProfile.buffsPerRow
-      auraFrame:SetPoint("BOTTOMLEFT", self._frameDisplayList[indexBelow], "TOPLEFT", 0, 0)
+      auraFrame:SetPoint("BOTTOMLEFT", frameList[indexBelow], "TOPLEFT", 0,
+        self._curDbProfile.yoffset)
     else
-      auraFrame:SetPoint("TOPLEFT", self._frameDisplayList[index - 1], "TOPRIGHT", 2, 0)
+      auraFrame:SetPoint("TOPLEFT", frameList[index - 1], "TOPRIGHT", 2, 0)
     end
   end
 end
@@ -304,5 +308,40 @@ function Aura47:_createAuraFrames()
 
     auraFrame:Hide()
     self._auraFrameList[i] = auraFrame
+  end
+end
+
+function Aura47:_refreshShowbar()
+  if self._curDbProfile.showbar then
+    self:_refreshShowbarShow()
+  else
+    self:_refreshShowbarHide()
+  end
+end
+
+function Aura47:_refreshShowbarShow()
+  for i = 1, self._MAX_BUFF_INDEX do
+    local frame = FramePool47:getFrame()
+    frame:SetFrameLevel(self.mainFrame:GetFrameLevel() - 1)
+    frame:SetHeight(self._curDbProfile.height)
+    frame:SetWidth(self._curDbProfile.height)
+
+    frame.bgFrame = frame:CreateTexture(nil, "BACKGROUND")
+    frame.bgFrame:SetTexture(0, 0, 0, 0.8)
+    frame.bgFrame:SetAllPoints(frame)
+
+    table.insert(self._showbarList, frame)
+    self:_setPointAuraFrame(i, self._showbarList)
+    frame:Show()
+  end
+end
+
+function Aura47:_refreshShowbarHide()
+  for i = 1, self._MAX_BUFF_INDEX do
+    local frame = self._showbarList[i]
+    if frame == nil then break end
+    frame:ClearAllPoints()
+    frame:Hide()
+    FramePool47:releaseFrame(frame)
   end
 end

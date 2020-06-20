@@ -48,7 +48,15 @@ function Aura47Options:getOptionTable()
           name = "Enable",
           desc = "Enable / Disable this module",
           order = ZxSimpleUI.HEADER_ORDER_INDEX + 1,
-          width = "full"
+          width = "full",
+          disabled = function(info) return self._curDbProfile.showbar end
+        },
+        showbar = {
+          name = "Show Debuff Bar",
+          desc = "Show Debuff Bar",
+          type = "toggle",
+          order = ZxSimpleUI.HEADER_ORDER_INDEX + 2,
+          disabled = function(info) return not self._curDbProfile.enabledToggle end
         },
         height = {
           name = "Height",

@@ -90,14 +90,6 @@ function ZxSimpleUI:registerModuleOptions(name, optTable, displayName)
   table.insert(self.moduleKeySorted, name)
 end
 
----@param currentValue number
----@param maxValue number
----@return number
-function ZxSimpleUI:calcPercentSafely(currentValue, maxValue)
-  if (maxValue == 0.0) then return 0.0 end
-  return currentValue / maxValue
-end
-
 ---@param module string
 function ZxSimpleUI:getModuleEnabledState(module)
   ---return statement
@@ -117,6 +109,14 @@ function ZxSimpleUI:setModuleEnabledState(moduleName, isEnabled)
       self:DisableModule(moduleName)
     end
   end
+end
+
+---@param currentValue number
+---@param maxValue number
+---@return number
+function ZxSimpleUI:calcPercentSafely(currentValue, maxValue)
+  if (maxValue == 0.0) then return 0.0 end
+  return currentValue / maxValue
 end
 
 ---@param currentFrame table

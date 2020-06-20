@@ -95,6 +95,15 @@ function Aura47Options:getOptionTable()
           max = 10,
           step = 1,
           order = self._coreOptions47:incrementOrderIndex()
+        },
+        durationLeftFade = {
+          name = "Duration To Fade",
+          desc = "Duration left (in seconds) to start fading out",
+          type = "range",
+          min = 1,
+          max = 30,
+          step = 1,
+          order = self._coreOptions47:incrementOrderIndex()
         }
       }
     }

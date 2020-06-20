@@ -42,7 +42,8 @@ function Aura47:__init__()
       height = 30,
       yoffset = 2,
       framePool = "PlayerName47", -- Can be changed with setUnit()
-      buffsPerRow = 8
+      buffsPerRow = 8,
+      durationLeftFade = 2
     }
   }
   self._frameToAnchorTo = nil
@@ -68,6 +69,8 @@ end
 function Aura47.OnInitialize(self)
   self.db = ZxSimpleUI.db:RegisterNamespace(self.MODULE_NAME, self._defaults)
   self._curDbProfile = self.db.profile
+  -- showbar should be off by default
+  self._curDbProfile.showbar = false
 
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(self.MODULE_NAME))
 end
@@ -229,7 +232,7 @@ end
 ---@param auraFrame table
 function Aura47:_handleAuraFrameOnUpdate(auraFrame, duration, expireTime)
   ---@param remaining integer
-  local function setUpdateTime(remaining)
+  local function getUpdateTime(remaining)
     local updateTimeSeconds = 0.1
     if remaining > 60 then
       updateTimeSeconds = 5.0
@@ -250,11 +253,14 @@ function Aura47:_handleAuraFrameOnUpdate(auraFrame, duration, expireTime)
       currentElapsedTime = 0
       curTime = GetTime()
       remaining = expireTime - curTime
-      updateTimeSeconds = setUpdateTime(remaining)
-      if remaining < 2 and remaining > 0 then
+      updateTimeSeconds = getUpdateTime(remaining)
+      local leeway = 0.5
+      if remaining <= (self._curDbProfile.durationLeftFade + leeway) and remaining > 0 then
         auraFrame:SetAlpha(0.4)
       elseif remaining <= 0 then
         auraFrame:SetScript("OnUpdate", nil)
+      else
+        auraFrame:SetAlpha(1.0)
       end
     end
   end)

@@ -2,6 +2,7 @@
 local LibStub, CreateFrame = LibStub, CreateFrame
 
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
+---@class FramePool47
 local FramePool47 = {}
 FramePool47.__index = FramePool47
 ZxSimpleUI.FramePool47 = FramePool47

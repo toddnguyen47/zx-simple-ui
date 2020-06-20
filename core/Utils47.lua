@@ -1,4 +1,5 @@
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
+---@class Utils47
 local Utils47 = {}
 Utils47.__index = Utils47
 ZxSimpleUI.Utils47 = Utils47

@@ -6,8 +6,9 @@ local UIParent = UIParent
 
 UIParent.DECORATIVE_NAME = "UIParent"
 
---- AddOn Declaration
+-- AddOn Declaration
 local ADDON_NAME = "ZxSimpleUI"
+---@class ZxSimpleUI
 local ZxSimpleUI = LibStub("AceAddon-3.0"):NewAddon(ADDON_NAME, "AceConsole-3.0")
 
 ---LibSharedMedia registers

@@ -3,6 +3,7 @@
   <Script file="TargetName47.lua" />
   <Script file="TargetPower47.lua" />
   <Script file="Combo47.lua" />
+  <Script file="TargetDebuffs47.lua" />
 
   <Script file="TargetFactory47.lua" />
 </Ui>

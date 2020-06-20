@@ -8,6 +8,7 @@ local TargetHealth47 = ZxSimpleUI:GetModule("TargetHealth47")
 local TargetName47 = ZxSimpleUI:GetModule("TargetName47")
 local TargetPower47 = ZxSimpleUI:GetModule("TargetPower47")
 local Combo47 = ZxSimpleUI:GetModule("Combo47")
+local TargetDebuffs47 = ZxSimpleUI:GetModule("TargetDebuffs47")
 
 local MODULE_NAME = "TargetFactory47"
 local DECORATIVE_NAME = "Target Factory"
@@ -35,6 +36,7 @@ function TargetFactory47:OnEnable()
   CoreFactory47:initModuleEnableState(TargetPower47)
   CoreFactory47:initModuleEnableState(TargetName47)
   CoreFactory47:initModuleEnableState(Combo47)
+  CoreFactory47:initModuleEnableState(TargetDebuffs47)
 end
 
 ---Unhook, Unregister Events, Hide frames that you created.

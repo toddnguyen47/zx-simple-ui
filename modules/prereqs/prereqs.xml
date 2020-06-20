@@ -3,4 +3,5 @@
   <Script file="BarTemplate.lua" />
   <Script file="RegisterWatchHandler47.lua" />
   <Script file="SetOnShowOnHide.lua" />
+  <Script file="Aura47.lua" />
 </Ui>

@@ -1,6 +1,9 @@
 -- #region
---- include files
+-- include files
+---@type ZxSimpleUI
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
+---@type FramePool47
+local FramePool47 = ZxSimpleUI.FramePool47
 local CoreFactory47 = ZxSimpleUI.CoreFactory47
 local OptionsFactory47 = ZxSimpleUI.optionTables["OptionsFactory47"]
 
@@ -11,6 +14,8 @@ local Runes47 = ZxSimpleUI:GetModule("Runes47")
 local Totems47 = ZxSimpleUI:GetModule("Totems47")
 local PetHealth47 = ZxSimpleUI:GetModule("PetHealth47")
 local PetPower47 = ZxSimpleUI:GetModule("PetPower47")
+---@type PlayerDebuffs47
+local PlayerDebuffs47 = ZxSimpleUI:GetModule("PlayerDebuffs47")
 
 local MODULE_NAME = "PlayerFactory47"
 local DECORATIVE_NAME = "Player Factory"
@@ -44,6 +49,7 @@ function PlayerFactory47:OnEnable()
   CoreFactory47:initModuleEnableState(Totems47)
   CoreFactory47:initModuleEnableState(PetHealth47)
   CoreFactory47:initModuleEnableState(PetPower47)
+  CoreFactory47:initModuleEnableState(PlayerDebuffs47)
 end
 
 ---Unhook, Unregister Events, Hide frames that you created.
@@ -115,6 +121,29 @@ function PlayerFactory47:createPetPowerOptions()
   local optionInstance = OptionsFactory47:createBarTemplateEnableOptions(curModule)
   optionInstance:registerModuleOptionsTable()
   return optionInstance.options
+end
+
+---@return table
+function PlayerFactory47:createPlayerAura()
+  local module1 = nil
+  local function handle(curFrame, event, ...)
+    local playerAura = Aura47:new()
+    playerAura:setUnit("player")
+    playerAura:setModuleName("PlayerAura47")
+    playerAura:setDecorativeName("Player Aura 47")
+    playerAura:addFilter(playerAura.FILTERS.HELPFUL)
+    module1 = ZxSimpleUI:NewModule(playerAura.MODULE_NAME, playerAura)
+
+    curFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
+    curFrame:SetScript("OnEvent", nil)
+    FramePool47:releaseFrame(curFrame)
+    return module1
+  end
+
+  local frame = FramePool47:getFrame()
+  frame:RegisterEvent("PLAYER_ENTERING_WORLD")
+  frame:SetScript("OnEvent", handle)
+  return module1
 end
 
 -- ####################################

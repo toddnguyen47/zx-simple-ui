@@ -20,7 +20,7 @@ TargetDebuffs47.DECORATIVE_NAME = DECORATIVE_NAME
 ---Do init tasks here, like loading the Saved Variables,
 ---Or setting up slash commands.
 function TargetDebuffs47:OnInitialize()
-  playerAura.OnInitialize(TargetDebuffs47)
+  playerAura.OnInitialize(self)
   self:setUnit("target")
   self:addFilter(playerAura.FILTERS.PLAYER)
   self:setCasterSource("player")
@@ -30,7 +30,7 @@ end
 ---Register Events, Hook functions, Create Frames, Get information from
 ---the game that wasn't available in OnInitialize
 function TargetDebuffs47:OnEnable()
-  playerAura.OnEnable(TargetDebuffs47)
+  playerAura.OnEnable(self)
   self:handleUnitAura(self.unit)
   self.mainFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
 end
@@ -38,9 +38,9 @@ end
 ---Unhook, Unregister Events, Hide frames that you created.
 ---You would probably only use an OnDisable if you want to
 ---build a "standby" mode, or be able to toggle modules on/off.
-function TargetDebuffs47:OnDisable() playerAura.OnDisable(TargetDebuffs47) end
+function TargetDebuffs47:OnDisable() playerAura.OnDisable(self) end
 
 function TargetDebuffs47:handleOnEvent(curFrame, event, arg1, arg2, ...)
-  playerAura.handleOnEvent(TargetDebuffs47, curFrame, event, arg1, arg2, ...)
+  playerAura.handleOnEvent(self, curFrame, event, arg1, arg2, ...)
   if string.upper(event) == "PLAYER_TARGET_CHANGED" then self:handleUnitAura(self.unit) end
 end

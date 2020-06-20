@@ -20,7 +20,7 @@ PlayerDebuffs47.DECORATIVE_NAME = DECORATIVE_NAME
 ---Do init tasks here, like loading the Saved Variables,
 ---Or setting up slash commands.
 function PlayerDebuffs47:OnInitialize()
-  playerAura.OnInitialize(PlayerDebuffs47)
+  playerAura.OnInitialize(self)
   self:setUnit("player")
 end
 
@@ -28,11 +28,11 @@ end
 ---Register Events, Hook functions, Create Frames, Get information from
 ---the game that wasn't available in OnInitialize
 function PlayerDebuffs47:OnEnable()
-  playerAura.OnEnable(PlayerDebuffs47)
+  playerAura.OnEnable(self)
   self:handleUnitAura(self.unit)
 end
 
 ---Unhook, Unregister Events, Hide frames that you created.
 ---You would probably only use an OnDisable if you want to
 ---build a "standby" mode, or be able to toggle modules on/off.
-function PlayerDebuffs47:OnDisable() playerAura.OnDisable(PlayerDebuffs47) end
+function PlayerDebuffs47:OnDisable() playerAura.OnDisable(self) end

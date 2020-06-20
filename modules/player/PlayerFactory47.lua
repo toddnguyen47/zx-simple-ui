@@ -123,29 +123,6 @@ function PlayerFactory47:createPetPowerOptions()
   return optionInstance.options
 end
 
----@return table
-function PlayerFactory47:createPlayerAura()
-  local module1 = nil
-  local function handle(curFrame, event, ...)
-    local playerAura = Aura47:new()
-    playerAura:setUnit("player")
-    playerAura:setModuleName("PlayerAura47")
-    playerAura:setDecorativeName("Player Aura 47")
-    playerAura:addFilter(playerAura.FILTERS.HELPFUL)
-    module1 = ZxSimpleUI:NewModule(playerAura.MODULE_NAME, playerAura)
-
-    curFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
-    curFrame:SetScript("OnEvent", nil)
-    FramePool47:releaseFrame(curFrame)
-    return module1
-  end
-
-  local frame = FramePool47:getFrame()
-  frame:RegisterEvent("PLAYER_ENTERING_WORLD")
-  frame:SetScript("OnEvent", handle)
-  return module1
-end
-
 -- ####################################
 -- # PRIVATE FUNCTIONS
 -- ####################################

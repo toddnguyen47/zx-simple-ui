@@ -23,6 +23,7 @@ function TargetDebuffs47:OnInitialize()
   playerAura.OnInitialize(self)
   self:setUnit("target")
   self:addFilter(playerAura.FILTERS.PLAYER)
+  self:addFilter(playerAura.FILTERS.HARMFUL)
   self:setCasterSource("player")
 end
 

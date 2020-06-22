@@ -1,6 +1,6 @@
 local LibStub = LibStub
 local CreateFrame, UnitBuff, UnitDebuff = CreateFrame, UnitBuff, UnitDebuff
-local GetTime = GetTime
+local GetTime, GameTooltip = GetTime, GameTooltip
 local unpack = unpack
 
 -- Include files
@@ -53,6 +53,7 @@ function Aura47:__init__()
   self._casterSource = ""
   self._frameDisplayList = {}
   self._showbarList = {}
+  self._isUnitDebuff = true
 end
 
 ---@return Aura47
@@ -161,18 +162,19 @@ end
 function Aura47:handleUnitAura(unitTarget)
   if string.lower(unitTarget) == self.unit then
     self._frameDisplayList = {}
+    local filterString = self:_getFilterString()
 
     for i = 1, self._MAX_BUFF_INDEX do
-      local filterString = self:_getFilterString()
       local name, rank, icon, count, dispelType, duration, expireTime, casterSource,
-            isStealable = UnitDebuff(self.unit, i, filterString)
+            isStealable = self:_getUnitAuraInfo(i, filterString)
       local auraFrame = self._auraFrameList[i]
       local isNameNil = name == nil
       local isSameCaster = self._casterSource == "" or self._casterSource == casterSource
 
       if not isNameNil and isSameCaster then
-        self:_handleAuraFound(auraFrame, icon)
+        self:_handleAuraFound(auraFrame, icon, filterString)
         self:_handleAuraFrameOnUpdate(auraFrame, duration, expireTime)
+        auraFrame.auraIndex = i
         table.insert(self._frameDisplayList, auraFrame)
       else
         self:_handleAuraNameNotFound(auraFrame)
@@ -182,6 +184,9 @@ function Aura47:handleUnitAura(unitTarget)
     self:_showFrameDisplayList()
   end
 end
+
+---@param isUnitDebuff boolean
+function Aura47:setIsUnitDebuff(isUnitDebuff) self._isUnitDebuff = isUnitDebuff end
 
 -- ####################################
 -- # PRIVATE FUNCTIONS
@@ -216,17 +221,25 @@ end
 
 ---@param auraFrame table
 function Aura47:_handleAuraNameNotFound(auraFrame)
-  local auraTexture = auraFrame.texture
-  auraTexture:SetTexture(nil)
+  auraFrame.texture:SetTexture(nil)
   auraFrame:ClearAllPoints()
+  auraFrame:SetScript("OnEnter", nil)
+  auraFrame:SetScript("OnLeave", nil)
+  auraFrame:SetScript("OnUpdate", nil)
+  self:_hideGameTooltip(auraFrame)
 end
 
 ---@param auraFrame table
 ---@param icon string
-function Aura47:_handleAuraFound(auraFrame, icon)
+---@param filterString string
+function Aura47:_handleAuraFound(auraFrame, icon, filterString)
   auraFrame.texture:SetTexture(icon)
   auraFrame:SetAlpha(1.0)
   auraFrame:ClearAllPoints()
+  auraFrame:SetScript("OnEnter", function(curFrame, ...)
+    self:_showGameTooltip(auraFrame, filterString)
+  end)
+  auraFrame:SetScript("OnLeave", function(curFrame, ...) self:_hideGameTooltip(auraFrame) end)
 end
 
 ---@param auraFrame table
@@ -304,7 +317,7 @@ end
 
 function Aura47:_createAuraFrames()
   for i = 1, self._MAX_BUFF_INDEX do
-    local auraFrame = CreateFrame("Frame", nil, self.mainFrame)
+    local auraFrame = CreateFrame("Button", nil, self.mainFrame, "SecureUnitButtonTemplate")
     auraFrame.lastUpdatedTime = 0
     auraFrame.parent = self.mainFrame
     auraFrame:SetFrameLevel(self.mainFrame:GetFrameLevel() + 1)
@@ -315,6 +328,28 @@ function Aura47:_createAuraFrames()
     auraFrame:Hide()
     self._auraFrameList[i] = auraFrame
   end
+end
+
+---@param auraFrame table
+---@param filterString string
+function Aura47:_showGameTooltip(auraFrame, filterString)
+  GameTooltip:SetOwner(auraFrame, "ANCHOR_BOTTOMRIGHT")
+  GameTooltip:SetUnitAura(self.unit, auraFrame.auraIndex, filterString)
+
+  local totalElapsedTime = 0
+  auraFrame:SetScript("OnUpdate", function(curFrame, elapsed)
+    totalElapsedTime = totalElapsedTime + elapsed
+    if totalElapsedTime > 0.2 then
+      totalElapsedTime = 0
+      GameTooltip:SetUnitAura(self.unit, auraFrame.auraIndex, filterString)
+    end
+  end)
+end
+
+---@param auraFrame table
+function Aura47:_hideGameTooltip(auraFrame)
+  auraFrame:SetScript("OnUpdate", nil)
+  GameTooltip:Hide()
 end
 
 function Aura47:_refreshShowbar()
@@ -350,4 +385,18 @@ function Aura47:_refreshShowbarHide()
     frame:Hide()
     FramePool47:releaseFrame(frame)
   end
+end
+
+---@param index integer
+---@param filterString string
+function Aura47:_getUnitAuraInfo(index, filterString)
+  local name, rank, icon, count, dispelType, duration, expireTime, casterSource, isStealable
+  if self._isUnitDebuff then
+    name, rank, icon, count, dispelType, duration, expireTime, casterSource, isStealable =
+      UnitDebuff(self.unit, index, filterString)
+  else
+    name, rank, icon, count, dispelType, duration, expireTime, casterSource, isStealable =
+      UnitBuff(self.unit, index, filterString)
+  end
+  return name, rank, icon, count, dispelType, duration, expireTime, casterSource, isStealable
 end

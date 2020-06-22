@@ -312,12 +312,33 @@ function Aura47:_getFilterString()
   for _, filter in pairs(self._buffFilters) do filterString = filterString .. filter .. "|" end
   -- Remove last pipe
   filterString = string.sub(filterString, 1, string.len(filterString) - 1)
+
+  if self._isUnitDebuff then
+    filterString = filterString:gsub(self.FILTERS.HELPFUL, "")
+    if filterString:find(self.FILTERS.HARMFUL) == nil then
+      if filterString == "" then
+        filterString = self.FILTERS.HARMFUL
+      else
+        filterString = filterString .. "|" .. self.FILTERS.HARMFUL
+      end
+    end
+  else
+    filterString = filterString:gsub(self.FILTERS.HARMFUL, "")
+    if filterString:find(self.FILTERS.HELPFUL) == nil then
+      if filterString == "" then
+        filterString = self.FILTERS.HELPFUL
+      else
+        filterString = filterString .. "|" .. self.FILTERS.HELPFUL
+      end
+    end
+  end
+
   return filterString
 end
 
 function Aura47:_createAuraFrames()
   for i = 1, self._MAX_BUFF_INDEX do
-    local auraFrame = CreateFrame("Button", nil, self.mainFrame, "SecureUnitButtonTemplate")
+    local auraFrame = CreateFrame("Button", nil, self.mainFrame)
     auraFrame.lastUpdatedTime = 0
     auraFrame.parent = self.mainFrame
     auraFrame:SetFrameLevel(self.mainFrame:GetFrameLevel() + 1)

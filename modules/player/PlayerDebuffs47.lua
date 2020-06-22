@@ -22,7 +22,7 @@ PlayerDebuffs47.DECORATIVE_NAME = DECORATIVE_NAME
 function PlayerDebuffs47:OnInitialize()
   playerAura.OnInitialize(self)
   self:setUnit("player")
-  self:addFilter(playerAura.FILTERS.HARMFUL)
+  self:setIsUnitDebuff(true)
 end
 
 ---Do more initialization here, that really enables the use of your addon.

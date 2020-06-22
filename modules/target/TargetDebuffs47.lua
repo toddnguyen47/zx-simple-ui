@@ -22,8 +22,8 @@ TargetDebuffs47.DECORATIVE_NAME = DECORATIVE_NAME
 function TargetDebuffs47:OnInitialize()
   playerAura.OnInitialize(self)
   self:setUnit("target")
+  self:setIsUnitDebuff(true)
   self:addFilter(playerAura.FILTERS.PLAYER)
-  self:addFilter(playerAura.FILTERS.HARMFUL)
   self:setCasterSource("player")
 end
 

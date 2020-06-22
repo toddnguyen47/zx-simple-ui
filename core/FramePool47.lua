@@ -13,6 +13,7 @@ local _count = 0
 
 ---@param frame table
 function FramePool47:releaseFrame(frame)
+  frame:SetParent(nil)
   frame:Hide()
   table.insert(_framePool, frame)
   _count = _count + 1

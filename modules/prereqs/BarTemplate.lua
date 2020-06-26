@@ -157,5 +157,5 @@ function BarTemplate:_setMouseClicks()
   -- Set left click
   self.mainFrame:SetAttribute("*type1", "target")
   -- Set right click
-  self.mainFrame:SetAttribute("*type2", "menu")
+  self.mainFrame:SetAttribute("*type2", "openRightClickMenu")
 end

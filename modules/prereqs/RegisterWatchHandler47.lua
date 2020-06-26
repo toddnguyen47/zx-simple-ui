@@ -3,6 +3,7 @@ local ToggleDropDownMenu, PlayerFrameDropDown = ToggleDropDownMenu, PlayerFrameD
 local TargetFrameDropDown, PetFrameDropDown = TargetFrameDropDown, PetFrameDropDown
 local RegisterUnitWatch, UnregisterUnitWatch = RegisterUnitWatch, UnregisterUnitWatch
 
+---@class RegisterWatchHandler47
 local RegisterWatchHandler47 = {}
 ZxSimpleUI.prereqTables["RegisterWatchHandler47"] = RegisterWatchHandler47
 
@@ -17,18 +18,21 @@ local FRAME_DROPDOWN_LIST = {
 function RegisterWatchHandler47:setRegisterForWatch(curFrame, unit)
   curFrame = self:_setCurFrameUnit(curFrame, unit)
   -- Handle right click
-  curFrame.menu =
-    function() ToggleDropDownMenu(1, nil, FRAME_DROPDOWN_LIST[unit], "cursor") end
+  curFrame.openRightClickMenu = function()
+    if FRAME_DROPDOWN_LIST[unit] ~= nil then
+      ToggleDropDownMenu(1, nil, FRAME_DROPDOWN_LIST[unit], "cursor")
+    end
+  end
 
   ZxSimpleUI:enableTooltip(curFrame)
-  RegisterUnitWatch(curFrame, ZxSimpleUI:getUnitWatchState(curFrame.unit))
+  RegisterUnitWatch(curFrame, self:getUnitWatchState(curFrame.unit))
 end
 
 ---@param curFrame table
 ---@param unit string
 function RegisterWatchHandler47:setUnregisterForWatch(curFrame, unit)
   curFrame = self:_setCurFrameUnit(curFrame, unit)
-  UnregisterUnitWatch(curFrame, ZxSimpleUI:getUnitWatchState(curFrame.unit))
+  UnregisterUnitWatch(curFrame, self:getUnitWatchState(curFrame.unit))
 end
 
 ---@return table
@@ -38,6 +42,11 @@ function RegisterWatchHandler47:getListOfFrameDropDowns()
   table.sort(sortedList)
   return sortedList
 end
+
+---@param unit string
+---@return boolean
+---Ref: https://wowwiki.fandom.com/wiki/SecureStateDriver
+function RegisterWatchHandler47:getUnitWatchState(unit) return string.lower(unit) == "pet" end
 
 -- ####################################
 -- # PRIVATE FUNCTIONS

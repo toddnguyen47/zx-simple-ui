@@ -125,11 +125,6 @@ function ZxSimpleUI:enableTooltip(currentFrame)
   currentFrame:SetScript("OnLeave", UnitFrame_OnLeave)
 end
 
----@param unit string
----@return boolean
----Ref: https://wowwiki.fandom.com/wiki/SecureStateDriver
-function ZxSimpleUI:getUnitWatchState(unit) return string.lower(unit) == "pet" end
-
 ---@param moduleName string
 ---@param tableValues table
 function ZxSimpleUI:addToFrameList(moduleName, tableValues)

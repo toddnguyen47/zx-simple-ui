@@ -5,56 +5,62 @@ local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 local AceGUI = LibStub("AceGUI-3.0")
 local AceDBOptions = LibStub("AceDBOptions-3.0")
 
-local CoreOptionsInterface = ZxSimpleUI:NewModule("Options", nil)
+---@class CoreOptionsRegister
+local CoreOptionsRegister = ZxSimpleUI:NewModule("Options", nil)
 
 -- PRIVATE functions and variables
 ---@param key string
-local _curDbProfile, _openOptionFrame, _getSlashCommandsString
-local _getOpenOptionTable, _getOptionTable, _addModuleOptionTables
-local _getPrintFrameOptionTable
 local _OPEN_OPTION_APPNAME = "ZxSimpleGUI_OpenOption"
 
-function CoreOptionsInterface:OnInitialize()
-  _curDbProfile = ZxSimpleUI.db.profile
+function CoreOptionsRegister:OnInitialize()
+  self._curDbProfile = ZxSimpleUI.db.profile
+  self._openOptionTable = {}
+  self._options = {}
+  self._printFrameOptionTable = {}
+  self._frame = nil
   self:SetupOptions()
 end
 
-function CoreOptionsInterface:SetupOptions()
+function CoreOptionsRegister:SetupOptions()
   ZxSimpleUI.blizOptionTable = {}
-  AceConfigRegistry:RegisterOptionsTable(_OPEN_OPTION_APPNAME, _getOpenOptionTable)
-  AceConfigRegistry:RegisterOptionsTable(ZxSimpleUI.ADDON_NAME, _getOptionTable)
+  AceConfigRegistry:RegisterOptionsTable(_OPEN_OPTION_APPNAME,
+    function(...) return self:_getOpenOptionTable() end)
+  AceConfigRegistry:RegisterOptionsTable(ZxSimpleUI.ADDON_NAME,
+    function(...) return self:_getOptionTable() end)
 
   local frameRef = AceConfigDialog:AddToBlizOptions(_OPEN_OPTION_APPNAME,
                      ZxSimpleUI.DECORATIVE_NAME)
   ZxSimpleUI.blizOptionTable[ZxSimpleUI.ADDON_NAME] = frameRef
   -- Register slash commands as well
   for _, command in pairs(ZxSimpleUI.SLASH_COMMANDS) do
-    ZxSimpleUI:RegisterChatCommand(command, _openOptionFrame)
+    ZxSimpleUI:RegisterChatCommand(command, function(...) self:_openOptionFrame() end)
   end
 
   -- Set profile options
   ZxSimpleUI:registerModuleOptions("Profiles", AceDBOptions:GetOptionsTable(ZxSimpleUI.db),
     "Profiles")
   -- Set Print Frames option
-  ZxSimpleUI:registerModuleOptions("PrintFrames", _getPrintFrameOptionTable(), "Print Frames")
+  ZxSimpleUI:registerModuleOptions("PrintFrames",
+    function(...) return self:_getPrintFrameOptionTable() end, "Print Frames")
 end
 
 -- ########################################
 -- # "PRIVATE" functions
 -- ########################################
 
-local _openOptionTable = {}
-local _frame = nil
-
 ---@return table
-function _getOpenOptionTable()
-  if next(_openOptionTable) == nil then
-    _openOptionTable = {
+function CoreOptionsRegister:_getOpenOptionTable()
+  if next(self._openOptionTable) == nil then
+    self._openOptionTable = {
       type = "group",
       args = {
-        openoptions = {name = "Open Options", type = "execute", func = _openOptionFrame},
+        openoptions = {
+          name = "Open Options",
+          type = "execute",
+          func = function(curFrame, ...) self:_openOptionFrame() end
+        },
         descriptionParagraph = {
-          name = _getSlashCommandsString(),
+          name = self:_getSlashCommandsString(),
           type = "description",
           fontSize = "medium"
         }
@@ -62,14 +68,13 @@ function _getOpenOptionTable()
     }
   end
 
-  return _openOptionTable
+  return self._openOptionTable
 end
 
 ---@return table
-local _printFrameOptionTable = {}
-function _getPrintFrameOptionTable()
-  if next(_printFrameOptionTable) == nil then
-    _printFrameOptionTable = {
+function CoreOptionsRegister:_getPrintFrameOptionTable()
+  if next(self._printFrameOptionTable) == nil then
+    self._printFrameOptionTable = {
       type = "group",
       name = "Print Frames",
       args = {
@@ -97,58 +102,57 @@ function _getPrintFrameOptionTable()
               end
             end
 
-            _printFrameOptionTable.args.descDisplay.name = s1
+            self._printFrameOptionTable.args.descDisplay.name = s1
           end
         },
         descDisplay = {name = "", type = "description", fontSize = "medium", order = 2}
       }
     }
   end
-  return _printFrameOptionTable
+  return self._printFrameOptionTable
 end
 
-function _getSlashCommandsString()
+function CoreOptionsRegister:_getSlashCommandsString()
   local s1 = "You can also open the options frame with one of these commands:\n"
   for _, command in pairs(ZxSimpleUI.SLASH_COMMANDS) do s1 = s1 .. "    /" .. command .. "\n" end
   s1 = string.sub(s1, 0, string.len(s1) - 1)
   return s1
 end
 
-function _openOptionFrame(info, value, ...)
-  if not _frame then
-    _frame = AceGUI:Create("Frame")
-    _frame:SetCallback("OnClose", function(widget) AceGUI:Release(widget) end)
-    _frame:SetTitle(ZxSimpleUI.DECORATIVE_NAME)
+function CoreOptionsRegister:_openOptionFrame(info, value, ...)
+  if not self._frame then
+    self._frame = AceGUI:Create("Frame")
+    self._frame:SetCallback("OnClose", function(widget) AceGUI:Release(widget) end)
+    self._frame:SetTitle(ZxSimpleUI.DECORATIVE_NAME)
   end
-  AceConfigDialog:Open(ZxSimpleUI.ADDON_NAME, _frame)
+  AceConfigDialog:Open(ZxSimpleUI.ADDON_NAME, self._frame)
 end
 
-local option = {}
-function _getOptionTable()
-  if next(option) == nil then
-    option = {type = "group", args = {}}
-    _addModuleOptionTables()
+function CoreOptionsRegister:_getOptionTable()
+  if next(self._options) == nil then
+    self._options = {type = "group", args = {}}
+    self:_addModuleOptionTables()
   end
-  return option
+  return self._options
 end
 
-function _addModuleOptionTables()
+function CoreOptionsRegister:_addModuleOptionTables()
   local defaultOrderIndex = 7
   table.sort(ZxSimpleUI.moduleKeySorted)
   for _, moduleAppName in pairs(ZxSimpleUI.moduleKeySorted) do
     local optionTableOrFunc = ZxSimpleUI.moduleOptionsTable[moduleAppName]
     if type(optionTableOrFunc) == "function" then
-      option.args[moduleAppName] = optionTableOrFunc()
+      self._options.args[moduleAppName] = optionTableOrFunc()
     else
-      option.args[moduleAppName] = optionTableOrFunc
+      self._options.args[moduleAppName] = optionTableOrFunc
     end
     -- Make sure "Profiles" is the first option
     if moduleAppName == "Profiles" then
-      option.args[moduleAppName]["order"] = 1
+      self._options.args[moduleAppName]["order"] = 1
     elseif moduleAppName == "PrintFrames" then
-      option.args[moduleAppName]["order"] = 2
+      self._options.args[moduleAppName]["order"] = 2
     else
-      option.args[moduleAppName]["order"] = defaultOrderIndex
+      self._options.args[moduleAppName]["order"] = defaultOrderIndex
       defaultOrderIndex = defaultOrderIndex + 1
     end
   end

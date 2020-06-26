@@ -1,21 +1,22 @@
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 
+---@class BarTemplateEnableOptions
 local BarTemplateEnableOptions = {}
 BarTemplateEnableOptions.__index = BarTemplateEnableOptions
 BarTemplateEnableOptions.OPTION_NAME = "BarTemplateEnableOptions"
 ZxSimpleUI.optionTables[BarTemplateEnableOptions.OPTION_NAME] = BarTemplateEnableOptions
 
----@param barTemplateOptions table
-function BarTemplateEnableOptions:__init__(barTemplateOptions)
+function BarTemplateEnableOptions:__init__()
   self.options = {}
-  self._barTemplateOptions = barTemplateOptions
   self._currentModule = self._barTemplateOptions:getCurrentModule()
   self._curDbProfile = self._currentModule.db.profile
 end
 
-function BarTemplateEnableOptions:new(...)
+function BarTemplateEnableOptions:new(barTemplateOptions)
+  ---@type BarTemplateEnableOptions
   local newInstance = setmetatable({}, self)
-  newInstance:__init__(...)
+  newInstance._barTemplateOptions = barTemplateOptions
+  newInstance:__init__()
   return newInstance
 end
 

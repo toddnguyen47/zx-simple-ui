@@ -68,8 +68,7 @@ function PlayerFactory47:createPlayerHealthOptions()
   local curModule = PlayerHealth47
   if curModule.mainFrame == nil then curModule:createBar() end
   local optionInstance = OptionsFactory47:createBarTemplateOptions(curModule)
-  optionInstance:registerModuleOptionsTable()
-  return optionInstance.options
+  return CoreFactory47:registerAndReturnOptionTable(optionInstance, curModule)
 end
 
 ---@return table
@@ -77,8 +76,7 @@ function PlayerFactory47:createPlayerPowerOptions()
   local curModule = PlayerPower47
   if curModule.mainFrame == nil then curModule:createBar() end
   local optionInstance = OptionsFactory47:createPower47Options(curModule)
-  optionInstance:registerModuleOptionsTable()
-  return optionInstance.options
+  return CoreFactory47:registerAndReturnOptionTable(optionInstance, curModule)
 end
 
 ---@return table
@@ -86,8 +84,7 @@ function PlayerFactory47:createPlayerNameOptions()
   local curModule = PlayerName47
   if curModule.mainFrame == nil then curModule:createBar() end
   local optionInstance = OptionsFactory47:createBarTemplateEnableOptions(curModule)
-  optionInstance:registerModuleOptionsTable()
-  return optionInstance.options
+  return CoreFactory47:registerAndReturnOptionTable(optionInstance, curModule)
 end
 
 ---@return table
@@ -95,8 +92,7 @@ function PlayerFactory47:createRuneOptions()
   local curModule = Runes47
   if curModule.mainFrame == nil then curModule:createBar() end
   local optionInstance = OptionsFactory47:createRunes47Options(curModule)
-  optionInstance:registerModuleOptionsTable()
-  return optionInstance.options
+  return CoreFactory47:registerAndReturnOptionTable(optionInstance, curModule)
 end
 
 ---@return table
@@ -104,8 +100,7 @@ function PlayerFactory47:createTotemOptions()
   local curModule = Totems47
   if curModule.mainFrame == nil then curModule:createBar() end
   local optionInstance = OptionsFactory47:createTotems47Options(curModule)
-  optionInstance:registerModuleOptionsTable()
-  return optionInstance.options
+  return CoreFactory47:registerAndReturnOptionTable(optionInstance, curModule)
 end
 
 ---@return table
@@ -113,8 +108,7 @@ function PlayerFactory47:createPetHealthOptions()
   local curModule = PetHealth47
   if curModule.mainFrame == nil then curModule:createBar() end
   local optionInstance = OptionsFactory47:createBarTemplateEnableOptions(curModule)
-  optionInstance:registerModuleOptionsTable()
-  return optionInstance.options
+  return CoreFactory47:registerAndReturnOptionTable(optionInstance, curModule)
 end
 
 ---@return table
@@ -122,8 +116,7 @@ function PlayerFactory47:createPetPowerOptions()
   local curModule = PetPower47
   if curModule.mainFrame == nil then curModule:createBar() end
   local optionInstance = OptionsFactory47:createBarTemplateEnableOptions(curModule)
-  optionInstance:registerModuleOptionsTable()
-  return optionInstance.options
+  return CoreFactory47:registerAndReturnOptionTable(optionInstance, curModule)
 end
 
 ---@return table
@@ -131,8 +124,7 @@ function PlayerFactory47:createPlayerDebuffOptions()
   local curModule = PlayerDebuffs47
   if curModule.mainFrame == nil then curModule:createBar() end
   local optionInstance = OptionsFactory47:createAura47Options(curModule)
-  optionInstance:registerModuleOptionsTable()
-  return optionInstance.options
+  return CoreFactory47:registerAndReturnOptionTable(optionInstance, curModule)
 end
 
 -- ####################################

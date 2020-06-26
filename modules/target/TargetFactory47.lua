@@ -52,32 +52,28 @@ function TargetFactory47:createHealthOptions()
   local curModule = TargetHealth47
   if curModule.mainFrame == nil then curModule:createBar() end
   local optionInstance = OptionsFactory47:createBarTemplateOptions(curModule)
-  optionInstance:registerModuleOptionsTable()
-  return optionInstance.options
+  return CoreFactory47:registerAndReturnOptionTable(optionInstance, curModule)
 end
 
 function TargetFactory47:createPowerOptions()
   local curModule = TargetPower47
   if curModule.mainFrame == nil then curModule:createBar() end
   local optionInstance = OptionsFactory47:createPower47Options(curModule)
-  optionInstance:registerModuleOptionsTable()
-  return optionInstance.options
+  return CoreFactory47:registerAndReturnOptionTable(optionInstance, curModule)
 end
 
 function TargetFactory47:createNameOptions()
   local curModule = TargetName47
   if curModule.mainFrame == nil then curModule:createBar() end
   local optionInstance = OptionsFactory47:createTargetName47Options(curModule)
-  optionInstance:registerModuleOptionsTable()
-  return optionInstance.options
+  return CoreFactory47:registerAndReturnOptionTable(optionInstance, curModule)
 end
 
 function TargetFactory47:createComboOptions()
   local curModule = Combo47
   if curModule.mainFrame == nil then curModule:createBar() end
   local optionInstance = OptionsFactory47:createCombo47Options(curModule)
-  optionInstance:registerModuleOptionsTable()
-  return optionInstance.options
+  return CoreFactory47:registerAndReturnOptionTable(optionInstance, curModule)
 end
 
 ---@return table
@@ -85,8 +81,7 @@ function TargetFactory47:createTargetDebuffOptions()
   local curModule = TargetDebuffs47
   if curModule.mainFrame == nil then curModule:createBar() end
   local optionInstance = OptionsFactory47:createAura47Options(curModule)
-  optionInstance:registerModuleOptionsTable()
-  return optionInstance.options
+  return CoreFactory47:registerAndReturnOptionTable(optionInstance, curModule)
 end
 
 -- ####################################

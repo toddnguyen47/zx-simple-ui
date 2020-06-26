@@ -71,6 +71,7 @@ function OptionsFactory47:createTargetName47Options(curModule)
   return TargetName47Options:new(barTemplateOptions)
 end
 
+---@param curModule table
 ---@return Aura47Options
 function OptionsFactory47:createAura47Options(curModule)
   local core47Options = self:createCoreOptions(curModule)

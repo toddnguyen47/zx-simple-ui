@@ -1,5 +1,8 @@
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local Utils47 = ZxSimpleUI.Utils47
+---@type CoreFactory47
+local CoreFactory47 = ZxSimpleUI.CoreFactory47
+
 local AceConfigRegistry = LibStub("AceConfigRegistry-3.0")
 local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 local AceGUI = LibStub("AceGUI-3.0")
@@ -37,11 +40,16 @@ function CoreOptionsRegister:SetupOptions()
   end
 
   -- Set profile options
-  ZxSimpleUI:registerModuleOptions("Profiles", AceDBOptions:GetOptionsTable(ZxSimpleUI.db),
-    "Profiles")
+  local profileTable = AceDBOptions:GetOptionsTable(ZxSimpleUI.db)
+  local moduleName = "Profiles"
+  CoreFactory47:disableEnabledToggleInCombat(moduleName, profileTable["args"])
+  ZxSimpleUI:registerModuleOptions(moduleName, profileTable, moduleName)
+
   -- Set Print Frames option
-  ZxSimpleUI:registerModuleOptions("PrintFrames",
-    function(...) return self:_getPrintFrameOptionTable() end, "Print Frames")
+  moduleName = "PrintFrames"
+  local printFrameTable = self:_getPrintFrameOptionTable()
+  CoreFactory47:disableEnabledToggleInCombat(moduleName, printFrameTable["args"])
+  ZxSimpleUI:registerModuleOptions(moduleName, printFrameTable, "Print Frames")
 end
 
 -- ########################################
@@ -78,6 +86,7 @@ function CoreOptionsRegister:_getPrintFrameOptionTable()
       type = "group",
       name = "Print Frames",
       args = {
+        descDisplay = {name = "", type = "description", fontSize = "medium", order = 2},
         printFrameVisibility = {
           name = "Print Frame Visibility",
           type = "execute",
@@ -104,11 +113,11 @@ function CoreOptionsRegister:_getPrintFrameOptionTable()
 
             self._printFrameOptionTable.args.descDisplay.name = s1
           end
-        },
-        descDisplay = {name = "", type = "description", fontSize = "medium", order = 2}
+        }
       }
     }
   end
+
   return self._printFrameOptionTable
 end
 
@@ -146,10 +155,12 @@ function CoreOptionsRegister:_addModuleOptionTables()
     else
       self._options.args[moduleAppName] = optionTableOrFunc
     end
-    -- Make sure "Profiles" is the first option
+
     if moduleAppName == "Profiles" then
+      -- Make sure "Profiles" is the first option
       self._options.args[moduleAppName]["order"] = 1
     elseif moduleAppName == "PrintFrames" then
+      -- Make sure "PrintFrames" is the second option
       self._options.args[moduleAppName]["order"] = 2
     else
       self._options.args[moduleAppName]["order"] = defaultOrderIndex

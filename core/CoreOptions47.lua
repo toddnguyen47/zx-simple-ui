@@ -1,5 +1,3 @@
-local MAX_COMBO_POINTS = MAX_COMBO_POINTS
-
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local media = LibStub("LibSharedMedia-3.0")
 

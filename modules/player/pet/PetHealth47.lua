@@ -106,7 +106,7 @@ function PetHealth47:createBar()
   local maxUnitHealth = UnitHealthMax(self.unit)
   local percentage = ZxSimpleUI:calcPercentSafely(curUnitHealth, maxUnitHealth)
 
-  local anchorFrame = ZxSimpleUI:getFrameListFrame("PlayerPower47")
+  local anchorFrame = ZxSimpleUI:getFrameListFrame(self._curDbProfile.framePool)
   self.bars.frameToAnchorTo = anchorFrame
   self.mainFrame = self.bars:createBar(percentage)
   self.mainFrame.DECORATIVE_NAME = self.DECORATIVE_NAME

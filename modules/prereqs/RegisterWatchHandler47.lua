@@ -1,28 +1,24 @@
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
+local UnitIsUnit, UnitPopupMenus = UnitIsUnit, UnitPopupMenus
 local ToggleDropDownMenu, PlayerFrameDropDown = ToggleDropDownMenu, PlayerFrameDropDown
 local TargetFrameDropDown, PetFrameDropDown = TargetFrameDropDown, PetFrameDropDown
 local RegisterUnitWatch, UnregisterUnitWatch = RegisterUnitWatch, UnregisterUnitWatch
 
 ---@class RegisterWatchHandler47
 local RegisterWatchHandler47 = {}
+RegisterWatchHandler47.__index = RegisterWatchHandler47
 ZxSimpleUI.prereqTables["RegisterWatchHandler47"] = RegisterWatchHandler47
 
-local FRAME_DROPDOWN_LIST = {
-  player = PlayerFrameDropDown,
-  target = TargetFrameDropDown,
-  pet = PetFrameDropDown
-}
+RegisterWatchHandler47._areFocusOptionsRemoved = false
+RegisterWatchHandler47._popupMenuList = {}
 
 ---@param curFrame table
 ---@param unit string
 function RegisterWatchHandler47:setRegisterForWatch(curFrame, unit)
   curFrame = self:_setCurFrameUnit(curFrame, unit)
+  self:_removeSetFocusFromPopups()
   -- Handle right click
-  curFrame.openRightClickMenu = function()
-    if FRAME_DROPDOWN_LIST[unit] ~= nil then
-      ToggleDropDownMenu(1, nil, FRAME_DROPDOWN_LIST[unit], "cursor")
-    end
-  end
+  curFrame.openRightClickMenu = function() self:_handleToggleDropdownMenu(unit) end
 
   ZxSimpleUI:enableTooltip(curFrame)
   RegisterUnitWatch(curFrame, self:getUnitWatchState(curFrame.unit))
@@ -32,6 +28,7 @@ end
 ---@param unit string
 function RegisterWatchHandler47:setUnregisterForWatch(curFrame, unit)
   curFrame = self:_setCurFrameUnit(curFrame, unit)
+  self:_addSetFocusFromPopups()
   UnregisterUnitWatch(curFrame, self:getUnitWatchState(curFrame.unit))
 end
 
@@ -62,3 +59,35 @@ function RegisterWatchHandler47:_setCurFrameUnit(curFrame, unit)
   curFrame:SetAttribute("unit", curFrame.unit)
   return curFrame
 end
+
+---@param unit string
+function RegisterWatchHandler47:_handleToggleDropdownMenu(unit)
+  if UnitIsUnit(unit, "player") then
+    ToggleDropDownMenu(1, nil, PlayerFrameDropDown, "cursor")
+  elseif unit == "pet" then
+    ToggleDropDownMenu(1, nil, PetFrameDropDown, "cursor")
+  elseif unit == "target" then
+    ToggleDropDownMenu(1, nil, TargetFrameDropDown, "cursor")
+  end
+end
+
+---Remove "Set Focus", "Clear Focus", etc, so that our AddOn will not get tainted
+function RegisterWatchHandler47:_removeSetFocusFromPopups()
+  if not self._areFocusOptionsRemoved then
+    self._areFocusOptionsRemoved = true
+    ZxSimpleUI:Print(
+      "If you want to focus a target, please make macros and use `/focus` or " ..
+        "`/clearfocus`")
+    for key, inputList in pairs(UnitPopupMenus) do
+      if key ~= "RAID" and key ~= "FOCUS" then
+        for index, value in ipairs(inputList) do
+          if value:find("FOCUS") or value:find("focus") then
+            table.remove(inputList, index)
+          end
+        end
+      end
+    end
+  end
+end
+
+function RegisterWatchHandler47:_addSetFocusFromPopups() end

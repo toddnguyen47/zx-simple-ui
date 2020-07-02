@@ -3,6 +3,6 @@
   <Script file="FramePool47.lua" />
   <Script file="Animations47.lua" />
   <Script file="CoreFactory47.lua" />
-  <Script file="CoreOptionsRegister.lua" />
+  <Script file="CoreOptionsRegister47.lua" />
   <Script file="CoreOptions47.lua" />
 </Ui>

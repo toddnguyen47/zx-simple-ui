@@ -8,23 +8,23 @@ local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 local AceGUI = LibStub("AceGUI-3.0")
 local AceDBOptions = LibStub("AceDBOptions-3.0")
 
----@class CoreOptionsRegister
-local CoreOptionsRegister = ZxSimpleUI:NewModule("Options", nil)
+---@class CoreOptionsRegister47
+local CoreOptionsRegister47 = ZxSimpleUI:NewModule("Options", nil)
 
 -- PRIVATE functions and variables
 ---@param key string
-local _OPEN_OPTION_APPNAME = "ZxSimpleGUI_OpenOption"
+local _OPEN_OPTION_APPNAME = "ZxSimpleUI_OpenOption"
 
-function CoreOptionsRegister:OnInitialize()
+function CoreOptionsRegister47:OnInitialize()
   self._curDbProfile = ZxSimpleUI.db.profile
   self._openOptionTable = {}
   self._options = {}
   self._printFrameOptionTable = {}
-  self._frame = nil
+  self._isFrameClosed = true
   self:SetupOptions()
 end
 
-function CoreOptionsRegister:SetupOptions()
+function CoreOptionsRegister47:SetupOptions()
   ZxSimpleUI.blizOptionTable = {}
   AceConfigRegistry:RegisterOptionsTable(_OPEN_OPTION_APPNAME,
     function(...) return self:_getOpenOptionTable() end)
@@ -57,7 +57,7 @@ end
 -- ########################################
 
 ---@return table
-function CoreOptionsRegister:_getOpenOptionTable()
+function CoreOptionsRegister47:_getOpenOptionTable()
   if next(self._openOptionTable) == nil then
     self._openOptionTable = {
       type = "group",
@@ -80,7 +80,7 @@ function CoreOptionsRegister:_getOpenOptionTable()
 end
 
 ---@return table
-function CoreOptionsRegister:_getPrintFrameOptionTable()
+function CoreOptionsRegister47:_getPrintFrameOptionTable()
   if next(self._printFrameOptionTable) == nil then
     self._printFrameOptionTable = {
       type = "group",
@@ -121,23 +121,28 @@ function CoreOptionsRegister:_getPrintFrameOptionTable()
   return self._printFrameOptionTable
 end
 
-function CoreOptionsRegister:_getSlashCommandsString()
+function CoreOptionsRegister47:_getSlashCommandsString()
   local s1 = "You can also open the options frame with one of these commands:\n"
   for _, command in pairs(ZxSimpleUI.SLASH_COMMANDS) do s1 = s1 .. "    /" .. command .. "\n" end
   s1 = string.sub(s1, 0, string.len(s1) - 1)
   return s1
 end
 
-function CoreOptionsRegister:_openOptionFrame(info, value, ...)
-  if not self._frame then
-    self._frame = AceGUI:Create("Frame")
-    self._frame:SetCallback("OnClose", function(widget) AceGUI:Release(widget) end)
-    self._frame:SetTitle(ZxSimpleUI.DECORATIVE_NAME)
+function CoreOptionsRegister47:_openOptionFrame(info, value, ...)
+  local frame = nil
+  if self._isFrameClosed then
+    self._isFrameClosed = false
+    frame = AceGUI:Create("Frame")
+    frame:SetCallback("OnClose", function(widget)
+      self._isFrameClosed = true
+      AceGUI:Release(widget)
+    end)
+    frame:SetTitle(ZxSimpleUI.DECORATIVE_NAME)
+    AceConfigDialog:Open(ZxSimpleUI.ADDON_NAME, frame)
   end
-  AceConfigDialog:Open(ZxSimpleUI.ADDON_NAME, self._frame)
 end
 
-function CoreOptionsRegister:_getOptionTable()
+function CoreOptionsRegister47:_getOptionTable()
   if next(self._options) == nil then
     self._options = {type = "group", args = {}}
     self:_addModuleOptionTables()
@@ -145,7 +150,7 @@ function CoreOptionsRegister:_getOptionTable()
   return self._options
 end
 
-function CoreOptionsRegister:_addModuleOptionTables()
+function CoreOptionsRegister47:_addModuleOptionTables()
   local defaultOrderIndex = 7
   table.sort(ZxSimpleUI.moduleKeySorted)
   for _, moduleAppName in pairs(ZxSimpleUI.moduleKeySorted) do

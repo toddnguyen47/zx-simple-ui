@@ -1,4 +1,6 @@
+---@type ZxSimpleUI
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
+---@type ZxSimpleUI
 local FramePool47 = ZxSimpleUI.FramePool47
 
 ---@class CoreFactory47
@@ -29,50 +31,9 @@ end
 function CoreFactory47:registerAndReturnOptionTable(optionInstance, curModule)
   optionInstance:registerModuleOptionsTable()
   local optionTable = optionInstance.options
-  self:disableEnabledToggleInCombat(curModule.MODULE_NAME, optionTable["args"])
   return optionTable
-end
-
----@param appName string
----@param optionTableInput table
-function CoreFactory47:disableEnabledToggleInCombat(appName, optionTableInput)
-  local frameEnabledToggle = FramePool47:getFrame()
-  frameEnabledToggle:RegisterEvent("PLAYER_REGEN_DISABLED")
-  frameEnabledToggle:RegisterEvent("PLAYER_REGEN_ENABLED")
-  frameEnabledToggle:SetScript("OnEvent", function(curFrame, event, arg1, arg2, ...)
-    if event == "PLAYER_REGEN_DISABLED" then
-      self:_handleInCombat(appName, optionTableInput)
-    elseif event == "PLAYER_REGEN_ENABLED" then
-      self:_handleOutOfCombat(appName, optionTableInput)
-    end
-  end)
-  self._frameEnableToggleList[appName] = frameEnabledToggle
 end
 
 -- ####################################
 -- # PRIVATE FUNCTIONS
 -- ####################################
-
----@param appName string
----@param optionTableInput table
-function CoreFactory47:_handleInCombat(appName, optionTableInput)
-  self._prevDisabledOptionsList[appName] = {}
-  if optionTableInput ~= nil then
-    for key, val in pairs(optionTableInput) do
-      self._prevDisabledOptionsList[appName][key] = val["disabled"]
-      val["disabled"] = true
-    end
-  end
-end
-
----@appName string
----@param optionTableInput table
-function CoreFactory47:_handleOutOfCombat(appName, optionTableInput)
-  if optionTableInput ~= nil then
-    for key, val in pairs(optionTableInput) do
-      val["disabled"] = self._prevDisabledOptionsList[appName][key]
-    end
-  end
-  -- Clean up!
-  self._prevDisabledOptionsList[appName] = {}
-end

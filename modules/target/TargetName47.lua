@@ -72,7 +72,6 @@ function TargetName47:OnInitialize()
   self:__init__()
 
   self.db = ZxSimpleUI.db:RegisterNamespace(MODULE_NAME, self._newDefaults)
-  self._curDbProfile = self.db.profile
 
   self.bars = BarTemplate:new(self.db)
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(MODULE_NAME))
@@ -138,7 +137,7 @@ function TargetName47:refreshConfig()
 end
 
 function TargetName47:handleEnableToggle()
-  ZxSimpleUI:setModuleEnabledState(MODULE_NAME, self._curDbProfile.enabledToggle)
+  ZxSimpleUI:setModuleEnabledState(MODULE_NAME, self.db.profile.enabledToggle)
 end
 
 -- ####################################
@@ -199,9 +198,9 @@ end
 ---@return string
 function TargetName47:_getFormattedNameInitials(name)
   local formattedName = ""
-  if self._curDbProfile.nameInitials == "allButFirst" then
+  if self.db.profile.nameInitials == "allButFirst" then
     formattedName = Utils47:getInitialsExceptFirstWord(name)
-  elseif self._curDbProfile.nameInitials == "allButLast" then
+  elseif self.db.profile.nameInitials == "allButLast" then
     formattedName = Utils47:getInitialsExceptLastWord(name)
   end
   return formattedName
@@ -223,11 +222,11 @@ function TargetName47:_getReactionColor()
   local reaction = UnitReaction("player", self.unit)
   local color = {}
   if reaction == self._UNIT_REACTIONS.HOSTILE then
-    color = self._curDbProfile.hostileColor
+    color = self.db.profile.hostileColor
   elseif reaction == self._UNIT_REACTIONS.NEUTRAL then
-    color = self._curDbProfile.neutralColor
+    color = self.db.profile.neutralColor
   else
-    color = self._curDbProfile.friendlyColor
+    color = self.db.profile.friendlyColor
   end
   return color
 end

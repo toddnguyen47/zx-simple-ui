@@ -12,7 +12,6 @@ function BarTemplateOptions:__init__(coreOptions47)
   self.options = {}
   self._coreOptions47 = coreOptions47
   self._currentModule = self._coreOptions47:getCurrentModule()
-  self._curDbProfile = self._currentModule.db.profile
 end
 
 function BarTemplateOptions:new(...)
@@ -134,7 +133,7 @@ function BarTemplateOptions:getOptionTable()
           name = "Zero X Offset",
           type = "execute",
           func = function(...)
-            self._curDbProfile.xoffset = 0
+            self._currentModule.db.profile.xoffset = 0
             self._currentModule:refreshConfig()
           end,
           order = self._coreOptions47:incrementOrderIndex()
@@ -152,7 +151,7 @@ function BarTemplateOptions:getOptionTable()
           name = "Zero Y Offset",
           type = "execute",
           func = function(...)
-            self._curDbProfile.yoffset = 0
+            self._currentModule.db.profile.yoffset = 0
             self._currentModule:refreshConfig()
           end,
           order = self._coreOptions47:incrementOrderIndex()

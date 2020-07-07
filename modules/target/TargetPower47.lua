@@ -90,9 +90,9 @@ function TargetPower47:OnInitialize()
   self:__init__()
 
   self.db = ZxSimpleUI.db:RegisterNamespace(MODULE_NAME, self._newDefaults)
-  self._curDbProfile = self.db.profile
+
   -- Always set the showbar option to false on initialize
-  self._curDbProfile.showbar = self._defaults.profile.showbar
+  self.db.profile.showbar = self._defaults.profile.showbar
 
   self.bars = BarTemplate:new(self.db)
 
@@ -156,7 +156,7 @@ function TargetPower47:refreshConfig()
   self:handleEnableToggle()
   if self:IsEnabled() and self.mainFrame:IsVisible() then
     --- if we are currently in shown mode
-    if self._curDbProfile.showbar == true then
+    if self.db.profile.showbar == true then
       self.mainFrame.statusBar:SetStatusBarColor(unpack(self.currentPowerColorEdited))
     else
       self.bars:refreshConfig()
@@ -259,11 +259,11 @@ end
 ---@return table
 function TargetPower47:_getColorsInOptions()
   local t1 = {
-    ["UNIT_MANA"] = self._curDbProfile.colorMana,
-    ["UNIT_RAGE"] = self._curDbProfile.colorRage,
-    ["UNIT_FOCUS"] = self._curDbProfile.colorFocus,
-    ["UNIT_ENERGY"] = self._curDbProfile.colorEnergy,
-    ["UNIT_RUNIC_POWER"] = self._curDbProfile.colorRunicPower
+    ["UNIT_MANA"] = self.db.profile.colorMana,
+    ["UNIT_RAGE"] = self.db.profile.colorRage,
+    ["UNIT_FOCUS"] = self.db.profile.colorFocus,
+    ["UNIT_ENERGY"] = self.db.profile.colorEnergy,
+    ["UNIT_RUNIC_POWER"] = self.db.profile.colorRunicPower
   }
   return t1
 end

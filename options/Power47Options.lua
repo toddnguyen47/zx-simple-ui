@@ -12,7 +12,6 @@ function Power47Options:__init__(barTemplateOptions)
   self._barTemplateOptions = barTemplateOptions
   self._coreOptions47 = self._barTemplateOptions:getCoreOptions47()
   self._currentModule = self._barTemplateOptions:getCurrentModule()
-  self._curDbProfile = self._currentModule.db.profile
 end
 
 function Power47Options:new(...)
@@ -62,7 +61,9 @@ function Power47Options:_getExtraOptionTable()
           desc = "Show the currently edited power color",
           type = "toggle",
           order = 1,
-          disabled = function(info) return not self._curDbProfile.enabledToggle end,
+          disabled = function(info)
+            return not self._currentModule.db.profile.enabledToggle
+          end,
           get = function(info) return self._coreOptions47:getOption(info) end,
           set = function(info, value) self._coreOptions47:setOption(info, value) end
         },

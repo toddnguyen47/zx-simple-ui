@@ -85,10 +85,9 @@ end
 function PlayerPower47:OnInitialize()
   self:__init__()
   self.db = ZxSimpleUI.db:RegisterNamespace(self.MODULE_NAME, self._newDefaults)
-  self._curDbProfile = self.db.profile
 
   -- Always set the showbar option to false on initialize
-  self._curDbProfile.showbar = self._defaults.profile.showbar
+  self.db.profile.showbar = self._defaults.profile.showbar
 
   self.bars = BarTemplate:new(self.db)
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(self.MODULE_NAME))
@@ -133,7 +132,7 @@ function PlayerPower47:refreshConfig()
   self:handleEnableToggle()
   if self:IsEnabled() then
     -- If the show option is currently selected
-    if self._curDbProfile.showbar == true then
+    if self.db.profile.showbar == true then
       self.mainFrame.statusBar:SetStatusBarColor(unpack(self.currentPowerColorEdited))
     else
       self:_setRefreshColor()
@@ -211,18 +210,18 @@ function PlayerPower47:_setRefreshColor()
   local t1 = colorOptionTable["UNIT_" .. upperType]
   t1 = t1 or colorOptionTable["UNIT_MANA"]
 
-  self._curDbProfile.color = t1
+  self.db.profile.color = t1
   self.mainFrame.statusBar:SetStatusBarColor(unpack(t1))
 end
 
 ---@return table
 function PlayerPower47:_getColorsInOptions()
   local t1 = {
-    ["UNIT_MANA"] = self._curDbProfile.colorMana,
-    ["UNIT_RAGE"] = self._curDbProfile.colorRage,
-    ["UNIT_FOCUS"] = self._curDbProfile.colorFocus,
-    ["UNIT_ENERGY"] = self._curDbProfile.colorEnergy,
-    ["UNIT_RUNIC_POWER"] = self._curDbProfile.colorRunicPower
+    ["UNIT_MANA"] = self.db.profile.colorMana or self._powerEventColorTable["UNIT_MANA"],
+    ["UNIT_RAGE"] = self.db.profile.colorRage,
+    ["UNIT_FOCUS"] = self.db.profile.colorFocus,
+    ["UNIT_ENERGY"] = self.db.profile.colorEnergy,
+    ["UNIT_RUNIC_POWER"] = self.db.profile.colorRunicPower
   }
   return t1
 end

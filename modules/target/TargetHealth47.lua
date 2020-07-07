@@ -62,7 +62,6 @@ function TargetHealth47:OnInitialize()
   self:__init__()
 
   self.db = ZxSimpleUI.db:RegisterNamespace(MODULE_NAME, self._newDefaults)
-  self._curDbProfile = self.db.profile
 
   self.bars = BarTemplate:new(self.db)
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(MODULE_NAME))

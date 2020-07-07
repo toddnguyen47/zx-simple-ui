@@ -13,7 +13,6 @@ function Totems47Options:__init__(coreOptions47)
   self.options = {}
   self._coreOptions47 = coreOptions47
   self._currentModule = self._coreOptions47:getCurrentModule()
-  self._curDbProfile = self._currentModule.db.profile
 end
 
 function Totems47Options:new(...)

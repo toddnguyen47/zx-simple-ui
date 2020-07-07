@@ -48,9 +48,9 @@ end
 function Totems47:OnInitialize()
   self:__init__()
   self.db = ZxSimpleUI.db:RegisterNamespace(MODULE_NAME, self._defaults)
-  self._curDbProfile = self.db.profile
+
   -- Always set the showbar option to false on initialize
-  self._curDbProfile.showbar = self._defaults.profile.showbar
+  self.db.profile.showbar = self._defaults.profile.showbar
 
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(MODULE_NAME))
 end
@@ -77,7 +77,7 @@ function Totems47:OnDisable()
 end
 
 function Totems47:createBar()
-  self._frameToAnchorTo = ZxSimpleUI:getFrameListFrame(self._curDbProfile.framePool)
+  self._frameToAnchorTo = ZxSimpleUI:getFrameListFrame(self.db.profile.framePool)
 
   self.mainFrame = CreateFrame("Frame", nil, self._frameToAnchorTo)
   self.mainFrame.DECORATIVE_NAME = self.DECORATIVE_NAME
@@ -96,7 +96,7 @@ function Totems47:refreshConfig()
 end
 
 function Totems47:handleEnableToggle()
-  ZxSimpleUI:setModuleEnabledState(MODULE_NAME, self._curDbProfile.enabledToggle)
+  ZxSimpleUI:setModuleEnabledState(MODULE_NAME, self.db.profile.enabledToggle)
 end
 
 -- ####################################
@@ -109,13 +109,13 @@ function Totems47:_refreshAll()
 end
 
 function Totems47:_refreshBarFrame()
-  self._frameToAnchorTo = ZxSimpleUI:getFrameListFrame(self._curDbProfile.framePool)
+  self._frameToAnchorTo = ZxSimpleUI:getFrameListFrame(self.db.profile.framePool)
 
   self.mainFrame:SetWidth(self._frameToAnchorTo:GetWidth())
-  self.mainFrame:SetHeight(self._curDbProfile.height)
+  self.mainFrame:SetHeight(self.db.profile.height)
   self.mainFrame:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details
   self.mainFrame:SetPoint("TOPLEFT", self._frameToAnchorTo, "BOTTOMLEFT", 0,
-    self._curDbProfile.yoffset)
+    self.db.profile.yoffset)
 end
 
 function Totems47:_refreshTotemBars()
@@ -129,14 +129,14 @@ function Totems47:_refreshTotemBars()
     local totemFrame = self._totemBarList[totemPos]
     totemFrame:SetWidth(mainFrameHeight)
     totemFrame:SetHeight(mainFrameHeight)
-    totemFrame.durationText:SetFont(media:Fetch("font", self._curDbProfile.font),
-      self._curDbProfile.fontsize, self:_getFontFlags())
-    totemFrame.durationText:SetTextColor(unpack(self._curDbProfile.fontcolor))
+    totemFrame.durationText:SetFont(media:Fetch("font", self.db.profile.font),
+      self.db.profile.fontsize, self:_getFontFlags())
+    totemFrame.durationText:SetTextColor(unpack(self.db.profile.fontcolor))
 
     totemFrame:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details
     if i == 1 then
       totemFrame:SetPoint("TOPLEFT", self._frameToAnchorTo, "BOTTOMLEFT", 0,
-        self._curDbProfile.yoffset)
+        self.db.profile.yoffset)
     else
       local leftTotemPos = self._totemTypeDisplayOrder[i - 1]
       totemFrame:SetPoint("TOPLEFT", self._totemBarList[leftTotemPos], "TOPRIGHT", horizGap, 0)
@@ -156,8 +156,8 @@ function Totems47:_createTotemFrames()
 
     totemFrame.durationText = totemFrame:CreateFontString(nil, "BORDER")
     totemFrame.durationText:SetPoint("TOP", totemFrame, "BOTTOM", 0, -2)
-    totemFrame.durationText:SetFont(media:Fetch("font", self._curDbProfile.font),
-      self._curDbProfile.fontsize, self:_getFontFlags())
+    totemFrame.durationText:SetFont(media:Fetch("font", self.db.profile.font),
+      self.db.profile.fontsize, self:_getFontFlags())
 
     totemFrame:Hide()
     self._totemBarList[i] = totemFrame
@@ -250,9 +250,9 @@ end
 ---@return string
 function Totems47:_getFontFlags()
   local s = ""
-  if self._curDbProfile.outline then s = s .. "OUTLINE, " end
-  if self._curDbProfile.thickoutline then s = s .. "THICKOUTLINE, " end
-  if self._curDbProfile.monochrome then s = s .. "MONOCHROME, " end
+  if self.db.profile.outline then s = s .. "OUTLINE, " end
+  if self.db.profile.thickoutline then s = s .. "THICKOUTLINE, " end
+  if self.db.profile.monochrome then s = s .. "MONOCHROME, " end
   if s ~= "" then s = string.sub(s, 0, (string.len(s) - 2)) end
   return s
 end

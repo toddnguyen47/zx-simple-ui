@@ -58,9 +58,9 @@ function Combo47:OnInitialize()
   self:__init__()
 
   self.db = ZxSimpleUI.db:RegisterNamespace(MODULE_NAME, self._defaults)
-  self._curDbProfile = self.db.profile
+
   -- Always set the showbar option to false on initialize
-  self._curDbProfile.showbar = self._defaults.profile.showbar
+  self.db.profile.showbar = self._defaults.profile.showbar
 
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(MODULE_NAME))
 
@@ -90,14 +90,14 @@ function Combo47:OnDisable()
 end
 
 function Combo47:createBar()
-  self._frameToAnchorTo = ZxSimpleUI:getFrameListFrame(self._curDbProfile.framePool)
+  self._frameToAnchorTo = ZxSimpleUI:getFrameListFrame(self.db.profile.framePool)
 
   self.mainFrame = CreateFrame("Frame", nil, self._frameToAnchorTo)
   self.mainFrame:SetFrameLevel(ZxSimpleUI.DEFAULT_FRAME_LEVEL + 2)
   self.mainFrame.DECORATIVE_NAME = self.DECORATIVE_NAME
 
   self.mainFrame.bgTexture = self.mainFrame:CreateTexture(nil, "BACKGROUND")
-  self.mainFrame.bgTexture:SetTexture(unpack(self._curDbProfile.backgroundColor))
+  self.mainFrame.bgTexture:SetTexture(unpack(self.db.profile.backgroundColor))
   self.mainFrame.bgTexture:SetAllPoints(self.mainFrame)
 
   self:_createIndividualComboPointsDisplay()
@@ -114,12 +114,12 @@ function Combo47:refreshConfig()
   if self:IsEnabled() then
     self:_refreshAll()
     -- If we are currently seeing the showbar option, do not need to handle combo points
-    if not self._curDbProfile.showbar then self:_handleComboPoints() end
+    if not self.db.profile.showbar then self:_handleComboPoints() end
   end
 end
 
 function Combo47:handleEnableToggle()
-  ZxSimpleUI:setModuleEnabledState(MODULE_NAME, self._curDbProfile.enabledToggle)
+  ZxSimpleUI:setModuleEnabledState(MODULE_NAME, self.db.profile.enabledToggle)
 end
 
 function Combo47:handleShownOption()
@@ -145,24 +145,24 @@ function Combo47:_refreshAll()
 end
 
 function Combo47:_refreshBarFrame()
-  self._frameToAnchorTo = ZxSimpleUI:getFrameListFrame(self._curDbProfile.framePool)
+  self._frameToAnchorTo = ZxSimpleUI:getFrameListFrame(self.db.profile.framePool)
 
   self.mainFrame:SetWidth(self._frameToAnchorTo:GetWidth())
-  self.mainFrame:SetHeight(self._curDbProfile.height)
+  self.mainFrame:SetHeight(self.db.profile.height)
   self.mainFrame:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details
-  self.mainFrame:SetPoint(self._curDbProfile.selfCurrentPoint, self._frameToAnchorTo,
-    self._curDbProfile.relativePoint, 0, self._curDbProfile.yoffset)
+  self.mainFrame:SetPoint(self.db.profile.selfCurrentPoint, self._frameToAnchorTo,
+    self.db.profile.relativePoint, 0, self.db.profile.yoffset)
 
-  self.mainFrame.bgTexture:SetTexture(unpack(self._curDbProfile.backgroundColor))
+  self.mainFrame.bgTexture:SetTexture(unpack(self.db.profile.backgroundColor))
 end
 
 function Combo47:_refreshComboPointsDisplay()
-  local totalNumberOfGaps = self._curDbProfile.horizGap * (MAX_COMBO_POINTS - 1)
+  local totalNumberOfGaps = self.db.profile.horizGap * (MAX_COMBO_POINTS - 1)
   local comboWidth = (self._frameToAnchorTo:GetWidth() - totalNumberOfGaps) / MAX_COMBO_POINTS
   for i, comboTexture in ipairs(self._comboPointsTable) do
     comboTexture:SetWidth(comboWidth)
     comboTexture:SetHeight(self.mainFrame:GetHeight())
-    comboTexture:SetTexture(media:Fetch("statusbar", self._curDbProfile.texture), "BORDER")
+    comboTexture:SetTexture(media:Fetch("statusbar", self.db.profile.texture), "BORDER")
     self:_setComboPointsColor(i, comboTexture)
     comboTexture:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details
 
@@ -170,7 +170,7 @@ function Combo47:_refreshComboPointsDisplay()
       comboTexture:SetPoint("TOPLEFT", self.mainFrame, "TOPLEFT", 0, 0)
     else
       comboTexture:SetPoint("TOPLEFT", self._comboPointsTable[i - 1], "TOPRIGHT",
-        self._curDbProfile.horizGap, 0)
+        self.db.profile.horizGap, 0)
     end
   end
 end
@@ -225,12 +225,12 @@ end
 ---@param comboTexture table
 function Combo47:_setComboPointsColor(comboPoints, comboTexture)
   if comboPoints >= MAX_COMBO_POINTS then
-    comboTexture:SetVertexColor(unpack(self._curDbProfile.maxComboColor))
-  elseif self._curDbProfile.mediumComboPoints > 0 and comboPoints >=
-    self._curDbProfile.mediumComboPoints then
-    comboTexture:SetVertexColor(unpack(self._curDbProfile.medComboColor))
+    comboTexture:SetVertexColor(unpack(self.db.profile.maxComboColor))
+  elseif self.db.profile.mediumComboPoints > 0 and comboPoints >=
+    self.db.profile.mediumComboPoints then
+    comboTexture:SetVertexColor(unpack(self.db.profile.medComboColor))
   else
-    comboTexture:SetVertexColor(unpack(self._curDbProfile.lowComboColor))
+    comboTexture:SetVertexColor(unpack(self.db.profile.lowComboColor))
   end
 end
 

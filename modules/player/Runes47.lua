@@ -55,7 +55,6 @@ end
 function Runes47:OnInitialize()
   self:__init__()
   self.db = ZxSimpleUI.db:RegisterNamespace(MODULE_NAME, self._defaults)
-  self._curDbProfile = self.db.profile
 
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(MODULE_NAME))
 end
@@ -81,7 +80,7 @@ function Runes47:OnDisable()
 end
 
 function Runes47:createBar()
-  self._frameToAnchorTo = ZxSimpleUI:getFrameListFrame(self._curDbProfile.framePool)
+  self._frameToAnchorTo = ZxSimpleUI:getFrameListFrame(self.db.profile.framePool)
 
   self.mainFrame = CreateFrame("Frame", nil, self._frameToAnchorTo)
   self.mainFrame.DECORATIVE_NAME = self.DECORATIVE_NAME
@@ -104,7 +103,7 @@ function Runes47:refreshConfig()
 end
 
 function Runes47:handleEnableToggle()
-  ZxSimpleUI:setModuleEnabledState(self.MODULE_NAME, self._curDbProfile.enabledToggle)
+  ZxSimpleUI:setModuleEnabledState(self.MODULE_NAME, self.db.profile.enabledToggle)
 end
 
 function Runes47:handleShownOption()
@@ -123,24 +122,24 @@ function Runes47:_refreshAll()
 end
 
 function Runes47:_refreshBarFrame()
-  self._frameToAnchorTo = ZxSimpleUI:getFrameListFrame(self._curDbProfile.framePool)
+  self._frameToAnchorTo = ZxSimpleUI:getFrameListFrame(self.db.profile.framePool)
 
   self.mainFrame:SetWidth(self._frameToAnchorTo:GetWidth())
-  self.mainFrame:SetHeight(self._curDbProfile.height)
+  self.mainFrame:SetHeight(self.db.profile.height)
   self.mainFrame:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details
   self.mainFrame:SetPoint("TOPLEFT", self._frameToAnchorTo, "BOTTOMLEFT", 0,
-    self._curDbProfile.yoffset)
+    self.db.profile.yoffset)
 end
 
 function Runes47:_refreshRuneColors()
   self._runeColors = {
-    self._curDbProfile.bloodColor, self._curDbProfile.unholyChromaticColor,
-    self._curDbProfile.frostColor, self._curDbProfile.deathColor
+    self.db.profile.bloodColor, self.db.profile.unholyChromaticColor,
+    self.db.profile.frostColor, self.db.profile.deathColor
   }
 end
 
 function Runes47:_refreshRuneFrames()
-  local totalNumberOfGaps = self._curDbProfile.horizGap * (self.MAX_RUNE_NUMBER - 1)
+  local totalNumberOfGaps = self.db.profile.horizGap * (self.MAX_RUNE_NUMBER - 1)
   local runeWidth = (self._frameToAnchorTo:GetWidth() - totalNumberOfGaps) /
                       self.MAX_RUNE_NUMBER
 
@@ -148,8 +147,8 @@ function Runes47:_refreshRuneFrames()
     local runePos = self._displayRuneTypeOrder[i]
     local runeStatusBar = self._runeBarList[runePos]
     runeStatusBar:SetWidth(runeWidth)
-    runeStatusBar:SetHeight(self._curDbProfile.height)
-    runeStatusBar:SetStatusBarTexture(media:Fetch("statusbar", self._curDbProfile.texture),
+    runeStatusBar:SetHeight(self.db.profile.height)
+    runeStatusBar:SetStatusBarTexture(media:Fetch("statusbar", self.db.profile.texture),
       "BORDER")
     runeStatusBar:GetStatusBarTexture():SetHorizTile(false)
     self:_setRuneColor(runePos)
@@ -157,11 +156,11 @@ function Runes47:_refreshRuneFrames()
 
     if i == 1 then
       runeStatusBar:SetPoint("TOPLEFT", self._frameToAnchorTo, "BOTTOMLEFT", 0,
-        self._curDbProfile.yoffset)
+        self.db.profile.yoffset)
     else
       local leftRunePos = self._displayRuneTypeOrder[i - 1]
       runeStatusBar:SetPoint("TOPLEFT", self._runeBarList[leftRunePos], "TOPRIGHT",
-        self._curDbProfile.horizGap, 0)
+        self.db.profile.horizGap, 0)
     end
   end
 end
@@ -233,7 +232,7 @@ function Runes47:_handleRunePowerUpdate(curFrame, event, id, usable)
 
     runeStatusBar:SetMinMaxValues(0, runeStatusBar.duration)
     runeStatusBar:SetValue(currentTime - startTime)
-    runeStatusBar:SetAlpha(self._curDbProfile.runeCooldownAlpha)
+    runeStatusBar:SetAlpha(self.db.profile.runeCooldownAlpha)
     runeStatusBar:SetScript("OnUpdate", function(curFrame, elapsedTime)
       self:_monitorCurrentRune(curFrame, elapsedTime, id)
     end)
@@ -261,5 +260,5 @@ function Runes47:_handleRuneCooldownComplete(runeStatusBar, id)
   runeStatusBar:SetScript("OnUpdate", nil)
 
   local animDurationSec = 0.5
-  Animations47:animateHeight(runeStatusBar, self._curDbProfile.height, animDurationSec)
+  Animations47:animateHeight(runeStatusBar, self.db.profile.height, animDurationSec)
 end

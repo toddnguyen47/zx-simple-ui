@@ -21,7 +21,6 @@ function BarTemplate:__init__(db)
   self.frameToAnchorTo = UIParent
   -- Start order index at DEFAULT_ORDER_INDEX so other modules can easily put options in front
   self._orderIndex = ZxSimpleUI.DEFAULT_ORDER_INDEX
-  self._curDbProfile = self.db.profile
 
   self.frameBackdropTable = {
     bgFile = "Interface\\DialogFrame\\UI-Tooltip-Background",
@@ -50,11 +49,11 @@ function BarTemplate:createBar(percentValue)
   self.mainFrame:SetBackdropColor(1, 0, 0, 1)
   self.mainFrame:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details
 
-  -- self.mainFrame:SetPoint(self._curDbProfile.selfCurrentPoint, self.frameToAnchorTo,
-  --   self._curDbProfile.relativePoint, self._curDbProfile.xoffset, self._curDbProfile.yoffset)
-  self.mainFrame:SetPoint(self._curDbProfile.selfCurrentPoint,
-    ZxSimpleUI:getFrameListFrame(self._curDbProfile.framePool),
-    self._curDbProfile.relativePoint, self._curDbProfile.xoffset, self._curDbProfile.yoffset)
+  -- self.mainFrame:SetPoint(self.db.profile.selfCurrentPoint, self.frameToAnchorTo,
+  --   self.db.profile.relativePoint, self.db.profile.xoffset, self.db.profile.yoffset)
+  self.mainFrame:SetPoint(self.db.profile.selfCurrentPoint,
+    ZxSimpleUI:getFrameListFrame(self.db.profile.framePool), self.db.profile.relativePoint,
+    self.db.profile.xoffset, self.db.profile.yoffset)
 
   self:_setMouseClicks()
 
@@ -65,19 +64,19 @@ function BarTemplate:createBar(percentValue)
   self.mainFrame.statusBar = CreateFrame("StatusBar", nil, self.mainFrame)
   self.mainFrame.statusBar:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details
   self.mainFrame.statusBar:SetPoint("CENTER", self.mainFrame, "CENTER")
-  local texture = media:Fetch("statusbar", self._curDbProfile.texture)
+  local texture = media:Fetch("statusbar", self.db.profile.texture)
   self.mainFrame.statusBar:SetStatusBarTexture(texture, "BORDER")
   self.mainFrame.statusBar:GetStatusBarTexture():SetHorizTile(false)
   self.mainFrame.statusBar:GetStatusBarTexture():SetVertTile(false)
-  self.mainFrame.statusBar:SetStatusBarColor(unpack(self._curDbProfile.color))
+  self.mainFrame.statusBar:SetStatusBarColor(unpack(self.db.profile.color))
   self.mainFrame.statusBar:SetMinMaxValues(0, 1)
   self.mainFrame.statusBar:SetValue(percentValue)
   self:_setFrameWidthHeight()
 
   self.mainFrame.mainText = self.mainFrame.statusBar:CreateFontString(nil, "BORDER")
-  self.mainFrame.mainText:SetFont(media:Fetch("font", self._curDbProfile.font),
-    self._curDbProfile.fontsize, "OUTLINE")
-  self.mainFrame.mainText:SetTextColor(unpack(self._curDbProfile.fontcolor))
+  self.mainFrame.mainText:SetFont(media:Fetch("font", self.db.profile.font),
+    self.db.profile.fontsize, "OUTLINE")
+  self.mainFrame.mainText:SetTextColor(unpack(self.db.profile.fontcolor))
   self.mainFrame.mainText:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details
   self.mainFrame.mainText:SetPoint("CENTER", self.mainFrame.statusBar, "CENTER", 0, 0)
   self.mainFrame.mainText:SetText(string.format("%.1f%%", percentValue * 100.0))
@@ -102,18 +101,18 @@ end
 function BarTemplate:setTextOnly(strInput) self.mainFrame.mainText:SetText(strInput) end
 
 function BarTemplate:handlePositionXCenter()
-  local width = self._curDbProfile.width
+  local width = self.db.profile.width
 
   local centerXPos = math.floor(ZxSimpleUI.SCREEN_WIDTH / 2 - width / 2)
-  self._curDbProfile.xoffset = centerXPos
+  self.db.profile.xoffset = centerXPos
   self:refreshConfig()
 end
 
 function BarTemplate:handlePositionYCenter()
-  local height = self._curDbProfile.height
+  local height = self.db.profile.height
 
   local centerYPos = math.floor(ZxSimpleUI.SCREEN_HEIGHT / 2 - height / 2)
-  self._curDbProfile.yoffset = centerYPos
+  self.db.profile.yoffset = centerYPos
   self:refreshConfig()
 end
 
@@ -122,8 +121,8 @@ end
 -- ####################################
 
 function BarTemplate:_setFrameWidthHeight()
-  self.mainFrame:SetWidth(self._curDbProfile.width)
-  self.mainFrame:SetHeight(self._curDbProfile.height)
+  self.mainFrame:SetWidth(self.db.profile.width)
+  self.mainFrame:SetHeight(self.db.profile.height)
   self.mainFrame.bgFrame:SetWidth(self.mainFrame:GetWidth())
   self.mainFrame.bgFrame:SetHeight(self.mainFrame:GetHeight())
   self.mainFrame.statusBar:SetWidth(self.mainFrame:GetWidth())
@@ -132,24 +131,24 @@ end
 
 function BarTemplate:_refreshBarFrame()
   self.mainFrame:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details
-  -- self.mainFrame:SetPoint(self._curDbProfile.selfCurrentPoint, self.frameToAnchorTo,
-  --   self._curDbProfile.relativePoint, self._curDbProfile.xoffset, self._curDbProfile.yoffset)
-  self.mainFrame:SetPoint(self._curDbProfile.selfCurrentPoint,
-    ZxSimpleUI:getFrameListFrame(self._curDbProfile.framePool),
-    self._curDbProfile.relativePoint, self._curDbProfile.xoffset, self._curDbProfile.yoffset)
+  -- self.mainFrame:SetPoint(self.db.profile.selfCurrentPoint, self.frameToAnchorTo,
+  --   self.db.profile.relativePoint, self.db.profile.xoffset, self.db.profile.yoffset)
+  self.mainFrame:SetPoint(self.db.profile.selfCurrentPoint,
+    ZxSimpleUI:getFrameListFrame(self.db.profile.framePool), self.db.profile.relativePoint,
+    self.db.profile.xoffset, self.db.profile.yoffset)
   self.mainFrame:SetBackdrop(self.frameBackdropTable)
 
-  self.frameBackdropTable.edgeFile = media:Fetch("border", self._curDbProfile.border)
+  self.frameBackdropTable.edgeFile = media:Fetch("border", self.db.profile.border)
 
-  self.mainFrame.mainText:SetFont(media:Fetch("font", self._curDbProfile.font),
-    self._curDbProfile.fontsize, "OUTLINE")
-  self.mainFrame.mainText:SetTextColor(unpack(self._curDbProfile.fontcolor))
+  self.mainFrame.mainText:SetFont(media:Fetch("font", self.db.profile.font),
+    self.db.profile.fontsize, "OUTLINE")
+  self.mainFrame.mainText:SetTextColor(unpack(self.db.profile.fontcolor))
 end
 
 function BarTemplate:_refreshStatusBar()
-  local texture = media:Fetch("statusbar", self._curDbProfile.texture)
+  local texture = media:Fetch("statusbar", self.db.profile.texture)
   self.mainFrame.statusBar:SetStatusBarTexture(texture, "BORDER")
-  self.mainFrame.statusBar:SetStatusBarColor(unpack(self._curDbProfile.color))
+  self.mainFrame.statusBar:SetStatusBarColor(unpack(self.db.profile.color))
 end
 
 function BarTemplate:_setMouseClicks()

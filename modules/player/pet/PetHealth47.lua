@@ -61,7 +61,7 @@ end
 function PetHealth47:OnInitialize()
   self:__init__()
   self.db = ZxSimpleUI.db:RegisterNamespace(MODULE_NAME, self._newDefaults)
-  self._curDbProfile = self.db.profile
+
   self.bars = BarTemplate:new(self.db)
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(MODULE_NAME))
 end
@@ -106,7 +106,7 @@ function PetHealth47:createBar()
   local maxUnitHealth = UnitHealthMax(self.unit)
   local percentage = ZxSimpleUI:calcPercentSafely(curUnitHealth, maxUnitHealth)
 
-  local anchorFrame = ZxSimpleUI:getFrameListFrame(self._curDbProfile.framePool)
+  local anchorFrame = ZxSimpleUI:getFrameListFrame(self.db.profile.framePool)
   self.bars.frameToAnchorTo = anchorFrame
   self.mainFrame = self.bars:createBar(percentage)
   self.mainFrame.DECORATIVE_NAME = self.DECORATIVE_NAME
@@ -125,7 +125,7 @@ function PetHealth47:refreshConfig()
 end
 
 function PetHealth47:handleEnableToggle()
-  ZxSimpleUI:setModuleEnabledState(MODULE_NAME, self._curDbProfile.enabledToggle)
+  ZxSimpleUI:setModuleEnabledState(MODULE_NAME, self.db.profile.enabledToggle)
 end
 
 -- ####################################

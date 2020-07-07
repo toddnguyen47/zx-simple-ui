@@ -69,9 +69,9 @@ end
 ---Or setting up slash commands.
 function Aura47.OnInitialize(self)
   self.db = ZxSimpleUI.db:RegisterNamespace(self.MODULE_NAME, self._defaults)
-  self._curDbProfile = self.db.profile
+
   -- showbar should be off by default
-  self._curDbProfile.showbar = false
+  self.db.profile.showbar = false
 
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(self.MODULE_NAME))
 end
@@ -98,7 +98,7 @@ function Aura47.OnDisable(self)
 end
 
 function Aura47:createBar()
-  self._frameToAnchorTo = ZxSimpleUI:getFrameListFrame(self._curDbProfile.framePool)
+  self._frameToAnchorTo = ZxSimpleUI:getFrameListFrame(self.db.profile.framePool)
 
   self.mainFrame = CreateFrame("Frame", nil, self._frameToAnchorTo)
   self.mainFrame.DECORATIVE_NAME = self.DECORATIVE_NAME
@@ -123,7 +123,7 @@ function Aura47:refreshConfig()
 end
 
 function Aura47:handleEnableToggle()
-  ZxSimpleUI:setModuleEnabledState(self.MODULE_NAME, self._curDbProfile.enabledToggle)
+  ZxSimpleUI:setModuleEnabledState(self.MODULE_NAME, self.db.profile.enabledToggle)
 end
 
 -- ####################################
@@ -133,9 +133,9 @@ end
 function Aura47:setUnit(unit)
   self.unit = unit
   if string.lower(self.unit) == "target" then
-    self._curDbProfile.framePool = "TargetName47"
+    self.db.profile.framePool = "TargetName47"
   else
-    self._curDbProfile.framePool = "PlayerName47"
+    self.db.profile.framePool = "PlayerName47"
   end
 end
 
@@ -192,20 +192,20 @@ function Aura47:setIsUnitDebuff(isUnitDebuff) self._isUnitDebuff = isUnitDebuff 
 -- # PRIVATE FUNCTIONS
 -- ####################################
 function Aura47:_refreshBarFrame()
-  self._frameToAnchorTo = ZxSimpleUI:getFrameListFrame(self._curDbProfile.framePool)
+  self._frameToAnchorTo = ZxSimpleUI:getFrameListFrame(self.db.profile.framePool)
 
   self.mainFrame:SetWidth(self._frameToAnchorTo:GetWidth())
-  self.mainFrame:SetHeight(self._curDbProfile.height)
+  self.mainFrame:SetHeight(self.db.profile.height)
   self.mainFrame:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details
   self.mainFrame:SetPoint("BOTTOMLEFT", self._frameToAnchorTo, "TOPLEFT", 0,
-    self._curDbProfile.yoffset)
+    self.db.profile.yoffset)
 end
 
 function Aura47:_refreshAuraFrames()
   for i = 1, self._MAX_BUFF_INDEX do
     local auraFrame = self._auraFrameList[i]
-    auraFrame:SetWidth(self._curDbProfile.height)
-    auraFrame:SetHeight(self._curDbProfile.height)
+    auraFrame:SetWidth(self.db.profile.height)
+    auraFrame:SetHeight(self.db.profile.height)
   end
 end
 
@@ -268,7 +268,7 @@ function Aura47:_handleAuraFrameOnUpdate(auraFrame, duration, expireTime)
       remaining = expireTime - curTime
       updateTimeSeconds = getUpdateTime(remaining)
       local leeway = 0.5
-      if remaining <= (self._curDbProfile.durationLeftFade + leeway) and remaining > 0 then
+      if remaining <= (self.db.profile.durationLeftFade + leeway) and remaining > 0 then
         auraFrame:SetAlpha(0.4)
       elseif remaining <= 0 then
         auraFrame:SetScript("OnUpdate", nil)
@@ -294,12 +294,12 @@ function Aura47:_setPointAuraFrame(index, frameList)
   if index == 1 then
     auraFrame:SetPoint("TOPLEFT", self.mainFrame, "TOPLEFT", 0, 0)
   else
-    local tempMod = (index - 1) % self._curDbProfile.buffsPerRow
+    local tempMod = (index - 1) % self.db.profile.buffsPerRow
     if tempMod == 0 then
       -- Put it above the current left-most aura
-      local indexBelow = index - self._curDbProfile.buffsPerRow
+      local indexBelow = index - self.db.profile.buffsPerRow
       auraFrame:SetPoint("BOTTOMLEFT", frameList[indexBelow], "TOPLEFT", 0,
-        self._curDbProfile.yoffset)
+        self.db.profile.yoffset)
     else
       auraFrame:SetPoint("TOPLEFT", frameList[index - 1], "TOPRIGHT", 2, 0)
     end
@@ -374,7 +374,7 @@ function Aura47:_hideGameTooltip(auraFrame)
 end
 
 function Aura47:_refreshShowbar()
-  if self._curDbProfile.showbar then
+  if self.db.profile.showbar then
     self:_refreshShowbarShow()
   else
     self:_refreshShowbarHide()
@@ -385,8 +385,8 @@ function Aura47:_refreshShowbarShow()
   for i = 1, self._MAX_BUFF_INDEX do
     local frame = FramePool47:getFrame()
     frame:SetFrameLevel(self.mainFrame:GetFrameLevel() - 1)
-    frame:SetHeight(self._curDbProfile.height)
-    frame:SetWidth(self._curDbProfile.height)
+    frame:SetHeight(self.db.profile.height)
+    frame:SetWidth(self.db.profile.height)
 
     frame.bgFrame = frame:CreateTexture(nil, "BACKGROUND")
     frame.bgFrame:SetTexture(0, 0, 0, 0.8)

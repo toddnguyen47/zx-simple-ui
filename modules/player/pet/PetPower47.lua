@@ -82,9 +82,9 @@ function PetPower47:OnInitialize()
   self:__init__()
 
   self.db = ZxSimpleUI.db:RegisterNamespace(MODULE_NAME, self._newDefaults)
-  self._curDbProfile = self.db.profile
+
   -- Always set the showbar option to false on initialize
-  self._curDbProfile.showbar = self._defaults.profile.showbar
+  self.db.profile.showbar = self._defaults.profile.showbar
 
   self.bars = BarTemplate:new(self.db)
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(MODULE_NAME))
@@ -125,7 +125,7 @@ function PetPower47:createBar()
   local maxUnitPower = UnitPowerMax(self.unit)
   local percentage = ZxSimpleUI:calcPercentSafely(curUnitPower, maxUnitPower)
 
-  local anchorFrame = ZxSimpleUI:getFrameListFrame(self._curDbProfile.framePool)
+  local anchorFrame = ZxSimpleUI:getFrameListFrame(self.db.profile.framePool)
   self.bars.frameToAnchorTo = anchorFrame
   self.mainFrame = self.bars:createBar(percentage)
   self.mainFrame.DECORATIVE_NAME = self.DECORATIVE_NAME
@@ -142,7 +142,7 @@ function PetPower47:refreshConfig()
   self:handleEnableToggle()
   if self:IsEnabled() then
     -- If the show option is currently selected
-    if self._curDbProfile.showbar == true then
+    if self.db.profile.showbar == true then
       self.mainFrame.statusBar:SetStatusBarColor(unpack(self.currentPowerColorEdited))
     else
       self.bars:refreshConfig()
@@ -151,7 +151,7 @@ function PetPower47:refreshConfig()
 end
 
 function PetPower47:handleEnableToggle()
-  ZxSimpleUI:setModuleEnabledState(MODULE_NAME, self._curDbProfile.enabledToggle)
+  ZxSimpleUI:setModuleEnabledState(MODULE_NAME, self.db.profile.enabledToggle)
 end
 
 -- ####################################
@@ -236,7 +236,7 @@ function PetPower47:_setInitialColor()
   t1 = t1 or self._powerEventColorTable["UNIT_MANA"]
 
   self._newDefaults.profile.color = t1
-  self._curDbProfile.color = t1
+  self.db.profile.color = t1
   self.mainFrame.statusBar:SetStatusBarColor(unpack(t1))
 end
 

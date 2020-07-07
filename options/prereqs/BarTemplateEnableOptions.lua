@@ -9,7 +9,6 @@ ZxSimpleUI.optionTables[BarTemplateEnableOptions.OPTION_NAME] = BarTemplateEnabl
 function BarTemplateEnableOptions:__init__()
   self.options = {}
   self._currentModule = self._barTemplateOptions:getCurrentModule()
-  self._curDbProfile = self._currentModule.db.profile
 end
 
 function BarTemplateEnableOptions:new(barTemplateOptions)

@@ -10,7 +10,6 @@ ZxSimpleUI.optionTables[Aura47Options.OPTION_NAME] = Aura47Options
 function Aura47Options:__init__()
   self.options = {}
   self._currentModule = self._coreOptions47:getCurrentModule()
-  self._curDbProfile = self._currentModule.db.profile
 end
 
 ---@param coreOptions47 CoreOptions47
@@ -49,14 +48,16 @@ function Aura47Options:getOptionTable()
           desc = "Enable / Disable this module",
           order = ZxSimpleUI.HEADER_ORDER_INDEX + 1,
           width = "full",
-          disabled = function(info) return self._curDbProfile.showbar end
+          disabled = function(info) return self._currentModule.db.profile.showbar end
         },
         showbar = {
           name = "Show Debuff Bar",
           desc = "Show Debuff Bar",
           type = "toggle",
           order = ZxSimpleUI.HEADER_ORDER_INDEX + 2,
-          disabled = function(info) return not self._curDbProfile.enabledToggle end
+          disabled = function(info)
+            return not self._currentModule.db.profile.enabledToggle
+          end
         },
         height = {
           name = "Height",

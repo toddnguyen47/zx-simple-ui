@@ -56,7 +56,6 @@ function PlayerName47:OnInitialize()
   self:__init__()
 
   self.db = ZxSimpleUI.db:RegisterNamespace(self.MODULE_NAME, self._newDefaults)
-  self._curDbProfile = self.db.profile
 
   self.bars = BarTemplate:new(self.db)
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(self.MODULE_NAME))
@@ -99,7 +98,7 @@ function PlayerName47:refreshConfig()
 end
 
 function PlayerName47:handleEnableToggle()
-  ZxSimpleUI:setModuleEnabledState(self.MODULE_NAME, self._curDbProfile.enabledToggle)
+  ZxSimpleUI:setModuleEnabledState(self.MODULE_NAME, self.db.profile.enabledToggle)
 end
 
 -- ####################################

@@ -12,7 +12,6 @@ function TargetName47Options:__init__()
   local barTemplateOptions = self._barTemplateEnableOptions:getBarTemplateOptions()
   self._coreOptions47 = barTemplateOptions:getCoreOptions47()
   self._currentModule = barTemplateOptions:getCurrentModule()
-  self._curDbProfile = self._currentModule.db.profile
 end
 
 ---@param barTemplateEnableOptions table

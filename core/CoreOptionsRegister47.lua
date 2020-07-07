@@ -18,7 +18,6 @@ local CoreOptionsRegister47 = MainAddon:NewModule("Options", nil)
 local _OPEN_OPTION_APPNAME = MainAddon.ADDON_NAME .. "_OpenOption"
 
 function CoreOptionsRegister47:OnInitialize()
-  self._curDbProfile = MainAddon.db.profile
   self._openOptionTable = {}
   self._options = {}
   self._printFrameOptionTable = {}

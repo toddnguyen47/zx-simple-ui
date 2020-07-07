@@ -13,7 +13,6 @@ function Combo47Options:__init__(coreOptions47)
   self.options = {}
   self._coreOptions47 = coreOptions47
   self._currentModule = self._coreOptions47:getCurrentModule()
-  self._curDbProfile = self._currentModule.db.profile
 end
 
 function Combo47Options:new(...)
@@ -47,7 +46,7 @@ function Combo47Options:getOptionTable()
           name = "Enable",
           desc = "Enable / Disable this module",
           order = ZxSimpleUI.HEADER_ORDER_INDEX + 1,
-          disabled = function(info) return self._curDbProfile.showbar end,
+          disabled = function(info) return self._currentModule.db.profile.showbar end,
           width = "full"
         },
         showbar = {
@@ -55,7 +54,9 @@ function Combo47Options:getOptionTable()
           name = "Show Display",
           desc = "Show/Hide the Combo Points Display",
           order = ZxSimpleUI.HEADER_ORDER_INDEX + 2,
-          disabled = function(info) return not self._curDbProfile.enabledToggle end,
+          disabled = function(info)
+            return not self._currentModule.db.profile.enabledToggle
+          end,
           get = function(info) return self._coreOptions47:getShownOption(info) end,
           set = function(info, value) self._coreOptions47:setShownOption(info, value) end
         },

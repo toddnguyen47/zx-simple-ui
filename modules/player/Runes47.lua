@@ -5,6 +5,8 @@ local CreateFrame, UnitClass = CreateFrame, UnitClass
 
 --- include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
+local Locale = LibStub("AceLocale-3.0"):GetLocale(ZxSimpleUI.ADDON_NAME)
+
 local Animations47 = ZxSimpleUI.Animations47
 local media = LibStub("LibSharedMedia-3.0")
 
@@ -12,7 +14,7 @@ local media = LibStub("LibSharedMedia-3.0")
 local Utils47 = ZxSimpleUI.Utils47
 
 local MODULE_NAME = "Runes47"
-local DECORATIVE_NAME = "Runes Display"
+local DECORATIVE_NAME = Locale["module.decName.runesDisplay"]
 local Runes47 = ZxSimpleUI:NewModule(MODULE_NAME)
 
 Runes47.MODULE_NAME = MODULE_NAME

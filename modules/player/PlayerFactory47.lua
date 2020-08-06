@@ -2,6 +2,7 @@
 -- include files
 ---@type ZxSimpleUI
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
+local Locale = LibStub("AceLocale-3.0"):GetLocale(ZxSimpleUI.ADDON_NAME)
 ---@type FramePool47
 local FramePool47 = ZxSimpleUI.FramePool47
 local CoreFactory47 = ZxSimpleUI.CoreFactory47
@@ -19,7 +20,7 @@ local PetPower47 = ZxSimpleUI:GetModule("PetPower47")
 local PlayerDebuffs47 = ZxSimpleUI:GetModule("PlayerDebuffs47")
 
 local MODULE_NAME = "PlayerFactory47"
-local DECORATIVE_NAME = "Player Factory"
+local DECORATIVE_NAME = Locale["module.decName.playerFactory"]
 local PlayerFactory47 = ZxSimpleUI:NewModule(MODULE_NAME)
 PlayerFactory47.MODULE_NAME = MODULE_NAME
 PlayerFactory47.DECORATIVE_NAME = DECORATIVE_NAME

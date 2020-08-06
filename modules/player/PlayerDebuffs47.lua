@@ -3,13 +3,14 @@ local LibStub = LibStub
 
 -- include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
+local Locale = LibStub("AceLocale-3.0"):GetLocale(ZxSimpleUI.ADDON_NAME)
 ---@type Aura47
 local Aura47 = ZxSimpleUI.prereqTables["Aura47"]
 local playerAura = Aura47:new()
 
 -- #region
 local MODULE_NAME = "PlayerDebuffs47"
-local DECORATIVE_NAME = "Player Debuffs"
+local DECORATIVE_NAME = Locale["module.decName.playerDebuffs"]
 ---@class PlayerDebuffs47 : Aura47
 local PlayerDebuffs47 = ZxSimpleUI:NewModule(MODULE_NAME, playerAura)
 

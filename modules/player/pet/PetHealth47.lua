@@ -6,6 +6,7 @@ local UnitExists = UnitExists
 -- #region
 --- include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
+local Locale = LibStub("AceLocale-3.0"):GetLocale(ZxSimpleUI.ADDON_NAME)
 local FramePool47 = ZxSimpleUI.FramePool47
 local Utils47 = ZxSimpleUI.Utils47
 local BarTemplateDefaults = ZxSimpleUI.prereqTables["BarTemplateDefaults"]
@@ -14,7 +15,7 @@ local RegisterWatchHandler47 = ZxSimpleUI.prereqTables["RegisterWatchHandler47"]
 local SetOnShowOnHide = ZxSimpleUI.prereqTables["SetOnShowOnHide"]
 
 local MODULE_NAME = "PetHealth47"
-local DECORATIVE_NAME = "Pet Health"
+local DECORATIVE_NAME = Locale["module.decName.petHealth"]
 local PetHealth47 = ZxSimpleUI:NewModule(MODULE_NAME)
 
 PetHealth47.MODULE_NAME = MODULE_NAME

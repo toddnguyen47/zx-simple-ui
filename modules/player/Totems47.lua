@@ -5,10 +5,11 @@ local UnitClass = UnitClass
 
 ---include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
+local Locale = LibStub("AceLocale-3.0"):GetLocale(ZxSimpleUI.ADDON_NAME)
 
 -- #region
 local MODULE_NAME = "Totems47"
-local DECORATIVE_NAME = "Totems Display"
+local DECORATIVE_NAME = Locale["module.decName.totemsDisplay"]
 local Totems47 = ZxSimpleUI:NewModule(MODULE_NAME)
 local media = LibStub("LibSharedMedia-3.0")
 

@@ -6,13 +6,14 @@ local UnitName = UnitName
 
 --- include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
+local Locale = LibStub("AceLocale-3.0"):GetLocale(ZxSimpleUI.ADDON_NAME)
 local Utils47 = ZxSimpleUI.Utils47
 local BarTemplateDefaults = ZxSimpleUI.prereqTables["BarTemplateDefaults"]
 local BarTemplate = ZxSimpleUI.prereqTables["BarTemplate"]
 local RegisterWatchHandler47 = ZxSimpleUI.prereqTables["RegisterWatchHandler47"]
 
 local MODULE_NAME = "PlayerHealth47"
-local DECORATIVE_NAME = "Player Health"
+local DECORATIVE_NAME = Locale["module.decName.playerHealth"]
 
 local PlayerHealth47 = ZxSimpleUI:NewModule(MODULE_NAME)
 PlayerHealth47.MODULE_NAME = MODULE_NAME

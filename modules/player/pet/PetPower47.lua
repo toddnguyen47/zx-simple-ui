@@ -6,6 +6,7 @@ local UnitExists = UnitExists
 
 --- include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
+local Locale = LibStub("AceLocale-3.0"):GetLocale(ZxSimpleUI.ADDON_NAME)
 local FramePool47 = ZxSimpleUI.FramePool47
 
 -- #region
@@ -16,7 +17,7 @@ local RegisterWatchHandler47 = ZxSimpleUI.prereqTables["RegisterWatchHandler47"]
 local SetOnShowOnHide = ZxSimpleUI.prereqTables["SetOnShowOnHide"]
 
 local MODULE_NAME = "PetPower47"
-local DECORATIVE_NAME = "Pet Power"
+local DECORATIVE_NAME = Locale["module.decName.petPower"]
 local PetPower47 = ZxSimpleUI:NewModule(MODULE_NAME)
 
 PetPower47.MODULE_NAME = MODULE_NAME

@@ -9,6 +9,7 @@ local unpack = unpack
 
 ---Include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
+local Locale = LibStub("AceLocale-3.0"):GetLocale(ZxSimpleUI.ADDON_NAME)
 local BarTemplateDefaults = ZxSimpleUI.prereqTables["BarTemplateDefaults"]
 local BarTemplate = ZxSimpleUI.prereqTables["BarTemplate"]
 local Utils47 = ZxSimpleUI.Utils47
@@ -17,7 +18,7 @@ local SetOnShowOnHide = ZxSimpleUI.prereqTables["SetOnShowOnHide"]
 
 -- #region
 local MODULE_NAME = "TargetHealth47"
-local DECORATIVE_NAME = "Target Health"
+local DECORATIVE_NAME = Locale["module.decName.targetHealth"]
 local TargetHealth47 = ZxSimpleUI:NewModule(MODULE_NAME)
 
 TargetHealth47.MODULE_NAME = MODULE_NAME

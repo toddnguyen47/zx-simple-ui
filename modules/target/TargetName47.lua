@@ -4,6 +4,7 @@ local UnitClassification, UnitLevel = UnitClassification, UnitLevel
 
 ---include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
+local Locale = LibStub("AceLocale-3.0"):GetLocale(ZxSimpleUI.ADDON_NAME)
 local BarTemplateDefaults = ZxSimpleUI.prereqTables["BarTemplateDefaults"]
 local BarTemplate = ZxSimpleUI.prereqTables["BarTemplate"]
 local Utils47 = ZxSimpleUI.Utils47
@@ -12,7 +13,7 @@ local SetOnShowOnHide = ZxSimpleUI.prereqTables["SetOnShowOnHide"]
 
 -- #region
 local MODULE_NAME = "TargetName47"
-local DECORATIVE_NAME = "Target Name"
+local DECORATIVE_NAME = Locale["module.decName.targetName"]
 local TargetName47 = ZxSimpleUI:NewModule(MODULE_NAME)
 
 TargetName47.MODULE_NAME = MODULE_NAME

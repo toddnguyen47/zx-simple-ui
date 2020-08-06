@@ -1,6 +1,7 @@
 -- #region
 --- include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
+local Locale = LibStub("AceLocale-3.0"):GetLocale(ZxSimpleUI.ADDON_NAME)
 local CoreFactory47 = ZxSimpleUI.CoreFactory47
 local OptionsFactory47 = ZxSimpleUI.optionTables["OptionsFactory47"]
 
@@ -11,7 +12,7 @@ local Combo47 = ZxSimpleUI:GetModule("Combo47")
 local TargetDebuffs47 = ZxSimpleUI:GetModule("TargetDebuffs47")
 
 local MODULE_NAME = "TargetFactory47"
-local DECORATIVE_NAME = "Target Factory"
+local DECORATIVE_NAME = Locale["module.decName.targetFactory"]
 local TargetFactory47 = ZxSimpleUI:NewModule(MODULE_NAME)
 TargetFactory47.MODULE_NAME = MODULE_NAME
 TargetFactory47.DECORATIVE_NAME = DECORATIVE_NAME

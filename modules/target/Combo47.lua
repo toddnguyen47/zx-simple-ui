@@ -7,12 +7,13 @@ local unpack = unpack
 
 ---include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
+local Locale = LibStub("AceLocale-3.0"):GetLocale(ZxSimpleUI.ADDON_NAME)
 local Utils47 = ZxSimpleUI.Utils47
 local BarTemplateDefaults = ZxSimpleUI.prereqTables["BarTemplateDefaults"]
 
 -- #region
 local MODULE_NAME = "Combo47"
-local DECORATIVE_NAME = "Combo Points Display"
+local DECORATIVE_NAME = Locale["module.decName.targetCombo"]
 local Combo47 = ZxSimpleUI:NewModule(MODULE_NAME)
 local media = LibStub("LibSharedMedia-3.0")
 

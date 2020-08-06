@@ -2,6 +2,7 @@ local MAX_COMBO_POINTS = MAX_COMBO_POINTS
 
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local media = LibStub("LibSharedMedia-3.0")
+local Locale = LibStub("AceLocale-3.0"):GetLocale(ZxSimpleUI.ADDON_NAME)
 
 local Totems47Options = {}
 Totems47Options.__index = Totems47Options
@@ -43,8 +44,8 @@ function Totems47Options:getOptionTable()
         },
         enabledToggle = {
           type = "toggle",
-          name = "Enable",
-          desc = "Enable / Disable this module",
+          name = Locale["enabledToggle.name"],
+          desc = Locale["enabledToggle.desc"],
           order = ZxSimpleUI.HEADER_ORDER_INDEX + 1,
           width = "full"
         },

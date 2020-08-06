@@ -1,5 +1,6 @@
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local media = LibStub("LibSharedMedia-3.0")
+local Locale = LibStub("AceLocale-3.0"):GetLocale(ZxSimpleUI.ADDON_NAME)
 
 ---@class Aura47Options
 local Aura47Options = {}
@@ -44,8 +45,8 @@ function Aura47Options:getOptionTable()
         },
         enabledToggle = {
           type = "toggle",
-          name = "Enable",
-          desc = "Enable / Disable this module",
+          name = Locale["enabledToggle.name"],
+          desc = Locale["enabledToggle.desc"],
           order = ZxSimpleUI.HEADER_ORDER_INDEX + 1,
           width = "full",
           disabled = function(info) return self._currentModule.db.profile.showbar end

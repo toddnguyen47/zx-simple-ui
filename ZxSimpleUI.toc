@@ -8,6 +8,7 @@
 embeds.xml
 Core.lua
 core\core.xml
+locale\locale.xml
 
 options\options.xml
 modules\modules.xml

@@ -1,6 +1,7 @@
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local Utils47 = ZxSimpleUI.Utils47
 local media = LibStub("LibSharedMedia-3.0")
+local Locale = LibStub("AceLocale-3.0"):GetLocale(ZxSimpleUI.ADDON_NAME)
 
 local BarTemplateOptions = {}
 BarTemplateOptions.__index = BarTemplateOptions
@@ -186,8 +187,8 @@ function BarTemplateOptions:getOptionTable()
           order = self._coreOptions47:incrementOrderIndex()
         },
         texture = {
-          name = "Bar Texture",
-          desc = "Bar Texture",
+          name = Locale["texture.name"],
+          desc = Locale["texture.desc"],
           type = "select",
           dialogControl = "LSM30_Statusbar",
           values = media:HashTable("statusbar"),

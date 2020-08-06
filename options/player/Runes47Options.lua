@@ -49,9 +49,9 @@ function Runes47Options:getOptionTable()
           width = "full"
         },
         texture = {
-          name = "Bar Texture",
-          desc = "Bar Texture",
           type = "select",
+          name = Locale["texture.name"],
+          desc = Locale["texture.desc"],
           dialogControl = "LSM30_Statusbar",
           values = media:HashTable("statusbar"),
           order = self._coreOptions47:incrementOrderIndex()

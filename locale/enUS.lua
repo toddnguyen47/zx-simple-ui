@@ -4,3 +4,5 @@ local Locale = LibStub("AceLocale-3.0"):NewLocale(ZxSimpleUI.ADDON_NAME, "enUS",
 
 Locale["enabledToggle.desc"] = "Enable / Disable this module"
 Locale["enabledToggle.name"] = "Enable"
+Locale["texture.desc"] = "Bar Texture"
+Locale["texture.name"] = "Bar Texture"

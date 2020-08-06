@@ -73,8 +73,8 @@ function Combo47Options:getOptionTable()
           end
         },
         texture = {
-          name = "Bar Texture",
-          desc = "Bar Texture",
+          name = Locale["texture.name"],
+          desc = Locale["texture.desc"],
           type = "select",
           dialogControl = "LSM30_Statusbar",
           values = media:HashTable("statusbar"),

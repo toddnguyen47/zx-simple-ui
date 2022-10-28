@@ -22,6 +22,8 @@ PlayerName47.bars = nil
 PlayerName47.unit = "player"
 -- #endregion
 
+local _UNIT_HEALTH_STR = "UNIT_HEALTH"
+
 function PlayerName47:__init__()
   self._defaults = {
     profile = {
@@ -87,6 +89,7 @@ function PlayerName47:createBar()
   self.mainFrame.DECORATIVE_NAME = self.DECORATIVE_NAME
   self.mainFrame.frameToAnchorTo = ZxSimpleUI:getFrameListFrame("PlayerHealth47")
   self.bars:setTextOnly(self:_getFormattedName())
+  self:_registerEvents()
 
   ZxSimpleUI:addToFrameList(self.MODULE_NAME,
     {frame = self.mainFrame, name = self.DECORATIVE_NAME})
@@ -113,4 +116,16 @@ function PlayerName47:_getFormattedName()
   local level = UnitLevel(self.unit)
   if tonumber(level) < 0 then level = "??" end
   return string.format("%s (%s)", name, tostring(level))
+end
+
+function PlayerName47:_registerEvents()
+  self.mainFrame:RegisterEvent(_UNIT_HEALTH_STR)
+end
+
+function PlayerName47:_handleEvents()
+  self.mainFrame:SetScript("OnEvent", function(self, event, ...)
+    if (event == _UNIT_HEALTH_STR) then
+      self.bars:setTextOnly(self:_getFormattedName())
+    end
+  end)
 end

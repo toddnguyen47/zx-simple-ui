@@ -116,7 +116,8 @@ end
 ---@return number
 function ZxSimpleUI:calcPercentSafely(currentValue, maxValue)
   if (maxValue == 0.0) then return 0.0 end
-  return currentValue / maxValue
+  local quotient = currentValue / maxValue
+  return quotient
 end
 
 ---@param currentFrame table

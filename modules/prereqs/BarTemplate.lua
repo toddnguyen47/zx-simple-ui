@@ -70,7 +70,6 @@ function BarTemplate:createBar(percentValue)
   self.mainFrame.statusBar:GetStatusBarTexture():SetVertTile(false)
   self.mainFrame.statusBar:SetStatusBarColor(unpack(self.db.profile.color))
   self.mainFrame.statusBar:SetMinMaxValues(0, 1)
-  self.mainFrame.statusBar:SetValue(percentValue)
   self:_setFrameWidthHeight()
 
   self.mainFrame.mainText = self.mainFrame.statusBar:CreateFontString(nil, "BORDER")
@@ -79,7 +78,8 @@ function BarTemplate:createBar(percentValue)
   self.mainFrame.mainText:SetTextColor(unpack(self.db.profile.fontcolor))
   self.mainFrame.mainText:ClearAllPoints() -- Ref: https://wow.gamepedia.com/API_Region_SetPoint#Details
   self.mainFrame.mainText:SetPoint("CENTER", self.mainFrame.statusBar, "CENTER", 0, 0)
-  self.mainFrame.mainText:SetText(string.format("%.1f%%", percentValue * 100.0))
+
+  self:setStatusBarValue(percentValue)
 
   self.mainFrame:Show()
   return self.mainFrame
@@ -93,7 +93,11 @@ end
 
 ---@param percentValue number from 0.0 to 1.0
 function BarTemplate:setStatusBarValue(percentValue)
-  self.mainFrame.mainText:SetText(string.format("%.1f%%", percentValue * 100.0))
+  -- self.mainFrame.mainText:SetText(string.format("%.1f%%", percentValue * 100.0))
+  local val = percentValue * 100.0
+  val = val + 0.5
+  val = math.floor(val)
+  self.mainFrame.mainText:SetText(string.format("%d%%", val))
   self.mainFrame.statusBar:SetValue(percentValue)
 end
 

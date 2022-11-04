@@ -69,10 +69,7 @@ function PlayerFactory47:createPlayerHealthOptions()
   local curModule = PlayerHealth47
   if curModule.mainFrame == nil then curModule:createBar() end
   local optionInstance = OptionsFactory47:createBarTemplateOptions(curModule)
-  local options = optionInstance:getOptionTable()
-  local bartextdisplay = OptionsFactory47:getBarTextDisplay()
-  options.args["bartextdisplay"] = bartextdisplay
-  optionInstance.options = options
+  optionInstance = self:_addBarTextDisplayOption(optionInstance)
   return CoreFactory47:registerAndReturnOptionTable(optionInstance, curModule)
 end
 
@@ -81,6 +78,7 @@ function PlayerFactory47:createPlayerPowerOptions()
   local curModule = PlayerPower47
   if curModule.mainFrame == nil then curModule:createBar() end
   local optionInstance = OptionsFactory47:createPower47Options(curModule)
+  optionInstance = self:_addBarTextDisplayOption(optionInstance)
   return CoreFactory47:registerAndReturnOptionTable(optionInstance, curModule)
 end
 
@@ -138,3 +136,13 @@ end
 ---@param t1 table
 ---@param t2 table
 function PlayerFactory47:_addAllFromT2ToT1(t1, t2) for k, v in pairs(t2) do t1[k] = v end end
+
+---@param optionInstance table
+---@return table
+function PlayerFactory47:_addBarTextDisplayOption(optionInstance)
+  local options = optionInstance:getOptionTable()
+  local bartextdisplay = OptionsFactory47:getBarTextDisplay()
+  options.args["bartextdisplay"] = bartextdisplay
+  optionInstance.options = options
+  return optionInstance
+end

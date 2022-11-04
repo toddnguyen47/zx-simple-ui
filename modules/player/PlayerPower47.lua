@@ -65,7 +65,8 @@ function PlayerPower47:__init__()
       border = "None",
       framePool = "PlayerHealth47",
       selfCurrentPoint = "TOPLEFT",
-      relativePoint = "BOTTOMLEFT"
+      relativePoint = "BOTTOMLEFT",
+      bartextdisplay = "Percent",
     }
   }
 
@@ -123,6 +124,7 @@ function PlayerPower47:createBar()
 
   self:_setRefreshColor()
   self:_registerEvents()
+  self:_refreshAll()
 
   RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
   ZxSimpleUI:addToFrameList(self.MODULE_NAME,
@@ -140,6 +142,7 @@ function PlayerPower47:refreshConfig()
       self:_setRefreshColor()
       self.bars:refreshConfig()
     end
+    self:_refreshAll()
   end
 end
 
@@ -178,8 +181,7 @@ end
 function PlayerPower47:_setPowerValue(curUnitPower)
   curUnitPower = curUnitPower or UnitPower(self.unit)
   local maxUnitPower = UnitPowerMax(self.unit)
-  local powerPercent = ZxSimpleUI:calcPercentSafely(curUnitPower, maxUnitPower)
-  self.bars:setStatusBarValue(powerPercent)
+  self.bars:setStatusBarValueCurrMax(curUnitPower, maxUnitPower, self.db.profile.bartextdisplay)
 end
 
 function PlayerPower47:_handlePowerChanged() self:refreshConfig() end
@@ -239,4 +241,8 @@ function PlayerPower47:_getDefaultClassPowerColor()
     t1 = self._powerEventColorTable["UNIT_RUNIC_POWER"]
   end
   return t1
+end
+
+function PlayerPower47:_refreshAll()
+  self:_setPowerValue()
 end

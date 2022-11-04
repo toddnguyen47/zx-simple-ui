@@ -92,3 +92,14 @@ function OptionsFactory47:getBarTextDisplay()
   }
   return bartextdisplay
 end
+
+---Add a bartextdisplay option
+---@param optionInstance table
+---@return table
+function OptionsFactory47:addBarTextDisplayOption(optionInstance)
+  local options = optionInstance:getOptionTable()
+  local bartextdisplay = OptionsFactory47:getBarTextDisplay()
+  options.args["bartextdisplay"] = bartextdisplay
+  optionInstance.options = options
+  return optionInstance
+end

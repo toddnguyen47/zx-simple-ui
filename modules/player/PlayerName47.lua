@@ -112,16 +112,24 @@ end
 -- ####################################
 
 ---@return string formattedName
-function PlayerName47:_getFormattedName()
+function PlayerName47:_getFormattedName(level)
   local name = UnitName(self.unit)
   name = Utils47:getInitialsExceptFirstWord(name)
-  -- local level = UnitLevel(self.unit)
+  level = level or UnitLevel(self.unit)
   if tonumber(self._prevLevel) < 0 then self._prevLevel = "??" end
   return string.format("%s (%s)", name, tostring(self._prevLevel))
 end
 
 function PlayerName47:_registerEvents()
   self.mainFrame:RegisterEvent(_PLAYER_LEVEL_UP)
+end
+
+function PlayerName47:_handleEvents()
+  self.mainFrame:SetScript("OnEvent", function(curFrame, event, ...)
+    if (event == _PLAYER_LEVEL_UP) then
+      self:_updateLevelingUp()
+    end
+  end)
 end
 
 function PlayerName47:_updateLevelingUp()
@@ -131,19 +139,11 @@ function PlayerName47:_updateLevelingUp()
     if (self._timeSinceLastUpdate > ZxSimpleUI.UPDATE_INTERVAL_SECONDS) then
       local level = UnitLevel(self.unit)
       if level > self._prevLevel then
-        self.bars:setTextOnly(self:_getFormattedName())
         self._prevLevel = level
+        self.bars:setTextOnly(self:_getFormattedName(self._prevLevel))
         -- Disable OnUpdate
         self.mainFrame:SetScript("OnUpdate", nil)
       end
-    end
-  end)
-end
-
-function PlayerName47:_handleEvents()
-  self.mainFrame:SetScript("OnEvent", function(curFrame, event, ...)
-    if (event == _PLAYER_LEVEL_UP) then
-      self:_updateLevelingUp()
     end
   end)
 end

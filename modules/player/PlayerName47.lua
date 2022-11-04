@@ -47,6 +47,7 @@ function PlayerName47:__init__()
 
   self._timeSinceLastUpdate = 0
   self._prevName = UnitName(self.unit)
+  self._prevLevel = UnitLevel(self.unit)
 
   self._barTemplateDefaults = BarTemplateDefaults:new()
   self._newDefaults = self._barTemplateDefaults.defaults
@@ -114,20 +115,35 @@ end
 function PlayerName47:_getFormattedName()
   local name = UnitName(self.unit)
   name = Utils47:getInitialsExceptFirstWord(name)
-  local level = UnitLevel(self.unit)
-  if tonumber(level) < 0 then level = "??" end
-  return string.format("%s (%s)", name, tostring(level))
+  -- local level = UnitLevel(self.unit)
+  if tonumber(self._prevLevel) < 0 then self._prevLevel = "??" end
+  return string.format("%s (%s)", name, tostring(self._prevLevel))
 end
 
 function PlayerName47:_registerEvents()
   self.mainFrame:RegisterEvent(_PLAYER_LEVEL_UP)
 end
 
+function PlayerName47:_updateLevelingUp()
+  if not self.mainFrame:IsVisible() then return end
+  self.mainFrame:SetScript("OnUpdate", function(curFrame, elapsed)
+    self._timeSinceLastUpdate = self._timeSinceLastUpdate + elapsed
+    if (self._timeSinceLastUpdate > ZxSimpleUI.UPDATE_INTERVAL_SECONDS) then
+      local level = UnitLevel(self.unit)
+      if level > self._prevLevel then
+        self.bars:setTextOnly(self:_getFormattedName())
+        self._prevLevel = level
+        -- Disable OnUpdate
+        self.mainFrame:SetScript("OnUpdate", nil)
+      end
+    end
+  end)
+end
+
 function PlayerName47:_handleEvents()
   self.mainFrame:SetScript("OnEvent", function(curFrame, event, ...)
-    print(event)
     if (event == _PLAYER_LEVEL_UP) then
-      self.bars:setTextOnly(self:_getFormattedName())
+      self:_updateLevelingUp()
     end
   end)
 end

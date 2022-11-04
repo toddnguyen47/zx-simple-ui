@@ -8,6 +8,7 @@ local UnitName = UnitName
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local Locale = LibStub("AceLocale-3.0"):GetLocale(ZxSimpleUI.ADDON_NAME)
 local Utils47 = ZxSimpleUI.Utils47
+
 local BarTemplateDefaults = ZxSimpleUI.prereqTables["BarTemplateDefaults"]
 local BarTemplate = ZxSimpleUI.prereqTables["BarTemplate"]
 local RegisterWatchHandler47 = ZxSimpleUI.prereqTables["RegisterWatchHandler47"]
@@ -37,7 +38,8 @@ function PlayerHealth47:__init__()
       border = "None",
       framePool = "UIParent",
       selfCurrentPoint = "CENTER",
-      relativePoint = "CENTER"
+      relativePoint = "CENTER",
+      bartextdisplay = "ValuePercent"
     }
   }
   self.mainFrame = nil
@@ -81,7 +83,10 @@ end
 
 function PlayerHealth47:refreshConfig()
   self:handleEnableToggle()
-  if self:IsEnabled() then self.bars:refreshConfig() end
+  if self:IsEnabled() then
+    self.bars:refreshConfig()
+    self:_refreshAll()
+  end
 end
 
 function PlayerHealth47:handleEnableToggle() end
@@ -96,6 +101,7 @@ function PlayerHealth47:createBar()
   self.mainFrame.DECORATIVE_NAME = self.DECORATIVE_NAME
 
   self:_registerEvents()
+  self:_handleUnitHealthEvent()
 
   RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
   ZxSimpleUI:addToFrameList(self.MODULE_NAME,
@@ -122,11 +128,14 @@ function PlayerHealth47:_onUpdateHandler(curFrame, elapsed)
   end
 end
 
+---@param curUnitHealth - optional current unit health. if nil, use UnitHealth()
 function PlayerHealth47:_handleUnitHealthEvent(curUnitHealth)
   curUnitHealth = curUnitHealth or UnitHealth(self.unit)
   local maxUnitHealth = UnitHealthMax(self.unit)
   local healthPercent = ZxSimpleUI:calcPercentSafely(curUnitHealth, maxUnitHealth)
-  self.bars:setStatusBarValue(healthPercent)
+  -- self.bars:setStatusBarValue(healthPercent)
+  -- # TODO: check the options
+  self.bars:setStatusBarValueCurrMax(curUnitHealth, maxUnitHealth, self.db.profile.bartextdisplay)
 end
 
 function PlayerHealth47:_registerEvents() self.mainFrame:RegisterEvent("UNIT_HEALTH") end
@@ -135,4 +144,8 @@ function PlayerHealth47:_enableAllScriptHandlers()
   self.mainFrame:SetScript("OnUpdate", function(curFrame, elapsed)
     self:_onUpdateHandler(curFrame, elapsed)
   end)
+end
+
+function PlayerHealth47:_refreshAll()
+  self:_handleUnitHealthEvent(nil)
 end

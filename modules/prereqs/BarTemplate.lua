@@ -101,6 +101,39 @@ function BarTemplate:setStatusBarValue(percentValue)
   self.mainFrame.statusBar:SetValue(percentValue)
 end
 
+-- Options
+local _optionCurBarTextPercent = "PERCENT"
+local _optionCurBarTextValue = "VALUE"
+local _optionCurBarTextValuePercent = "VALUEPERCENT"
+
+---@param curValue number current value
+---@param maxValue number maxValue
+function BarTemplate:setStatusBarValueCurrMax(curValue, maxValue, option)
+  local percentValue = 0.0
+  if maxValue ~= 0 then
+    percentValue = curValue / maxValue
+  end
+  local val = percentValue * 100.0
+  val = val + 0.5
+  val = math.floor(val)
+  local formattedCurValue = self:_getFormattedNumber(curValue)
+  local formattedMaxValue = self:_getFormattedNumber(maxValue)
+
+  local textValue = ""
+
+  local upperCaseOption = string.upper(option)
+  if upperCaseOption == _optionCurBarTextPercent then
+    textValue = string.format("%d%%", val)
+  elseif upperCaseOption == _optionCurBarTextValue then
+    textValue = string.format("%s/%s", formattedCurValue, formattedMaxValue)
+  elseif upperCaseOption == _optionCurBarTextValuePercent then
+    textValue = string.format("%s/%s (%d%%)", formattedCurValue, formattedMaxValue, val)
+  end
+
+  self.mainFrame.mainText:SetText(textValue)
+  self.mainFrame.statusBar:SetValue(percentValue)
+end
+
 ---@param strInput string
 function BarTemplate:setTextOnly(strInput) self.mainFrame.mainText:SetText(strInput) end
 
@@ -161,4 +194,33 @@ function BarTemplate:_setMouseClicks()
   self.mainFrame:SetAttribute("*type1", "target")
   -- Set right click
   self.mainFrame:SetAttribute("*type2", "openRightClickMenu")
+end
+
+local _ONE_BILLION = 10^9
+local _ONE_MILLION = 10^6
+local _ONE_THOUSAND = 10^3
+
+---@return string
+function BarTemplate:_getFormattedNumber(number)
+  local formatString = "%.1f"
+  local strVal = string.format(formatString, number)
+  if number >= _ONE_BILLION then
+    local val = self:_roundToOneDigit(number / _ONE_BILLION)
+    strVal = string.format(formatString .. "B", val)
+  elseif number >= _ONE_MILLION then
+    local val = self:_roundToOneDigit(number / _ONE_MILLION)
+    strVal = string.format(formatString .. "M", val)
+  elseif number >= _ONE_THOUSAND then
+    local val = self:_roundToOneDigit(number / _ONE_THOUSAND)
+    strVal = string.format(formatString .. "K", val)
+  else
+    strVal = string.format("%d", number)
+  end
+  return strVal
+end
+
+function BarTemplate:_roundToOneDigit(number)
+  number = number * 10.0 + 0.5
+  number = math.floor(number)
+  return number / 10.0
 end

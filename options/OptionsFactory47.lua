@@ -77,3 +77,18 @@ function OptionsFactory47:createAura47Options(curModule)
   local core47Options = self:createCoreOptions(curModule)
   return Aura47Options:new(core47Options)
 end
+
+function OptionsFactory47:getBarTextDisplay()
+  bartextdisplay = {
+    name = "Bar Text Display",
+    desc = "Display either percent, value, or both",
+    type = "select",
+    values = {
+      ["Percent"] = "Percent",
+      ["Value"] = "Value",
+      ["ValuePercent"] = "Value and Percent"
+    },
+    -- order = self._coreOptions47:incrementOrderIndex()
+  }
+  return bartextdisplay
+end

@@ -69,6 +69,10 @@ function PlayerFactory47:createPlayerHealthOptions()
   local curModule = PlayerHealth47
   if curModule.mainFrame == nil then curModule:createBar() end
   local optionInstance = OptionsFactory47:createBarTemplateOptions(curModule)
+  local options = optionInstance:getOptionTable()
+  local bartextdisplay = OptionsFactory47:getBarTextDisplay()
+  options.args["bartextdisplay"] = bartextdisplay
+  optionInstance.options = options
   return CoreFactory47:registerAndReturnOptionTable(optionInstance, curModule)
 end
 

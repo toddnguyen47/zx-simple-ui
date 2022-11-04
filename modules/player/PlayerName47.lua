@@ -116,8 +116,8 @@ function PlayerName47:_getFormattedName(level)
   local name = UnitName(self.unit)
   name = Utils47:getInitialsExceptFirstWord(name)
   level = level or UnitLevel(self.unit)
-  if tonumber(self._prevLevel) < 0 then self._prevLevel = "??" end
-  return string.format("%s (%s)", name, tostring(self._prevLevel))
+  if tonumber(level) < 0 then level = "??" end
+  return string.format("%s (%s)", name, tostring(level))
 end
 
 function PlayerName47:_registerEvents()

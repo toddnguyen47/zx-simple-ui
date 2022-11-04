@@ -42,7 +42,8 @@ function TargetHealth47:__init__()
       border = "None",
       framePool = "UIParent",
       selfCurrentPoint = "CENTER",
-      relativePoint = "CENTER"
+      relativePoint = "CENTER",
+      bartextdisplay = "ValuePercent"
     }
   }
   self._eventTable = {"UNIT_HEALTH", "PLAYER_TARGET_CHANGED"}
@@ -108,6 +109,7 @@ function TargetHealth47:createBar()
   self.mainFrame.DECORATIVE_NAME = self.DECORATIVE_NAME
 
   SetOnShowOnHide:setHandlerScripts(self)
+  self:_refreshAll()
 
   RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
   ZxSimpleUI:addToFrameList(self.MODULE_NAME,
@@ -119,7 +121,10 @@ end
 
 function TargetHealth47:refreshConfig()
   self:handleEnableToggle()
-  if self:IsEnabled() and self.mainFrame:IsVisible() then self.bars:refreshConfig() end
+  if self:IsEnabled() and self.mainFrame:IsVisible() then
+    self.bars:refreshConfig()
+    self:_refreshAll()
+  end
 end
 
 ---Don't have to do anything here. Maybe in the future I'll add an option to disable this bar.
@@ -181,6 +186,12 @@ end
 function TargetHealth47:_setHealthValue(curUnitHealth)
   curUnitHealth = curUnitHealth or UnitHealth(self.unit)
   local maxUnitHealth = UnitHealthMax(self.unit)
+  self.bars:setStatusBarValueCurrMax(curUnitHealth, maxUnitHealth, self.db.profile.bartextdisplay)
+end
+
+function TargetHealth47:_setHealthValueWithStatus(curUnitHealth)
+  curUnitHealth = curUnitHealth or UnitHealth(self.unit)
+  local maxUnitHealth = UnitHealthMax(self.unit)
   local healthPercent = ZxSimpleUI:calcPercentSafely(curUnitHealth, maxUnitHealth)
   self._unitClassification = UnitClassification(self.unit)
   if Utils47:isNormalEnemy(self._unitClassification) then
@@ -190,4 +201,8 @@ function TargetHealth47:_setHealthValue(curUnitHealth)
     self.mainFrame.statusBar:SetValue(healthPercent)
     self.mainFrame.mainText:SetText(string.format("(%s) %.1f%%", s1, healthPercent * 100.0))
   end
+end
+
+function TargetHealth47:_refreshAll()
+  self:_setHealthValue(nil)
 end

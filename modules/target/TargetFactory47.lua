@@ -53,6 +53,7 @@ function TargetFactory47:createHealthOptions()
   local curModule = TargetHealth47
   if curModule.mainFrame == nil then curModule:createBar() end
   local optionInstance = OptionsFactory47:createBarTemplateOptions(curModule)
+  optionInstance = OptionsFactory47:addBarTextDisplayOption(optionInstance)
   return CoreFactory47:registerAndReturnOptionTable(optionInstance, curModule)
 end
 
@@ -60,6 +61,7 @@ function TargetFactory47:createPowerOptions()
   local curModule = TargetPower47
   if curModule.mainFrame == nil then curModule:createBar() end
   local optionInstance = OptionsFactory47:createPower47Options(curModule)
+  optionInstance = OptionsFactory47:addBarTextDisplayOption(optionInstance)
   return CoreFactory47:registerAndReturnOptionTable(optionInstance, curModule)
 end
 

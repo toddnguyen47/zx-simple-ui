@@ -69,7 +69,8 @@ function TargetPower47:__init__()
       border = "None",
       framePool = "TargetHealth47",
       selfCurrentPoint = "TOPLEFT",
-      relativePoint = "BOTTOMLEFT"
+      relativePoint = "BOTTOMLEFT",
+      bartextdisplay = "Percent",
     }
   }
 
@@ -91,12 +92,10 @@ function TargetPower47:OnInitialize()
   self:__init__()
 
   self.db = ZxSimpleUI.db:RegisterNamespace(MODULE_NAME, self._newDefaults)
-
   -- Always set the showbar option to false on initialize
   self.db.profile.showbar = self._defaults.profile.showbar
 
   self.bars = BarTemplate:new(self.db)
-
   self:SetEnabledState(ZxSimpleUI:getModuleEnabledState(MODULE_NAME))
 end
 
@@ -163,6 +162,7 @@ function TargetPower47:refreshConfig()
       self.bars:refreshConfig()
       self:_setRefreshColor()
     end
+    self:_refreshAll()
   end
 end
 
@@ -207,7 +207,7 @@ function TargetPower47:_onEventHandler(curFrame, event, unit)
     if Utils47:stringEqualsIgnoreCase(event, "UNIT_DISPLAYPOWER") then
       self:_handlePowerChanged()
     elseif self._powerEventColorTable[event] ~= nil then
-      self:_handleUnitPowerEvent()
+      self:_handleUnitPowerText()
     end
   end
 end
@@ -223,11 +223,10 @@ function TargetPower47:_handlePowerChanged()
   self:_setRefreshColor()
 end
 
-function TargetPower47:_handleUnitPowerEvent(curUnitPower)
+function TargetPower47:_handleUnitPowerText(curUnitPower)
   curUnitPower = curUnitPower or UnitPower(self.unit)
   local maxUnitPower = UnitPowerMax(self.unit)
-  local powerPercent = ZxSimpleUI:calcPercentSafely(curUnitPower, maxUnitPower)
-  self.bars:setStatusBarValue(powerPercent)
+  self.bars:setStatusBarValueCurrMax(curUnitPower, maxUnitPower, self.db.profile.bartextdisplay)
 end
 
 function TargetPower47:_onUpdateHandler(curFrame, elapsed)
@@ -236,7 +235,7 @@ function TargetPower47:_onUpdateHandler(curFrame, elapsed)
   if (self._timeSinceLastUpdate > ZxSimpleUI.UPDATE_INTERVAL_SECONDS) then
     local curUnitPower = UnitPower(self.unit)
     if (curUnitPower ~= self._prevTargetPower47) then
-      self:_handleUnitPowerEvent(curUnitPower)
+      self:_handleUnitPowerText(curUnitPower)
       self._prevTargetPower47 = curUnitPower
       self._timeSinceLastUpdate = 0
     end
@@ -280,4 +279,8 @@ function TargetPower47:_getDefaultClassPowerColor()
     t1 = self._powerEventColorTable["UNIT_RUNIC_POWER"]
   end
   return t1
+end
+
+function TargetPower47:_refreshAll()
+  self:_handleUnitPowerText(nil)
 end

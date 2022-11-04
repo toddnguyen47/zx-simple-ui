@@ -61,7 +61,8 @@ function PetPower47:__init__()
       border = "None",
       selfCurrentPoint = "TOPRIGHT",
       relativePoint = "BOTTOMRIGHT",
-      framePool = "PetHealth47"
+      framePool = "PetHealth47",
+      bartextdisplay = "Percent",
     }
   }
 
@@ -133,6 +134,7 @@ function PetPower47:createBar()
   self.mainFrame.frameToAnchorTo = anchorFrame
 
   self:_setInitialVisibilityAndColor()
+  self:_refreshAll()
   RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
   ZxSimpleUI:addToFrameList(self.MODULE_NAME,
     {frame = self.mainFrame, name = self.DECORATIVE_NAME})
@@ -141,6 +143,7 @@ end
 
 function PetPower47:refreshConfig()
   self:handleEnableToggle()
+  self:_refreshAll()
   if self:IsEnabled() then
     -- If the show option is currently selected
     if self.db.profile.showbar == true then
@@ -192,8 +195,7 @@ end
 function PetPower47:_setPowerValue(curUnitPower)
   curUnitPower = curUnitPower or UnitPower(self.unit)
   local maxUnitPower = UnitPowerMax(self.unit)
-  local powerPercent = ZxSimpleUI:calcPercentSafely(curUnitPower, maxUnitPower)
-  self.bars:setStatusBarValue(powerPercent)
+  self.bars:setStatusBarValueCurrMax(curUnitPower, maxUnitPower, self.db.profile.bartextdisplay)
 end
 
 function PetPower47:_handlePowerChanged() self:refreshConfig() end
@@ -295,4 +297,8 @@ function PetPower47:_getDefaultClassPowerColor()
     t1 = self._powerEventColorTable["UNIT_MANA"]
   end
   return t1
+end
+
+function PetPower47:_refreshAll()
+  self:_setPowerValue()
 end

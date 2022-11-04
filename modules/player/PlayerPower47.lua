@@ -24,7 +24,7 @@ PlayerPower47.unit = "player"
 -- #endregion
 
 function PlayerPower47:__init__()
-  self.PLAYER_ENGLISH_CLASS = select(2, UnitClass("player"))
+  self.PLAYER_ENGLISH_CLASS = string.upper(select(2, UnitClass("player")))
 
   self._powerEventColorTable = {
     ["UNIT_MANA"] = {0.0, 0.0, 1.0, 1.0},
@@ -66,7 +66,7 @@ function PlayerPower47:__init__()
       framePool = "PlayerHealth47",
       selfCurrentPoint = "TOPLEFT",
       relativePoint = "BOTTOMLEFT",
-      bartextdisplay = "Percent",
+      bartextdisplay = self:_getDefaultBarTextDisplay(),
     }
   }
 
@@ -245,4 +245,16 @@ end
 
 function PlayerPower47:_refreshAll()
   self:_setPowerValue()
+end
+
+function PlayerPower47:_getDefaultBarTextDisplay()
+  local s1 = "ValuePercent"
+  if self.PLAYER_ENGLISH_CLASS == "WARRIOR" then
+    s1 = "Percent"
+  elseif self.PLAYER_ENGLISH_CLASS == "ROGUE" then
+    s1 = "Percent"
+  elseif self.PLAYER_ENGLISH_CLASS == "DEATHKNIGHT" then
+    s1 = "Percent"
+  end
+  return s1
 end

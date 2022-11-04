@@ -111,6 +111,7 @@ function PlayerFactory47:createPetHealthOptions()
   local curModule = PetHealth47
   if curModule.mainFrame == nil then curModule:createBar() end
   local optionInstance = OptionsFactory47:createBarTemplateEnableOptions(curModule)
+  optionInstance = OptionsFactory47:addBarTextDisplayOption(optionInstance)
   return CoreFactory47:registerAndReturnOptionTable(optionInstance, curModule)
 end
 
@@ -119,6 +120,7 @@ function PlayerFactory47:createPetPowerOptions()
   local curModule = PetPower47
   if curModule.mainFrame == nil then curModule:createBar() end
   local optionInstance = OptionsFactory47:createBarTemplateEnableOptions(curModule)
+  optionInstance = OptionsFactory47:addBarTextDisplayOption(optionInstance)
   return CoreFactory47:registerAndReturnOptionTable(optionInstance, curModule)
 end
 

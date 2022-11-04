@@ -42,7 +42,8 @@ function PetHealth47:__init__()
       border = "None",
       selfCurrentPoint = "TOPRIGHT",
       relativePoint = "BOTTOMRIGHT",
-      framePool = "PlayerPower47"
+      framePool = "PlayerPower47",
+      bartextdisplay = "Percent",
     }
   }
 
@@ -114,6 +115,7 @@ function PetHealth47:createBar()
   self.mainFrame.frameToAnchorTo = anchorFrame
 
   self:_setInitialVisibilityAndColor()
+  self:_refreshAll()
   RegisterWatchHandler47:setRegisterForWatch(self.mainFrame, self.unit)
   ZxSimpleUI:addToFrameList(self.MODULE_NAME,
     {frame = self.mainFrame, name = self.DECORATIVE_NAME})
@@ -122,6 +124,7 @@ end
 
 function PetHealth47:refreshConfig()
   self:handleEnableToggle()
+  self:_refreshAll()
   if self:IsEnabled() then self.bars:refreshConfig() end
 end
 
@@ -151,8 +154,7 @@ end
 function PetHealth47:_handleUnitHealthEvent(curUnitHealth)
   curUnitHealth = curUnitHealth or UnitHealth(self.unit)
   local maxUnitHealth = UnitHealthMax(self.unit)
-  local healthPercent = ZxSimpleUI:calcPercentSafely(curUnitHealth, maxUnitHealth)
-  self.bars:setStatusBarValue(healthPercent)
+  self.bars:setStatusBarValueCurrMax(curUnitHealth, maxUnitHealth, self.db.profile.bartextdisplay)
 end
 
 function PetHealth47:_registerEvents()
@@ -222,4 +224,8 @@ function PetHealth47:_handlePetExists()
   elseif not exists and shown then
     self.mainFrame:Hide()
   end
+end
+
+function PetHealth47:_refreshAll()
+  self:_handleUnitHealthEvent()
 end

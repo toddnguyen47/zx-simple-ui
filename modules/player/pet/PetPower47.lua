@@ -276,16 +276,25 @@ function PetPower47:_setInitialVisibilityAndColor()
   end)
 end
 
+local _TEMP_FRAME_PET_EXISTS = FramePool47:getFrame()
+
 function PetPower47:_handlePetExists()
-  local exists = UnitExists(self.unit)
-  local shown = self.mainFrame:IsShown()
-  if exists and not shown then
-    self:_setUnitPowerType()
-    self:_setInitialColor()
-    self.mainFrame:Show()
-  elseif not exists and shown then
-    self.mainFrame:Hide()
-  end
+  -- Wait first
+  local totalElapsedTime = 0
+  _TEMP_FRAME_PET_EXISTS:SetScript("OnUpdate", function(curFrame, elapsed)
+    totalElapsedTime = totalElapsedTime + elapsed
+    if (totalElapsedTime > 0.2) then
+      local exists = UnitExists(self.unit)
+      local shown = self.mainFrame:IsShown()
+      if exists and not shown then
+        self.mainFrame:Show()
+      elseif not exists and shown then
+        self.mainFrame:Hide()
+      end
+
+      _TEMP_FRAME_PET_EXISTS:SetScript("OnUpdate", nil)
+    end
+  end)
 end
 
 ---@return table

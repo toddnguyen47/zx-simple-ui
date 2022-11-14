@@ -2,17 +2,17 @@
 local LibStub = LibStub
 local UnitPower, UnitPowerMax = UnitPower, UnitPowerMax
 local UnitClass, UnitPowerType = UnitClass, UnitPowerType
-local UnitExists = UnitExists
 
 --- include files
 local ZxSimpleUI = LibStub("AceAddon-3.0"):GetAddon("ZxSimpleUI")
 local Locale = LibStub("AceLocale-3.0"):GetLocale(ZxSimpleUI.ADDON_NAME)
-local FramePool47 = ZxSimpleUI.FramePool47
 
 -- #region
 local BarTemplateDefaults = ZxSimpleUI.prereqTables["BarTemplateDefaults"]
 local BarTemplate = ZxSimpleUI.prereqTables["BarTemplate"]
+local FramePool47 = ZxSimpleUI.FramePool47
 local Utils47 = ZxSimpleUI.Utils47
+local PetUtils47 = ZxSimpleUI.PetUtils47
 local RegisterWatchHandler47 = ZxSimpleUI.prereqTables["RegisterWatchHandler47"]
 local SetOnShowOnHide = ZxSimpleUI.prereqTables["SetOnShowOnHide"]
 
@@ -261,7 +261,7 @@ function PetPower47:_setInitialVisibilityAndColor()
     if (tempTimeSinceLastUpdate > 0.1) then
       tempTimeSinceLastUpdate = 0
       -- Only update color if there is a pet
-      if UnitExists(self.unit) then
+      if PetUtils47:DoesUnitExist(self.unit) then
         self:_setUnitPowerType()
         if self._powerTypeString ~= "" then
           self:_setInitialColor()
@@ -283,9 +283,9 @@ function PetPower47:_handlePetExists()
   local totalElapsedTime = 0
   _TEMP_FRAME_PET_EXISTS:SetScript("OnUpdate", function(curFrame, elapsed)
     totalElapsedTime = totalElapsedTime + elapsed
-    if (totalElapsedTime > 0.2) then
-      local exists = UnitExists(self.unit)
+    if (totalElapsedTime > 0.5) then
       local shown = self.mainFrame:IsShown()
+      local exists = PetUtils47:DoesUnitExist(self.unit)
       if exists and not shown then
         self.mainFrame:Show()
       elseif not exists and shown then

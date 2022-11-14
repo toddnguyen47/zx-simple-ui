@@ -1,4 +1,5 @@
 <Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+  <Script file="PetUtils47.lua" />
   <Script file="PetHealth47.lua" />
   <Script file="PetPower47.lua" />
 </Ui>
